@@ -1,0 +1,85 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teamenglify.englify.SpeechRecognition">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/speechProgressBar"
+            android:layout_weight="3"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="7">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="3">
+                <TextView
+                    android:text="@string/speech_recognition_default"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dip"
+                    android:id="@+id/speechDisplayTextView"
+                    android:textColor="@color/speechDisplayTextView"
+                    style="@android:style/TextAppearance.Small"
+                    android:ellipsize="none"
+                    android:maxLines="5"
+                    android:scrollHorizontally="false"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:text="Loading texts to match..."
+                    android:layout_width="match_parent"
+                    android:layout_height="20dip"
+                    android:id="@+id/speechToMatchTextView"
+                    android:textColor="@color/speechToMatchTextView"
+                    android:ellipsize="none"
+                    style="@android:style/TextAppearance.Small"
+                    android:textIsSelectable="true"
+                    android:maxLines="5"
+                    android:scrollHorizontally="false"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:textColor="@color/speechReturnTextView"
+                    android:layout_height="0dip"
+                    android:id="@+id/speechReturnTextView"
+                    style="@android:style/TextAppearance.Small"
+                    android:ellipsize="none"
+                    android:maxLines="5"
+                    android:scrollHorizontally="false"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                app:srcCompat="@android:drawable/presence_audio_online"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:background="@null"
+                android:id="@+id/speechImageButton"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,29 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teamenglify.englify.TextToSpeech">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <EditText
+            android:hint="Text to translate..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ttsInputText"
+            android:gravity="center_horizontal"/>
+
+        <Button
+            android:text="Speak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/ttsButton" />
+
+
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teamenglify.englify.AudioBar">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_revert"
+            android:background="#4885ed"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:id="@+id/audioReplayButton"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="8">
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/audioSeekBar" />
+
+            <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/audioTextView"
+                style="@android:style/TextAppearance.Small"
+                android:layout_weight="1"
+                android:gravity="center_horizontal|bottom"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_media_play"
+            android:background="#4885ed"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:id="@+id/audioPlayPauseButton"
+            android:layout_weight="2"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+</FrameLayout>

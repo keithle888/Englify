@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Englify</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="speech_recognition_default">Loading speech recognition...</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="press_hold_e">Press and hold</string>
+    <string name="press_hold_b">ေလ့က်င့္ရန္အနည္းငယ္ၾကာဖိထားပါ။:</string>
+</resources>
