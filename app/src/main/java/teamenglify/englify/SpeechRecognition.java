@@ -99,7 +99,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         if (SpeechRecognizer.isRecognitionAvailable(getContext())) {
             speechDisplayTextView.setText(R.string.press_hold_b);
             setButtonListener();
-            executeAsyncTask();
         } else {
             speechDisplayTextView.setText("Speech Recognition not available.");
             speechToMatchTextView.setText("");
@@ -234,16 +233,18 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         if (speech != null) {
             speech = null;
         }
+        mHandler.removeCallbacks(mBackgroundThread);
+        mHandler.removeCallbacks(mUpdateUI);
     }
 
-    private class asyncTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void...Void) {
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                Log.d("SpeechRecognition", "asyncTask error: " + e.toString());
-            }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHandler.post(mBackgroundThread);
+    }
+
+    private Runnable mBackgroundThread = new Runnable() {
+        public void run() {
             if (currentPage != MainActivity.getMainActivity().currentPage) {
                 //if the currentPage on mainActivity has changed, it will be detected and this instance's value will be updated.
                 currentPage = MainActivity.getMainActivity().currentPage;
@@ -256,14 +257,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             if (currentPage != 99999 && textToMatch == null) {
                 mHandler.post(mUpdateUI);
             }
-            executeAsyncTask();
-            return null;
+            mHandler.postDelayed(mBackgroundThread, 100);
         }
-    }
-
-    private void executeAsyncTask() {
-        new asyncTask().execute();
-    }
+    };
 
     private Runnable mUpdateUI = new Runnable() {
         public void run() {
