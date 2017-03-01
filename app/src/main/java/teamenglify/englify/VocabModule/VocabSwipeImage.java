@@ -55,7 +55,7 @@ public class VocabSwipeImage extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_vocab_swipe_image, container, false);
         Bundle bundle = getArguments();
-        imageUrl = bundle.getString("imageUrl");
+        imageUrl = bundle.getString("imageUrl").trim();
         networkImageView = (NetworkImageView) v.findViewById(R.id.vocabNetworkImageView);
         networkImageView.setDefaultImageResId(R.drawable.loadinglogo);
         ImageLoader imageLoader = ImageLoadService.getInstance(MainActivity.getMainActivity().getApplicationContext()).getImageLoader();
