@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
     private String mActivityTitle;
     //variable for SpeechRecognition
     public boolean readyForSpeechRecognitionToLoad = false;
-    //variable for Local Save
-    public static File internalStorage;
 
 
     @Override
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         //initialize variables
         currentPage = 0;
         readyForAudioBarToLoad = false;
-        internalStorage = getFilesDir();
         //check permissions, else request for them
         checkAndRequestPermissions();
         mainActivity = this;
