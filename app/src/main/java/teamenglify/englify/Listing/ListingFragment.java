@@ -140,6 +140,7 @@ public class ListingFragment extends Fragment {
                 }
                 listingAdapter = new ListingAdapter(listOfChoicesVocab, listingType);
             } else {
+                //sends in List of Grades and List of Lessons
                 listingAdapter = new ListingAdapter(listOfChoices, listingType);
             }
             recyclerView.setAdapter(listingAdapter);
