@@ -28,6 +28,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import teamenglify.englify.DataService.S3Properties;
 import teamenglify.englify.FeedbackModule.Feedback;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         initializeMobileAnalytics();
         //initialize s3Client variable on another thread.
         new startS3Client().execute();
-        //initialize navaigation drawer
+        //initialize navigation drawer
         initializeNavigationDrawer();
         //initialize login Page (default starting fragment)
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.activity_main_container);
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
             fragment = new LoginFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
         }
+
     }
 
     @Override
