@@ -21,8 +21,6 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     public ListingAdapter(ArrayList<String> listOfChoices, String listingType) {
         this.listOfChoices = listOfChoices;
         this.listingType = listingType;
-//        Log.d("listingAdapter received", "listingType: " + listingType + ", listOfChoices: " + listOfChoices.toString());
-
     }
 
     @Override
@@ -35,7 +33,6 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 view.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 //load lesson list if the current listing is grade
                 if(listingType.equalsIgnoreCase("gradeListing")) {
-                    Log.d("Button Click", selected + " was clicked.");
                     mainActivity.getSupportActionBar().setTitle("Lesson Selection");
                     mainActivity.setCurrentListingType("lessonListing");
                     //check if the grade selected is the same as before, if not, wipe cached data for lesson, unit and vocab.
@@ -44,8 +41,9 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                         mainActivity.readListing = null;
                         mainActivity.vocabListing = null;
                         mainActivity.readyForAudioBarToLoad = false;
-                        Log.d("Deleting Cache", "");
+                        Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Deleting Cache.");
                     }
+
                     mainActivity.grade = selected;
                     mainActivity.loadNextListing();
                 } else if (listingType.equalsIgnoreCase("lessonListing")) {

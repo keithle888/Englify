@@ -1,10 +1,14 @@
 package teamenglify.englify;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -52,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
     public String currentListingType;
     public String currentListingURL;
     public static AmazonS3Client s3Client;
-
+    //variables for Background Thread that updates internet
+    private Handler mHandler;
+    public boolean hasInternetConnection;
+    public boolean isWiFiConnection;
     //variables from ListingDataService
     public ArrayList<String> gradeListing;
     public ArrayList<String> lessonListing;
@@ -84,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
         //default code
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //initialize background thread
+        mHandler = new Handler();
+        mHandler.post(mBackgroundThread);
         //initialize variables
         currentPage = 0;
         readyForAudioBarToLoad = false;
@@ -137,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
             analytics.getSessionClient().pauseSession();
             analytics.getEventClient().submitEvents();
         }
+        mHandler.removeCallbacks(mBackgroundThread);
     }
 
     @Override
@@ -145,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         if(analytics != null) {
             analytics.getSessionClient().resumeSession();
         }
+        mHandler.post(mBackgroundThread);
     }
 
     public static MainActivity getMainActivity(){
@@ -387,4 +399,16 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
+
+    private Runnable mBackgroundThread = new Runnable() {
+        public void run() {
+            //update internet connectivity
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            hasInternetConnection = activeNetwork != null && activeNetwork.isConnected();
+            isWiFiConnection = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+            //cause the background thread to run every 1000ms.
+            mHandler.postDelayed(mBackgroundThread, 1000);
+        }
+    };
 }
