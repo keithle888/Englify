@@ -6,4 +6,12 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="press_hold_e">Press and hold</string>
     <string name="press_hold_b">ေလ့က်င့္ရန္အနည္းငယ္ၾကာဖိထားပါ။:</string>
+    <string name="S3_Object_Listing">S3_Object_Listing</string>
+    <string name="Root_Directory">res</string>
+    <string name="Bucket_Name">englify</string>
+    <string name="Append_To_Storage_For_Images">img</string>
+    <string name="Append_To_Storage_For_Audio">audio</string>
+    <string name="Append_To_Storage_For_text">txt</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
 </resources>

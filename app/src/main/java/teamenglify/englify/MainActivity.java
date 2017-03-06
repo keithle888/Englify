@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,15 +44,15 @@ import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.VocabModule.VocabModule;
 
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
-
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
     public static String grade;
     public static String lesson;
     public static String vocab;
     public static String read;
-    public final static String bucketName = "englify";
-    public final static String parentFolder = "res";
+    public static String bucketName;
+    public static String rootDirectory;
+    public static String currentDirectory;
     public static int position;
     public String currentListingType;
     public String currentListingURL;
@@ -92,9 +93,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //initialize background thread
-        mHandler = new Handler();
+        HandlerThread mHandlerThread = new HandlerThread(getLocalClassName());
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper());
         mHandler.post(mBackgroundThread);
         //initialize variables
+        bucketName = getString(R.string.Bucket_Name);
+        currentDirectory = rootDirectory = getString(R.string.Root_Directory);
         currentPage = 0;
         readyForAudioBarToLoad = false;
         //check permissions, else request for them
@@ -103,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         //initialize mobile analytics
         initializeMobileAnalytics();
         //initialize s3Client variable on another thread.
-        new startS3Client().execute();
+        mHandler.post(startS3Client);
         //initialize navigation drawer
         initializeNavigationDrawer();
         //initialize login Page (default starting fragment)
@@ -136,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         // Handle your other action bar items...
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -183,11 +187,6 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().replace(R.id.activity_main_container, VocabModule.newInstance(currentListingType,currentListingURL)).addToBackStack(null).commit();
     }
 
-    public void setCurrentListingType(String s) {
-        currentListingType = s;
-        Log.d("currentListingType", s);
-    }
-
     public void setCurrentListingURL(String s) {
         currentListingURL = s;
         Log.d("currentListingURL", s);
@@ -197,27 +196,15 @@ public class MainActivity extends AppCompatActivity {
         return currentListingType;
     }
 
-    public String getCurrentListingURL() {
-        return currentListingURL;
-    }
-
-    public void setGrade(String s) {
-        grade = s;
-        Log.d("new Grade: ", s);
-    }
-
-
-    private class startS3Client extends AsyncTask<Void,Void,Void>{
-        @Override
-        protected Void doInBackground(Void... params) {
+    private Runnable startS3Client = new Runnable() {
+        public void run() {
             CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                     MainActivity.getMainActivity().getApplicationContext(),
                     S3Properties.IDENTITYPOOLID, // Identity Pool ID
                     Regions.AP_NORTHEAST_1); // Region
             s3Client = new AmazonS3Client(credentialsProvider);
-            return null;
         }
-    }
+    };
 
     public void setGradeListing(ArrayList<String> array) {
         gradeListing = array;
@@ -244,18 +231,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("New readURL: ", array.toString());
     }
 
-    public ArrayList<String> getGradeListing() {
-        return gradeListing;
-    }
-
-    public ArrayList<String> getLessonListing() {
-        return lessonListing;
-    }
-
-    public ArrayList<String> getReadListing() {
-        return readListing;
-    }
-
     public ArrayList<String> getVocabListing() {
         return vocabListing;
     }
@@ -264,46 +239,12 @@ public class MainActivity extends AppCompatActivity {
         return readImageURLListing;
     }
 
-    public void setAudioConversationURLListingURLListing(ArrayList<String> list) {
-        this.audioConversationURLListing = list;
-        if (list != null) {
-            Log.d("Audio Convo URLs found", list.toString());
-        }
-    }
-
-    public void setAudioVocabURLListingURLListing(ArrayList<String> list) {
-        this.audioConversationURLListing = list;
-        if (list != null) {
-            Log.d("Audio Vocab URLs found", list.toString());
-        }
-
-    }
-
     public void setCurrentPage(int i) {
         currentPage = i;
     }
 
     public int getCurrentPage() {
         return currentPage;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_RECORD_AUDIO: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("MainActivity", "Record Audio Permission Granted.");
-                } else {
-                    Log.d("MainActivity", "Record Audio Permission Denied.");
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
     private void checkAndRequestPermissions() {
@@ -358,13 +299,13 @@ public class MainActivity extends AppCompatActivity {
                 Fragment newFragment = null;
                 switch (position) {
                     case 0:
-                        //Goes to Grade
-                        mainActivity.setCurrentListingType("gradeListing");
-                        newFragment = new ListingFragment();
-                        break;
-                    case 1:
                         //Goes to Login
                         newFragment = new LoginFragment();
+                        break;
+                    case 1:
+                        //Goes to Grade
+                        mainActivity.currentListingType = "Grade";
+                        newFragment = new ListingFragment();
                         break;
                     case 2:
                         newFragment = new TextToSpeech();
@@ -372,12 +313,13 @@ public class MainActivity extends AppCompatActivity {
                     case 3:
                         newFragment = new Feedback();
                         break;
+                    case 4:
+                        break;
                 }
                 if (newFragment != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, newFragment).addToBackStack(null).commit();
                 }
                 mDrawerLayout.closeDrawers();
-
             }
         });
         //create button for Nav Drawer in Action bar
@@ -405,10 +347,29 @@ public class MainActivity extends AppCompatActivity {
             //update internet connectivity
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            hasInternetConnection = activeNetwork != null && activeNetwork.isConnected();
-            isWiFiConnection = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+            if (hasInternetConnection != (activeNetwork != null && activeNetwork.isConnected()) ) {
+                hasInternetConnection = activeNetwork != null && activeNetwork.isConnected();
+                isWiFiConnection = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+                Log.d("Englify", "Class MainActivity: Method mBackgroundThread: Internet Status -> " + hasInternetConnection);
+            }
             //cause the background thread to run every 1000ms.
             mHandler.postDelayed(mBackgroundThread, 1000);
         }
     };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_RECORD_AUDIO: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("MainActivity", "Record Audio Permission Granted.");
+                } else {
+                    Log.d("MainActivity", "Record Audio Permission Denied.");
+                }
+                return;
+            }
+        }
+    }
 }

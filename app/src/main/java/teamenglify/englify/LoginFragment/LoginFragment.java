@@ -63,24 +63,23 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         //initialize variables
         MainActivity mainActivity = MainActivity.getMainActivity();
         //set title
         mainActivity.getSupportActionBar().setTitle("Englify Home");
         //set button listener
-        Button loginBtn = (Button) v.findViewById(R.id.loginBtn);
+        Button loginBtn = (Button) view.findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 MainActivity mainActivity = MainActivity.getMainActivity();
-                mainActivity.setCurrentListingType("gradeListing");
-                mainActivity.setCurrentListingURL(mainActivity.parentFolder);
+                mainActivity.currentListingType = "Grade";
+                mainActivity.setCurrentListingURL(mainActivity.rootDirectory);
                 mainActivity.loadNextListing();
-                mainActivity.getSupportActionBar().setTitle("Grade Selection");
             }
         });
-        return v;
+        return view;
     }
 }

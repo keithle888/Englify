@@ -41,6 +41,7 @@
                 android:id="@+id/loginBtn"
                 android:text="Start Learning!">
             </Button>
+
         </LinearLayout>
 
     </FrameLayout>

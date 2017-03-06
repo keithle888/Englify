@@ -62,8 +62,8 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Read Selection");
-                mainActivity.setCurrentListingType("readListing");
-                mainActivity.setCurrentListingURL(mainActivity.parentFolder);
+                mainActivity.currentListingType = "readListing";
+                mainActivity.setCurrentListingURL(mainActivity.rootDirectory);
                 mainActivity.loadNextListing();
 
             }
@@ -74,8 +74,8 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Vocab Selection");
-                mainActivity.setCurrentListingType("vocabListing");
-                mainActivity.setCurrentListingURL(mainActivity.parentFolder);
+                mainActivity.currentListingType = "vocabListing";
+                mainActivity.setCurrentListingURL(mainActivity.rootDirectory);
                 mainActivity.loadNextListing();
             }
         });
