@@ -23,13 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Handler;
 
+import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.DataService.DownloadService;
 import teamenglify.englify.DataService.ListingDataService;
 import teamenglify.englify.DataService.LoadService;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Grade;
 import teamenglify.englify.R;
 
+import static teamenglify.englify.DataService.DataManager.*;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
@@ -90,19 +93,17 @@ public class ListingFragment extends Fragment {
         if (listingType != null && mainActivity.currentListingType != listingType) {
             mainActivity.currentListingType = listingType;
         }
-        Log.d("Englify", "Class ListingFragment: Method onPreExecute(): Loading listing " + listingType);
+        Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
         //set the correct Title in action bar
         String title = mainActivity.currentListingType + " " + "Listing";
         mainActivity.getSupportActionBar().setTitle(title);
-        //start download of Grade Listing if the local memory does not have the file
-        if (listingType.equalsIgnoreCase("Grade") && !LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing))) {
-            new DownloadService().execute(listingType);
+        //get the listings
+        ArrayList<Grade> grades = new DataManager().getListing();
+        //get name of grades into an ArrayList<String> listings
+        ArrayList<String> listings = new ArrayList<String>();
+        for (Grade grade : grades) {
+            listings.add(grade.name);
         }
-        //Use background Thread to load files when data is ready.
-        HandlerThread thread = new HandlerThread("ListingFragmentBackgroundThread");
-        thread.start();
-        Looper looper = thread.getLooper()
-        mHandler = new Handler(looper);
         listingAdapter = new ListingAdapter(listings, listingType);
         recyclerView.setAdapter(listingAdapter);
         //load additional settings

@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadNextListing() {
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(currentListingType, currentListingURL)).addToBackStack(null).commit();
+        fm.beginTransaction().replace(R.id.activity_main_container, new ListingFragment()).addToBackStack(null).commit();
     }
 
     public void loadModuleSelection() {
@@ -190,10 +190,6 @@ public class MainActivity extends AppCompatActivity {
     public void setCurrentListingURL(String s) {
         currentListingURL = s;
         Log.d("currentListingURL", s);
-    }
-
-    public String getCurrentListingType() {
-        return currentListingType;
     }
 
     private Runnable startS3Client = new Runnable() {

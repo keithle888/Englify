@@ -14,4 +14,6 @@
     <string name="Append_To_Storage_For_text">txt</string>
     <string name="Yes">Yes</string>
     <string name="No">No</string>
+    <string name="Download_Prompt_Title">Save To Memory</string>
+    <string name="Download_Prompt_Message">Would you like to download and save</string>
 </resources>

@@ -11,9 +11,11 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Grade;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -22,104 +24,89 @@ import static teamenglify.englify.MainActivity.mainActivity;
  * Created by Keith on 05-Mar-17.
  */
 
-public class DownloadService extends AsyncTask<String, Void, Boolean>{
+public class DownloadService extends AsyncTask<Void, Void, Boolean>{
+    public final static int DOWNLOAD_LISTING = 0;
+    public final static int DOWNLOAD_GRADE = 1;
+    private int downloadType;
+    private Grade grade;
     private ProgressDialog pd;
+
+    public DownloadService(int i) {
+        this.downloadType = i;
+    }
+
+    public DownloadService (int i, Grade grade) {
+        this.downloadType = i;
+        this.grade = grade;
+    }
+
     @Override
     public void onPreExecute() {
+        Log.d("Englify", "Class DownloadService: Method onPreExecute(): Download Service starting, opening ProgressDialog.");
         pd = new ProgressDialog(mainActivity);
-        pd.setCancelable(false);
         pd.show();
+        pd.setTitle("Download");
+        pd.setCancelable(false);
     }
 
     @Override
-    public Boolean doInBackground(String...params){
-        String downloadType = params[0];
-        if (downloadType != null) {
-            pd.setTitle("Downloading " + params[0]);
-            if (downloadType.equalsIgnoreCase("Grade")) {
-                pd.setMax(1);
-                downloadListings();
-            } else {
-                //for downloading grades
-                pd.setMax(3);
-                pd.setMessage("Downloading grade listings.");
-                downloadGradeListings();
-                pd.setProgress(1);
-                pd.setMessage("Downloading grade images");
-                downloadGradeImages();
-                pd.setProgress(2);
-                pd.setMessage("Downloading grade audio files");
-                downloadGradeAudioFiles();
-                pd.setProgress(3);
-                pd.setMessage("Download Complete");
-            }
-        } else {
-            Log.d("Englify", "Class DownloadService: Method Run(): String downloadType is null.");
-            return Boolean.FALSE;
+    public Boolean doInBackground(Void...voids) {
+        //change download depending on downloadType
+        if (downloadType == DOWNLOAD_LISTING) {
+            Log.d("Englify", "Class DownloadService: Method doInBackground(): Downloading listing.");
+            pd.setMax(1);
+            pd.setProgress(0);
+            pd.setMessage("Downloading listings.");
+            downloadListing();
+            return Boolean.TRUE;
+        } else if (downloadType == DOWNLOAD_GRADE && grade != null) {
+            Log.d("Englify", "Class DownloadService: Method doInBackground(): Downloading " + grade.name + " .");
+            pd.setMessage("Downloading " + grade.name + " structure.");
+            pd.setMax(3);
+            pd.setProgress(0);
+            //downloadGradeStructure();
+            pd.setProgress(1);
+            pd.setMessage("Downloading " + grade.name + " audio files.");
+            //downloadGradeAudio();
+            pd.setProgress(2);
+            pd.setMessage("Downloading " + grade.name + " images");
+            //downloadGradeImages();
+            pd.setProgress(3);
+            pd.setMessage(grade.name + " download complete.");
+            return Boolean.TRUE;
         }
-        return Boolean.TRUE;
+        return Boolean.FALSE;
     }
 
     @Override
-    public void onPostExecute(Boolean result) {
+    public Object onPostExecute(Boolean result) {
         pd.dismiss();
-        if (result) {
-            Toast toast = Toast.makeText(mainActivity, "Download successful.", Toast.LENGTH_SHORT);
-            toast.show();
-        } else {
-            Toast toast = Toast.makeText(mainActivity, "Download failed.", Toast.LENGTH_LONG);
-            toast.show();
-        }
+        Log.d("Englify", "Class DownloadService: Method doInBackground(): Download finish.");
     }
 
-    public void downloadListings() {
+    public void downloadListing() {
+        //download all objects
         ObjectListing objects = MainActivity.s3Client.listObjects(MainActivity.bucketName, MainActivity.rootDirectory);
         List<S3ObjectSummary> summaries = objects.getObjectSummaries();
-        HashMap<String, ArrayList<String>> sortedListings = sortListings(summaries);
-        LocalSave.saveObject(mainActivity.getString(R.string.S3_Object_Listing), sortedListings);
-    }
-
-    public HashMap<String, ArrayList<String>> sortListings(List<S3ObjectSummary> summaries) {
-        HashMap<String, ArrayList<String>> sortedListings = new HashMap<String, ArrayList<String>>();
-        //Covert List<S3ObjectSummary> to an ArrayList<List<String>> where List<String> is the directory URL delimited by "/" (FOR SORTING PURPOSES)
-        ArrayList<String[]> delimitedList = new ArrayList<>();
+        Log.d("Englify", "Class DownloadService: Method downloadListing(): Downloaded object listing from AWS S3.");
+        //identify grades
+        HashMap<String, String> identifiedGrades = new HashMap<>();
         for (S3ObjectSummary summary : summaries) {
-            String url = summary.getKey();
-            String[] delimitedURL = url.split("/");
-            delimitedList.add(delimitedURL);
-        }
-        for (String[] delimitedURL : delimitedList) {
-            String parentDirectory = "";
-            String resource = delimitedURL[delimitedURL.length-1];
-            if (delimitedURL.length == 2) { //Sort for Grade Listing
-                for (int i = 0 ; i < delimitedURL.length - 1 ; i++) { //the parent directory of the folder we are identifying is always length-1
-                    parentDirectory += delimitedURL[i] + "/";
-                }
-                if (!isFolder(delimitedURL[delimitedURL.length-1])) { //if the object is not a folder, but a resource (img / mp3 / txt file)
-                    parentDirectory += mainActivity.getString(R.string.Append_To_Storage_For_Images);
-                }
-                //check if the sortedList already has the ArrayList to store the folder name
-                if (sortedListings.containsKey(parentDirectory)) {
-                    ArrayList<String> folderStorage = (ArrayList<String>) sortedListings.get(parentDirectory);
-                    folderStorage.add(resource);
-                } else { //sorted list does not have the ArrayList yet
-                    ArrayList<String> folderStorage = new ArrayList<String>();
-                    folderStorage.add(resource);
-                    sortedListings.put(parentDirectory, folderStorage);
+            String key = summary.getKey();
+            String[] keyParts = key.split("/");
+            if (keyParts.length == 2) { //the listing for grades will always only have 2 parts ("res/grade01/")
+                //put into identifiedGrades if the grade does exist
+                if (!identifiedGrades.containsKey(keyParts[1])) {
+                    identifiedGrades.put(keyParts[1], "");
                 }
             }
-            Log.d("Englify", "Class DownloadService: Method sortListings: Saved " + resource + " to key -> " + parentDirectory);
         }
-        return sortedListings;
-    }
-
-    public void
-
-    public boolean isFolder(String entry) {
-        if (entry.contains(".txt") || entry.contains(".mp3") || entry.contains(".png") || entry.contains(".jpg")) {
-            return false;
-        } else {
-            return true;
+        //Generate grades based on identified grades
+        Set<String> listOfGrades = identifiedGrades.keySet();
+        Log.d("Englify", "Class DownloadService: Method downloadListing(): Identified grades: " + listOfGrades.toString());
+        ArrayList<Grade> grades = new ArrayList<Grade>();
+        for (String grade : listOfGrades) {
+            grades.add(new Grade(grade, null, null));
         }
     }
 }
