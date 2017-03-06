@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -57,8 +58,12 @@ public class DownloadService extends AsyncTask<Void, Void, Boolean>{
             pd.setMax(1);
             pd.setProgress(0);
             pd.setMessage("Downloading listings.");
-            downloadListing();
-            return Boolean.TRUE;
+            boolean success = downloadListing();
+            if (success) {
+                return Boolean.TRUE;
+            } else {
+                return Boolean.FALSE;
+            }
         } else if (downloadType == DOWNLOAD_GRADE && grade != null) {
             Log.d("Englify", "Class DownloadService: Method doInBackground(): Downloading " + grade.name + " .");
             pd.setMessage("Downloading " + grade.name + " structure.");
@@ -79,34 +84,68 @@ public class DownloadService extends AsyncTask<Void, Void, Boolean>{
     }
 
     @Override
-    public Object onPostExecute(Boolean result) {
+    public void onPostExecute(Boolean result) {
         pd.dismiss();
         Log.d("Englify", "Class DownloadService: Method doInBackground(): Download finish.");
     }
 
-    public void downloadListing() {
+    public boolean downloadListing() {
         //download all objects
-        ObjectListing objects = MainActivity.s3Client.listObjects(MainActivity.bucketName, MainActivity.rootDirectory);
-        List<S3ObjectSummary> summaries = objects.getObjectSummaries();
-        Log.d("Englify", "Class DownloadService: Method downloadListing(): Downloaded object listing from AWS S3.");
-        //identify grades
-        HashMap<String, String> identifiedGrades = new HashMap<>();
-        for (S3ObjectSummary summary : summaries) {
-            String key = summary.getKey();
-            String[] keyParts = key.split("/");
-            if (keyParts.length == 2) { //the listing for grades will always only have 2 parts ("res/grade01/")
-                //put into identifiedGrades if the grade does exist
-                if (!identifiedGrades.containsKey(keyParts[1])) {
-                    identifiedGrades.put(keyParts[1], "");
+        try {
+            ObjectListing objects = MainActivity.s3Client.listObjects(MainActivity.bucketName, MainActivity.rootDirectory);
+            List<S3ObjectSummary> summaries = objects.getObjectSummaries();
+            Log.d("Englify", "Class DownloadService: Method downloadListing(): Downloaded object listing from AWS S3.");
+            //identify grades
+            HashMap<String, String> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
+            for (S3ObjectSummary summary : summaries) {
+                String key = summary.getKey();
+                String[] keyParts = key.split("/");
+                if (keyParts.length == 2) { //the listing for grades will always only have 2 parts ("res/grade01/")
+                    //identify if its a grade or a grade picture
+                    if (isFolder(keyParts[1])) {
+                        //it is a Grade
+                        identifiedGrades.put(keyParts[1], "");
+                    } else {
+                        //it is a grade picture
+                        //locate the grade (key) it belongs to
+                        Set<String> keySet = identifiedGrades.keySet();
+                        String foundKey = "";
+                        for (String gradeKey : keySet) {
+                            if (keyParts[1].contains(gradeKey)) {
+                                foundKey = gradeKey;
+                            }
+                        }
+                        //if key is found, add img URL as the value of the key (grade) , else discard the image, the folder does not exist.
+                        if (!foundKey.isEmpty()) {
+                            identifiedGrades.put(foundKey, keyParts[1]);
+                        }
+                    }
                 }
             }
+            //Generate grades based on identified grades
+            Set<String> listOfGrades = identifiedGrades.keySet();
+            Log.d("Englify", "Class DownloadService: Method downloadListing(): Identified grades: " + listOfGrades.toString());
+            ArrayList<Grade> grades = new ArrayList<Grade>();
+            for (String gradeName : listOfGrades) {
+                //save each grade into internal storage
+                Grade newGrade = new Grade(gradeName, null, null, false);
+                LocalSave.saveObject(newGrade.name, newGrade);
+                grades.add(newGrade);
+            }
+            //save the grades to internal storage
+            LocalSave.saveObject(mainActivity.getString(R.string.S3_Object_Listing), grades);
+        } catch (Exception e) {
+            Log.d("Englify", "Class DownloadService: Method downloadListing(): Caught Exception: " + e.toString());
+            return false;
         }
-        //Generate grades based on identified grades
-        Set<String> listOfGrades = identifiedGrades.keySet();
-        Log.d("Englify", "Class DownloadService: Method downloadListing(): Identified grades: " + listOfGrades.toString());
-        ArrayList<Grade> grades = new ArrayList<Grade>();
-        for (String grade : listOfGrades) {
-            grades.add(new Grade(grade, null, null));
+        return true;
+    }
+
+    public boolean isFolder(String folderName) {
+        if (folderName.contains(".txt") || folderName.contains(".png") || folderName.contains(".jpg") || folderName.contains(".mp3")) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

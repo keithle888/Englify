@@ -28,7 +28,7 @@ public class VocabFragmentStateAdapter extends FragmentStatePagerAdapter {
         String prefix = "https://s3-ap-southeast-1.amazonaws.com/englify/res/";
         String vocab  = imageUrlList.get(i);
         String [] vocabArr = vocab.split("-");
-        String choices = MainActivity.grade+"/"+MainActivity.lesson+"/Vocabulary/"+vocabArr[0].trim() + ".png";
+        String choices = MainActivity.gradeSelected+"/"+MainActivity.lesson+"/Vocabulary/"+vocabArr[0].trim() + ".png";
         bundle.putString("imageUrl", prefix+choices);
         fragment.setArguments(bundle);
         return fragment;

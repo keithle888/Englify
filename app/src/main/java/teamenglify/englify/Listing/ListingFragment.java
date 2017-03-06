@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Handler;
 
@@ -30,9 +31,11 @@ import teamenglify.englify.DataService.LoadService;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.DataService.DataManager.*;
+import static teamenglify.englify.MainActivity.currentDirectory;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
@@ -41,29 +44,41 @@ import static teamenglify.englify.MainActivity.mainActivity;
  * create an instance of this fragment.
  */
 public class ListingFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
+    //Fixed variables to be used to determine listing type
+    public static final int GRADE_LISTING = 0;
+    public static final int LESSON_LISTING = 1;
+    public static final int MODULE_LISTING = 2;
+    public static final int READ_LISTING = 3;
+    public static final int VOCAB_LISTING = 4;
+    public static final int EXERCISE_LISTING = 5;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "param3";
+    private static final String ARG_PARAM4 = "param4";
+    private static final String ARG_PARAM5 = "param5";
     private RecyclerView recyclerView;
     private ListingAdapter listingAdapter;
     private ImageView noContentImage;
-    private String mParam1;
-    private String mParam2;
-    private String listingType;
-    private Handler mHandler;
+    private int listingType;
+    private String gradeSelected;
+    private String lessonSelected;
+    private String moduleSelected;
+    private String readOrVocabPartSelected;
 
 
     public ListingFragment() {
         // Required empty public constructor
     }
 
-    public static ListingFragment newInstance(String param1, String param2) {
+    public static ListingFragment newInstance(int listingType, String gradeSelected, String lessonSelected, String moduleSelected, String readOrVocabPartSelected) {
         ListingFragment fragment = new ListingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM1, listingType);
+        args.putString(ARG_PARAM2, gradeSelected);
+        args.putString(ARG_PARAM3, lessonSelected);
+        args.putString(ARG_PARAM4, moduleSelected);
+        args.putString(ARG_PARAM5, readOrVocabPartSelected);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,8 +87,11 @@ public class ListingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            listingType = getArguments().getInt(ARG_PARAM1);
+            gradeSelected = getArguments().getString(ARG_PARAM2);
+            lessonSelected = getArguments().getString(ARG_PARAM3);
+            moduleSelected = getArguments().getString(ARG_PARAM4);
+            readOrVocabPartSelected = getArguments().getString(ARG_PARAM5);
         }
     }
 
@@ -85,25 +103,24 @@ public class ListingFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
-        //check listing type on local instance
-        if (listingType == null) {
-            listingType = mainActivity.currentListingType;
-        }
-        //update mainActivity currentListingType (back stack) if not the same
-        if (listingType != null && mainActivity.currentListingType != listingType) {
-            mainActivity.currentListingType = listingType;
-        }
         Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
-        //set the correct Title in action bar
-        String title = mainActivity.currentListingType + " " + "Listing";
-        mainActivity.getSupportActionBar().setTitle(title);
-        //get the listings
-        ArrayList<Grade> grades = new DataManager().getListing();
-        //get name of grades into an ArrayList<String> listings
+        //get the listings based on which listingType
         ArrayList<String> listings = new ArrayList<String>();
-        for (Grade grade : grades) {
-            listings.add(grade.name);
+        if (listingType == GRADE_LISTING) {
+            //set the correct Title in action bar
+            mainActivity.getSupportActionBar().setTitle("Grade Listing");
+            ArrayList<Grade> grades = new DataManager().getListing();
+            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Received ArrayList<Grade>: " + grades.toString());
+            //get name of grades into an ArrayList<String> listings
+            for (Grade grade : grades) {
+                listings.add(grade.name);
+            }
+        } if (listingType == LESSON_LISTING) {
+            //get the associated grade
+            Grade grade = new DataManager().getGrade(gradeSelected);
         }
+        //sort the listings
+        Collections.sort(listings);
         listingAdapter = new ListingAdapter(listings, listingType);
         recyclerView.setAdapter(listingAdapter);
         //load additional settings

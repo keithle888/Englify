@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 
@@ -46,7 +47,7 @@ import teamenglify.englify.VocabModule.VocabModule;
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
-    public static String grade;
+    public static String gradeSelected;
     public static String lesson;
     public static String vocab;
     public static String read;
@@ -54,10 +55,9 @@ public class MainActivity extends AppCompatActivity {
     public static String rootDirectory;
     public static String currentDirectory;
     public static int position;
-    public String currentListingType;
-    public String currentListingURL;
     public static AmazonS3Client s3Client;
-    //variables for Background Thread that updates internet
+    public static TransferUtility transferUtility;
+    //variables for Background Thread that updates internet status
     private Handler mHandler;
     public boolean hasInternetConnection;
     public boolean isWiFiConnection;
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         currentDirectory = rootDirectory = getString(R.string.Root_Directory);
         currentPage = 0;
         readyForAudioBarToLoad = false;
+        transferUtility = new TransferUtility(s3Client, getApplicationContext());
         //check permissions, else request for them
         checkAndRequestPermissions();
         mainActivity = this;
@@ -167,29 +168,21 @@ public class MainActivity extends AppCompatActivity {
         return mainActivity;
     }
 
-    public void loadNextListing() {
+    public void loadNextListing(int listingType, String gradeSelected, String lessonSelected, String moduleSelected, String readOrVocabPartSelected) {
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, new ListingFragment()).addToBackStack(null).commit();
+        fm.beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(listingType, gradeSelected, lessonSelected, moduleSelected, readOrVocabPartSelected)).addToBackStack(null).commit();
     }
 
-    public void loadModuleSelection() {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, ModuleSelection.newInstance(currentListingType, currentListingURL)).addToBackStack(null).commit();
+    public void loadModuleListing(int i) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ModuleSelection.newInstance(i)).addToBackStack(null).commit();
     }
 
     public void loadReadingModule() {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, ReadingModule.newInstance(currentListingType,currentListingURL)).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new ReadingModule()).addToBackStack(null).commit();
     }
 
     public void loadVocabModule() {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, VocabModule.newInstance(currentListingType,currentListingURL)).addToBackStack(null).commit();
-    }
-
-    public void setCurrentListingURL(String s) {
-        currentListingURL = s;
-        Log.d("currentListingURL", s);
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new VocabModule()).addToBackStack(null).commit();
     }
 
     private Runnable startS3Client = new Runnable() {
@@ -300,8 +293,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         //Goes to Grade
-                        mainActivity.currentListingType = "Grade";
-                        newFragment = new ListingFragment();
+                        newFragment = ListingFragment.newInstance(ListingFragment.GRADE_LISTING, null, null, null, null);
                         break;
                     case 2:
                         newFragment = new TextToSpeech();

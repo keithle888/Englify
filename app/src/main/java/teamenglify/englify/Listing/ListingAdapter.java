@@ -20,9 +20,9 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
 
     private ArrayList<String> listOfChoices;
     private MainActivity mainActivity = MainActivity.getMainActivity();
-    private String listingType;
+    private int listingType;
 
-    public ListingAdapter(ArrayList<String> listOfChoices, String listingType) {
+    public ListingAdapter(ArrayList<String> listOfChoices, int listingType) {
         this.listOfChoices = listOfChoices;
         this.listingType = listingType;
     }
@@ -36,20 +36,18 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
             public void onClick(View view) {
                 view.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 //load lesson list if the current listing is grade
-                if(listingType.equalsIgnoreCase("Grade")) {
-                    mainActivity.currentListingType = "Lesson";
+                if(listingType == ListingFragment.GRADE_LISTING) {
                     //check if the grade selected is the same as before, if not, wipe cached data for lesson, unit and vocab.
-                    if(mainActivity.grade != null && !mainActivity.grade.equalsIgnoreCase(selected)) {
+                    if(mainActivity.gradeSelected != null && !mainActivity.gradeSelected.equalsIgnoreCase(selected)) {
                         mainActivity.lessonListing = null;
                         mainActivity.readListing = null;
                         mainActivity.vocabListing = null;
                         mainActivity.readyForAudioBarToLoad = false;
                         Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Deleting Cache.");
                     }
-                    mainActivity.grade = selected;
-                    mainActivity.loadNextListing();
-                } else if (listingType.equalsIgnoreCase("Lesson")) {
-                    mainActivity.currentListingType = "Module";
+                    mainActivity.gradeSelected = selected;
+                    mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, selected, null, null, null);
+                } else if (listingType == ListingFragment.LESSON_LISTING) {
                     //check if the lesson selected is the same as before, if not, wipe cached data for unit and vocab.
                     if(mainActivity.lesson != null && !mainActivity.lesson.equalsIgnoreCase(selected)) {
                         mainActivity.readListing = null;
@@ -60,21 +58,19 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                         Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder: Deleting Cache.");
                     }
                     MainActivity.lesson = selected;
-                    mainActivity.loadModuleSelection();
-                } else if (listingType.equalsIgnoreCase("Read")) {
+                    mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING);
+                } else if (listingType == ListingFragment.READ_LISTING) {
                     //update Action Bar Title
                     mainActivity.getSupportActionBar().setTitle("Study Read");
-                    mainActivity.currentListingType = "Read Module";
                     MainActivity.read = selected;
                     mainActivity.currentPage = 0;
-                    mainActivity.loadReadingModule();
-
-                } else if (listingType.equalsIgnoreCase("Vocab")) {
+                    //mainActivity.loadNextListing();
+                } else if (listingType == ListingFragment.VOCAB_LISTING) {
                     mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                     MainActivity.position = position;
                     mainActivity.currentPage = position;
                     MainActivity.vocab = selected;
-                    mainActivity.loadVocabModule();
+                    //mainActivity.loadVocabModule();
                 }
             }
         });

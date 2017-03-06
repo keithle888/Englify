@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
@@ -19,8 +20,7 @@ import teamenglify.englify.R;
 public class ModuleSelection extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
+    private int mParam1;
     MainActivity mainActivity;
 
 
@@ -28,12 +28,10 @@ public class ModuleSelection extends Fragment {
         // Required empty public constructor
     }
 
-
-    public static ModuleSelection newInstance(String param1, String param2) {
+    public static ModuleSelection newInstance(int param1) {
         ModuleSelection fragment = new ModuleSelection();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,8 +40,7 @@ public class ModuleSelection extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam1 = getArguments().getInt(ARG_PARAM1);
         }
     }
 
@@ -62,9 +59,7 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Read Selection");
-                mainActivity.currentListingType = "readListing";
-                mainActivity.setCurrentListingURL(mainActivity.rootDirectory);
-                mainActivity.loadNextListing();
+                //mainActivity.loadNextListing(ListingFragment.READ_LISTING);
 
             }
         });
@@ -74,9 +69,7 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Vocab Selection");
-                mainActivity.currentListingType = "vocabListing";
-                mainActivity.setCurrentListingURL(mainActivity.rootDirectory);
-                mainActivity.loadNextListing();
+                //mainActivity.loadNextListing(ListingFragment.VOCAB_LISTING);
             }
         });
         return v;
