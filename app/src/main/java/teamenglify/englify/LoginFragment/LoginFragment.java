@@ -76,7 +76,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 MainActivity mainActivity = MainActivity.getMainActivity();
-                mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, null, null, null, null);
+                mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, null);
             }
         });
         return view;

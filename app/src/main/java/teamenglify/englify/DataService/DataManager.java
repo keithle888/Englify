@@ -24,43 +24,35 @@ public class DataManager {
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
         if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing))) {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
-            //the root listings (grades) has been downloaded before, therefore get all the grades (individually download from internal memory and pass it up
-            ArrayList<Grade> grades = new ArrayList<>();
-            for (Grade g : (ArrayList<Grade>) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing))) {
-                Grade grade = (Grade) LocalSave.loadObject(g.name);
-                grades.add(grade);
-            }
-            mainActivity.downloadedObject = grades;
+            MainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         } else {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
             DownloadService download = new DownloadService(teamenglify.englify.DataService.DownloadService.DOWNLOAD_LISTING);
             download.execute();
-            try {
-                Log.d("Englify", "Class DataManager: Method getListing(): Waiting for DownloadService to finish.");
-                download.get();
-            } catch (Exception e) {
-                Log.d("Englify", "Class DataManager: Method getListing(): Exception caught: " + e.toString());
-            }
-            //once download is done
-            mainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         }
     }
 
-    public void getGrade(String gradeSelected) {
-        if (((Grade) LocalSave.loadObject(gradeSelected)).isDownloaded) {
-            //grade has been downloaded.
-            MainActivity.downloadedObject = LocalSave.loadObject(gradeSelected);
+    public void getGrade(Grade grade) {
+        //get grade from local memory
+        Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for " + grade.name + " availability.");
+        if (LocalSave.doesFileExist(grade.name)) {
+            grade = (Grade) LocalSave.loadObject(grade.name);
+        }
+        if (grade.isDownloaded) {
+            Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " was found in internal memory.");
+            mainActivity.downloadedObject = grade;
         } else {
             //grade has not been downloaded.
-            promptForDownload(gradeSelected);
+            Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " downloaded to internal memory. Moving to download listing from AWS S3");
+            promptForDownload(grade);
         }
     }
 
-    public void promptForDownload(String gradeSelected) {
+    public void promptForDownload(final Grade grade) {
         //create a dialog to ask whether they want to download the grade
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
         builder.setTitle(mainActivity.getString(R.string.Download_Prompt_Title))
-                .setMessage(mainActivity.getString(R.string.Download_Prompt_Message) + " " + gradeSelected)
+                .setMessage(mainActivity.getString(R.string.Download_Prompt_Message) + " " + grade.name + " ?")
                 .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -70,7 +62,7 @@ public class DataManager {
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        new DownloadService(DownloadService.DOWNLOAD_GRADE, grade).execute();
                     }
                 })
                 .show();

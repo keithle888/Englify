@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
@@ -14,28 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.logging.Handler;
 
 import teamenglify.englify.DataService.DataManager;
-import teamenglify.englify.DataService.DownloadService;
-import teamenglify.englify.DataService.ListingDataService;
-import teamenglify.englify.DataService.LoadService;
-import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
-import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
-
-import static teamenglify.englify.DataService.DataManager.*;
-import static teamenglify.englify.MainActivity.currentDirectory;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
@@ -53,32 +41,23 @@ public class ListingFragment extends Fragment {
     public static final int EXERCISE_LISTING = 5;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private static final String ARG_PARAM3 = "param3";
-    private static final String ARG_PARAM4 = "param4";
-    private static final String ARG_PARAM5 = "param5";
     private RecyclerView recyclerView;
     private ListingAdapter listingAdapter;
     private ImageView noContentImage;
     private int listingType;
-    private String gradeSelected;
-    private String lessonSelected;
-    private String moduleSelected;
-    private String readOrVocabPartSelected;
+    private Handler mHandler;
+    private Object objectToLoad;
 
 
     public ListingFragment() {
         // Required empty public constructor
     }
 
-    public static ListingFragment newInstance(int listingType, String gradeSelected, String lessonSelected, String moduleSelected, String readOrVocabPartSelected) {
+    public static ListingFragment newInstance(int listingType, Object objectToLoad) {
         ListingFragment fragment = new ListingFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, listingType);
-        args.putString(ARG_PARAM2, gradeSelected);
-        args.putString(ARG_PARAM3, lessonSelected);
-        args.putString(ARG_PARAM4, moduleSelected);
-        args.putString(ARG_PARAM5, readOrVocabPartSelected);
+        fragment.objectToLoad = objectToLoad;
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,10 +67,6 @@ public class ListingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             listingType = getArguments().getInt(ARG_PARAM1);
-            gradeSelected = getArguments().getString(ARG_PARAM2);
-            lessonSelected = getArguments().getString(ARG_PARAM3);
-            moduleSelected = getArguments().getString(ARG_PARAM4);
-            readOrVocabPartSelected = getArguments().getString(ARG_PARAM5);
         }
     }
 
@@ -104,32 +79,39 @@ public class ListingFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
         Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
-        //start DataManager Downloading
-        if (listingType == GRADE_LISTING) {
-            //set the correct Title in action bar
-            mainActivity.getSupportActionBar().setTitle("Grade Listing");
-            new DataManager().getListing();
-        } if (listingType == LESSON_LISTING) {
-            //get the associated grade
-            new DataManager().getGrade(gradeSelected);
+        mHandler = new Handler();
+        if (objectToLoad == null) {
+            //objectToLoad not present, download
+            if (listingType == GRADE_LISTING) {
+                //set the correct Title in action bar
+                mainActivity.getSupportActionBar().setTitle("Grade Listing");
+                new DataManager().getListing();
+                Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
+                mHandler.post(mBackgroundThread);
+            }
+        } else {
+            //objectToLoad present, load straight away
+            //if its a grade, check if its been downloaded
+            if (objectToLoad instanceof Grade && !((Grade) objectToLoad).isDownloaded) {
+                Log.d("Englify", "Class ListingFragment: Method onCreateView(): Asking DataManager to get " + ((Grade)objectToLoad).name);
+                new DataManager().getGrade((Grade) objectToLoad);
+                Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
+                mHandler.post(mBackgroundThread);
+            } else {
+                mUpdateUIAfterDataLoaded(objectToLoad);
+            }
         }
         return view;
     }
 
     public void mUpdateUIAfterDataLoaded(Object object) {
+        Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
         //get the listings based on which listingType
-        ArrayList<String> listings = new ArrayList<String>();
         if (listingType == GRADE_LISTING) {
-            ArrayList<Grade> grades = (ArrayList<Grade>) object;
-            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Received ArrayList<Grade>: " + grades.toString());
-            //get name of grades into an ArrayList<String> listings
-            for (Grade grade : grades) {
-                listings.add(grade.name);
-            }
+            RootListing grades = (RootListing) object;
+            Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded: Received RootListing: " + grades.grades.toString());
         }
-        //sort the listings
-        Collections.sort(listings);
-        listingAdapter = new ListingAdapter(listings, listingType);
+        listingAdapter = new ListingAdapter(object, listingType);
         recyclerView.setAdapter(listingAdapter);
         //load additional settings
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -140,12 +122,29 @@ public class ListingFragment extends Fragment {
     private Runnable mBackgroundThread = new Runnable() {
         @Override
         public void run() {
-            if (listingType == GRADE_LISTING) {
-                if (MainActivity.downloadedObject != null) {
-                    mUpdateUIAfterDataLoaded(MainActivity.downloadedObject);
-                    MainActivity.downloadedObject = null;
+            if (objectToLoad == null) {
+                if (listingType == GRADE_LISTING) {
+                    if (MainActivity.downloadedObject != null) {
+                        Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject from MainActivity.");
+                        objectToLoad = MainActivity.downloadedObject;
+                        mUpdateUIAfterDataLoaded(objectToLoad);
+                        MainActivity.downloadedObject = null;
+                    }
                 }
+                mHandler.postDelayed(mBackgroundThread, 500);
+                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Setting loop to run again.");
+            } else {
+                //break out of loop once object has been populated
+                mHandler.removeCallbacks(mBackgroundThread);
+
             }
+            Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Loop is running.");
         }
     };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mHandler.removeCallbacks(mBackgroundThread);
+    }
 }

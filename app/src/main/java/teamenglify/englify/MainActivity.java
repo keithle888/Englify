@@ -40,6 +40,7 @@ import teamenglify.englify.DataService.S3Properties;
 import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LoginFragment.LoginFragment;
+import teamenglify.englify.Model.Grade;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.VocabModule.VocabModule;
@@ -47,7 +48,7 @@ import teamenglify.englify.VocabModule.VocabModule;
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
-    public static String gradeSelected;
+    public static Grade grade;
     public static String lesson;
     public static String vocab;
     public static String read;
@@ -169,9 +170,9 @@ public class MainActivity extends AppCompatActivity {
         return mainActivity;
     }
 
-    public void loadNextListing(int listingType, String gradeSelected, String lessonSelected, String moduleSelected, String readOrVocabPartSelected) {
+    public void loadNextListing(int listingType, Object objectToLoad) {
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(listingType, gradeSelected, lessonSelected, moduleSelected, readOrVocabPartSelected)).addToBackStack(null).commit();
+        fm.beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(listingType, objectToLoad)).addToBackStack(null).commit();
     }
 
     public void loadModuleListing(int i) {
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         //Goes to Grade
-                        newFragment = ListingFragment.newInstance(ListingFragment.GRADE_LISTING, null, null, null, null);
+                        newFragment = ListingFragment.newInstance(ListingFragment.GRADE_LISTING, null);
                         break;
                     case 2:
                         newFragment = new TextToSpeech();

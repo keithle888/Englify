@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.provider.DocumentsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,24 +13,37 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
+
+import static teamenglify.englify.MainActivity.mainActivity;
 
 public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
 
-    private ArrayList<String> listOfChoices;
-    private MainActivity mainActivity = MainActivity.getMainActivity();
     private int listingType;
+    private Object object;
+    private ArrayList<String> listings;
 
-    public ListingAdapter(ArrayList<String> listOfChoices, int listingType) {
-        this.listOfChoices = listOfChoices;
+    public ListingAdapter(Object object, int listingType) {
+        this.object = object;
         this.listingType = listingType;
+        //Generate listings on constructor
+        listings = new ArrayList<>();
+        if (listingType == ListingFragment.GRADE_LISTING) {
+            RootListing root = (RootListing) object;
+            for (Grade grade : root.grades) {
+                listings.add(grade.name);
+            }
+        }
     }
 
     @Override
     public void onBindViewHolder(ListingViewHolder holder, final int position) {
-        final String selected = listOfChoices.get(position);
+        final String selected = listings.get(position);
         holder.updateUI(selected);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,15 +52,15 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 //load lesson list if the current listing is grade
                 if(listingType == ListingFragment.GRADE_LISTING) {
                     //check if the grade selected is the same as before, if not, wipe cached data for lesson, unit and vocab.
-                    if(mainActivity.gradeSelected != null && !mainActivity.gradeSelected.equalsIgnoreCase(selected)) {
+                    if(mainActivity.grade != null) {
                         mainActivity.lessonListing = null;
                         mainActivity.readListing = null;
                         mainActivity.vocabListing = null;
                         mainActivity.readyForAudioBarToLoad = false;
                         Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Deleting Cache.");
                     }
-                    mainActivity.gradeSelected = selected;
-                    mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, selected, null, null, null);
+                    mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
+                    Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Asked mainActivity to loadNextListing()");
                 } else if (listingType == ListingFragment.LESSON_LISTING) {
                     //check if the lesson selected is the same as before, if not, wipe cached data for unit and vocab.
                     if(mainActivity.lesson != null && !mainActivity.lesson.equalsIgnoreCase(selected)) {
@@ -78,7 +92,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
 
     @Override
     public int getItemCount() {
-        return listOfChoices.size();
+        return listings.size();
     }
 
     @Override

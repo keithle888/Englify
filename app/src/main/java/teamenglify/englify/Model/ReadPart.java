@@ -8,12 +8,12 @@ import java.io.Serializable;
 
 public class ReadPart implements Serializable {
     public String reading;
-    public String audioFile;
-    public String imgFile;
+    public String audioURL;
+    public String imgURL;
 
-    public ReadPart(String reading, String audioFile, String imgFile) {
+    public ReadPart(String reading, String imgURL, String audioURL) {
         this.reading = reading;
-        this.audioFile = audioFile;
-        this.imgFile = imgFile;
+        this.audioURL = audioURL;
+        this.imgURL = imgURL;
     }
 }

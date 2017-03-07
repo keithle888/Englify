@@ -19,4 +19,25 @@ public class Grade implements Serializable{
         this.imgURL = imgURL;
         this.isDownloaded = isDownloaded;
     }
+
+    public Grade(String name) {
+        this.name = name;
+    }
+
+    public void addLesson(Lesson lesson) {
+        if (lessons == null) {
+            lessons = new ArrayList<Lesson>();
+        }
+        lessons.add(lesson);
+    }
+
+    public Lesson findLesson(String lessonName) {
+        Lesson toReturn = null;
+        for (Lesson lesson : lessons) {
+            if (lesson.name.equalsIgnoreCase(lessonName)) {
+                toReturn = lesson;
+            }
+        }
+        return toReturn;
+    }
 }

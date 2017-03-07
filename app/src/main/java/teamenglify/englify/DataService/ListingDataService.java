@@ -51,7 +51,7 @@ public class ListingDataService implements Runnable{
             }
             MainActivity.getMainActivity().setGradeListing(listOfChoices);
         } else if (listingType.equalsIgnoreCase("lessonListing")) {
-            prefix = "res/" + MainActivity.getMainActivity().gradeSelected;
+            prefix = "res/" + MainActivity.getMainActivity().grade;
             s3objects = s3Client.listObjects("englify",prefix).getObjectSummaries();
 
             for(S3ObjectSummary temp : s3objects){
@@ -63,7 +63,7 @@ public class ListingDataService implements Runnable{
             }
             MainActivity.getMainActivity().setLessonListing(listOfChoices);
         } else if (listingType.equalsIgnoreCase("readListing")) {
-            prefix = "res/" + MainActivity.gradeSelected + "/" + MainActivity.lesson + "/Conversation";
+            prefix = "res/" + MainActivity.grade + "/" + MainActivity.lesson + "/Conversation";
             s3objects = s3Client.listObjects("englify",prefix).getObjectSummaries();
 
             for (S3ObjectSummary temp : s3objects) {
@@ -81,7 +81,7 @@ public class ListingDataService implements Runnable{
             MainActivity.getMainActivity().readyForSpeechRecognitionToLoad = false;
             MainActivity.getMainActivity().readyForAudioBarToLoad = false;
             String s3UrlPrefix =  "https://s3-ap-southeast-1.amazonaws.com/englify/";
-            prefix = "res/" + MainActivity.gradeSelected + "/" + MainActivity.lesson;
+            prefix = "res/" + MainActivity.grade + "/" + MainActivity.lesson;
             s3objects = s3Client.listObjects("englify",prefix).getObjectSummaries();
             for(S3ObjectSummary temp : s3objects){
                 String keyLine = temp.getKey();
@@ -111,7 +111,7 @@ public class ListingDataService implements Runnable{
             MainActivity.getMainActivity().readyForSpeechRecognitionToLoad = false;
             Log.d("ListingDataService", "listing for read image is loaded");
             String s3UrlPrefix =  "https://s3-ap-southeast-1.amazonaws.com/englify/";
-            prefix = "res/" + MainActivity.gradeSelected + "/" + MainActivity.lesson + "/Conversation/" + MainActivity.read;
+            prefix = "res/" + MainActivity.grade + "/" + MainActivity.lesson + "/Conversation/" + MainActivity.read;
             Log.d("ListingDataService", "Prefix set: " + prefix);
             s3objects = s3Client.listObjects("englify",prefix).getObjectSummaries();
             for(S3ObjectSummary temp : s3objects){

@@ -14,4 +14,8 @@ public class Module implements Serializable{
         this.name = name;
         this.imgURL = imgURL;
     }
+
+    public Module (String name) {
+        this.name = name;
+    }
 }
