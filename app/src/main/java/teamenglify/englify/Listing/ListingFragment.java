@@ -104,20 +104,28 @@ public class ListingFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
         Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
-        //get the listings based on which listingType
-        ArrayList<String> listings = new ArrayList<String>();
+        //start DataManager Downloading
         if (listingType == GRADE_LISTING) {
             //set the correct Title in action bar
             mainActivity.getSupportActionBar().setTitle("Grade Listing");
-            ArrayList<Grade> grades = new DataManager().getListing();
+            new DataManager().getListing();
+        } if (listingType == LESSON_LISTING) {
+            //get the associated grade
+            new DataManager().getGrade(gradeSelected);
+        }
+        return view;
+    }
+
+    public void mUpdateUIAfterDataLoaded(Object object) {
+        //get the listings based on which listingType
+        ArrayList<String> listings = new ArrayList<String>();
+        if (listingType == GRADE_LISTING) {
+            ArrayList<Grade> grades = (ArrayList<Grade>) object;
             Log.d("Englify", "Class ListingFragment: Method onCreateView(): Received ArrayList<Grade>: " + grades.toString());
             //get name of grades into an ArrayList<String> listings
             for (Grade grade : grades) {
                 listings.add(grade.name);
             }
-        } if (listingType == LESSON_LISTING) {
-            //get the associated grade
-            Grade grade = new DataManager().getGrade(gradeSelected);
         }
         //sort the listings
         Collections.sort(listings);
@@ -127,7 +135,17 @@ public class ListingFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
-        return view;
     }
+
+    private Runnable mBackgroundThread = new Runnable() {
+        @Override
+        public void run() {
+            if (listingType == GRADE_LISTING) {
+                if (MainActivity.downloadedObject != null) {
+                    mUpdateUIAfterDataLoaded(MainActivity.downloadedObject);
+                    MainActivity.downloadedObject = null;
+                }
+            }
+        }
+    };
 }

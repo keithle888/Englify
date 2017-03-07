@@ -8,6 +8,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import teamenglify.englify.LocalSave;
+import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.R;
 
@@ -16,10 +17,10 @@ import static teamenglify.englify.MainActivity.mainActivity;
 /**
  * Created by Keith on 06-Mar-17.
  */
-
+//Used to decide whether to download grades from the internet or from internal storage
 public class DataManager {
 
-    public ArrayList<Grade> getListing() {
+    public void getListing() {
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
         if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing))) {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
@@ -29,7 +30,7 @@ public class DataManager {
                 Grade grade = (Grade) LocalSave.loadObject(g.name);
                 grades.add(grade);
             }
-            return grades;
+            mainActivity.downloadedObject = grades;
         } else {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
             DownloadService download = new DownloadService(teamenglify.englify.DataService.DownloadService.DOWNLOAD_LISTING);
@@ -39,21 +40,19 @@ public class DataManager {
                 download.get();
             } catch (Exception e) {
                 Log.d("Englify", "Class DataManager: Method getListing(): Exception caught: " + e.toString());
-                return null;
             }
             //once download is done
-            return (ArrayList<Grade>) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
+            mainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         }
     }
 
-    public Grade getGrade(String gradeSelected) {
+    public void getGrade(String gradeSelected) {
         if (((Grade) LocalSave.loadObject(gradeSelected)).isDownloaded) {
             //grade has been downloaded.
-            return (Grade) LocalSave.loadObject(gradeSelected);
+            MainActivity.downloadedObject = LocalSave.loadObject(gradeSelected);
         } else {
             //grade has not been downloaded.
             promptForDownload(gradeSelected);
-            return null;
         }
     }
 

@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> audioConversationURLListing;
     public ArrayList<String> audioVocabURLListing;
     public ArrayList<String> audioConversationTextsToMatch;
+    public static Object downloadedObject;
     //analytics variable
     public static MobileAnalyticsManager analytics;
     //media player
