@@ -19,6 +19,7 @@ public class Read implements Serializable{
 
     public Read(String name) {
         this.name = name;
+        readParts = new ArrayList<>();
     }
 
     public boolean doesReadPartExist(String reading) {

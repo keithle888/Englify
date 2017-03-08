@@ -16,8 +16,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.RootListing;
+import teamenglify.englify.Model.Vocab;
+import teamenglify.englify.Model.VocabPart;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -37,6 +42,21 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
             RootListing root = (RootListing) object;
             for (Grade grade : root.grades) {
                 listings.add(grade.name);
+            }
+        } else if (listingType == ListingFragment.LESSON_LISTING) {
+            Grade grade = (Grade) object;
+            for (Lesson lesson : grade.lessons) {
+                listings.add(lesson.name);
+            }
+        } else if (listingType == ListingFragment.READ_LISTING) {
+            Conversation conversation = (Conversation) object;
+            for (Read read : conversation.reads) {
+                listings.add(read.name);
+            }
+        } else if (listingType == ListingFragment.VOCAB_LISTING) {
+            Vocab vocab = (Vocab) object;
+            for (VocabPart vocabPart : vocab.vocabParts) {
+                listings.add(vocabPart.text);
             }
         }
     }
@@ -72,7 +92,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                         Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder: Deleting Cache.");
                     }
                     MainActivity.lesson = selected;
-                    mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING);
+                    mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
                 } else if (listingType == ListingFragment.READ_LISTING) {
                     //update Action Bar Title
                     mainActivity.getSupportActionBar().setTitle("Study Read");

@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
@@ -80,26 +81,20 @@ public class ListingFragment extends Fragment {
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
         Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
         mHandler = new Handler();
-        if (objectToLoad == null) {
-            //objectToLoad not present, download
-            if (listingType == GRADE_LISTING) {
-                //set the correct Title in action bar
-                mainActivity.getSupportActionBar().setTitle("Grade Listing");
-                new DataManager().getListing();
-                Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
-                mHandler.post(mBackgroundThread);
-            }
+        //objectToLoad not present, download
+        if (listingType == GRADE_LISTING) {
+            //set the correct Title in action bar
+            mainActivity.getSupportActionBar().setTitle("Grade Listing");
+            new DataManager().getListing();
+            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
+            mHandler.post(mBackgroundThread);
+        } else if (objectToLoad instanceof Grade && !((Grade) objectToLoad).isDownloaded) {
+            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Asking DataManager to get " + ((Grade)objectToLoad).name);
+            new DataManager().getGrade((Grade) objectToLoad);
+            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
+            mHandler.post(mBackgroundThread);
         } else {
-            //objectToLoad present, load straight away
-            //if its a grade, check if its been downloaded
-            if (objectToLoad instanceof Grade && !((Grade) objectToLoad).isDownloaded) {
-                Log.d("Englify", "Class ListingFragment: Method onCreateView(): Asking DataManager to get " + ((Grade)objectToLoad).name);
-                new DataManager().getGrade((Grade) objectToLoad);
-                Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
-                mHandler.post(mBackgroundThread);
-            } else {
-                mUpdateUIAfterDataLoaded(objectToLoad);
-            }
+            mUpdateUIAfterDataLoaded(objectToLoad);
         }
         return view;
     }
@@ -122,21 +117,14 @@ public class ListingFragment extends Fragment {
     private Runnable mBackgroundThread = new Runnable() {
         @Override
         public void run() {
-            if (objectToLoad == null) {
-                if (listingType == GRADE_LISTING) {
-                    if (MainActivity.downloadedObject != null) {
-                        Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject from MainActivity.");
-                        objectToLoad = MainActivity.downloadedObject;
-                        mUpdateUIAfterDataLoaded(objectToLoad);
-                        MainActivity.downloadedObject = null;
-                    }
-                }
-                mHandler.postDelayed(mBackgroundThread, 500);
-                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Setting loop to run again.");
+            if (mainActivity.downloadedObject != null) {
+                objectToLoad = mainActivity.downloadedObject;
+                mUpdateUIAfterDataLoaded(objectToLoad);
+                mainActivity.downloadedObject = null;
+                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject.");
             } else {
-                //break out of loop once object has been populated
-                mHandler.removeCallbacks(mBackgroundThread);
-
+                mHandler.postDelayed(mBackgroundThread, 500);
+                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Looping.");
             }
             Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Loop is running.");
         }

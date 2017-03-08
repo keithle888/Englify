@@ -199,6 +199,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         grade.isDownloaded = true;
         LocalSave.saveObject(grade.name, grade);
         Log.d("Englify", "Class DownloadService: Method downloadGrade(): Finished downloading " + grade.name + " and saved to internal memory.");
+        mainActivity.downloadedObject = grade;
     }
 
     public void downloadGradeModules(Grade grade) {
@@ -236,18 +237,17 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                                 if (delimitedKey.length == 5) { // Its a vocab part
                                     if (isTextFile(delimitedKey[4])) { //Text for all vocab parts
                                         String prefix = generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]);
-                                        System.out.println("Prefix -> " + prefix);
                                         texts = readTextFile(s3Client.getObject(bucketName, prefix));
                                         Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Text file found for " + prefix);
                                     } else if (isAudioFile(delimitedKey[4])) { //Audio for vocabPart
                                         S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                        String audioAbsolutePath = LocalSave.saveMedia(generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]) ,s3Object);
-                                        vocab.addVocabPartAudio(delimitedKey[4], audioAbsolutePath);
+                                        String audioAbsolutePath = LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]) ,s3Object);
+                                        vocab.addVocabPartAudio(removeExtension(delimitedKey[4]), audioAbsolutePath);
                                         Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Audio file for " + generatePrefix(grade.name, lesson.name, vocab.name) + " saved to " + audioAbsolutePath);
                                     } else if (isImg(delimitedKey[4])) {//Img for vocabPart
                                         S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                        String imgAbsolutePath = LocalSave.saveMedia(generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]) ,s3Object);
-                                        vocab.addVocabPartImg(delimitedKey[4], imgAbsolutePath);
+                                        String imgAbsolutePath = LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]) ,s3Object);
+                                        vocab.addVocabPartImg(removeExtension(delimitedKey[4]), imgAbsolutePath);
                                         Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Image file for " + generatePrefix(grade.name, lesson.name, vocab.name) + " saved to " + imgAbsolutePath);
                                     }
                                 }
@@ -255,6 +255,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                         }
                     }
                     //overwrite the texts in VocabParts from the txt file
+                    Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): LinkedTextArray contents before overwriting Vocab -> " + texts.toString());
                     vocab.overwriteTexts(texts);
                     texts = null;
                 } else if (module instanceof  Exercise) {
@@ -280,13 +281,13 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                                 Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Text file found for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name));
                             } else if (isAudioFile(key)) {
                                 S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
-                                String audioAbsolutePath = LocalSave.saveMedia(generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
-                                read.addReadPartAudio(dKey[5], audioAbsolutePath);
+                                String audioAbsolutePath = LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
+                                read.addReadPartAudio(removeExtension(dKey[5]), audioAbsolutePath);
                                 Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Audio file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + audioAbsolutePath);
                             } else if (isImg(key)) {
                                 S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
-                                String imgAbsolutePath = LocalSave.saveMedia(generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
-                                read.addReadPartImg(dKey[5], imgAbsolutePath);
+                                String imgAbsolutePath = LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
+                                read.addReadPartImg(removeExtension(dKey[5]), imgAbsolutePath);
                                 Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Image file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + imgAbsolutePath);
                             }
                         }
@@ -359,5 +360,23 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             Log.d("Englify", "Class DownloadService: Method readTextFile: Caught exception -> " + e.toString());
         }
         return toReturn;
+    }
+
+    public String createMediaFileName(String...params) {
+        String toReturn = "";
+        for (String param : params) {
+            toReturn = toReturn + param + "_";
+        }
+        //get rid of last "/"
+        toReturn = toReturn.substring(0, toReturn.length()-1);
+        return toReturn;
+    }
+
+    public String removeExtension(String name) {
+        if (name.contains(".")) {
+            return name.substring(0, name.lastIndexOf('.'));
+        } else {
+            return name;
+        }
     }
 }

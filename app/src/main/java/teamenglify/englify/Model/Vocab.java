@@ -1,5 +1,7 @@
 package teamenglify.englify.Model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -17,6 +19,7 @@ public class Vocab extends Module{
 
     public Vocab (String name) {
         super(name);
+        vocabParts = new ArrayList<VocabPart>();
     }
 
     public void addVocabPartAudio(String vocabPartName, String audioAbsolutePath) {
@@ -57,6 +60,8 @@ public class Vocab extends Module{
     }
 
     public void overwriteTexts(LinkedList<String> texts) {
+        Log.d("Englify", "Class Vocab: Method overwriteTexts(): Texts received for overwriting VocabParts, contents are -> " + texts.toString());
+        Log.d("Englify", "Class Vocab: Method overwriteTexts(): Number of VocabParts -> " + vocabParts.size() + " and number of Overwrite texts -> " + texts.size());
         if (texts != null) {
             for (VocabPart vocabPart : vocabParts) {
                 String text = texts.pop();

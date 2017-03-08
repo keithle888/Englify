@@ -41,6 +41,8 @@ import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LoginFragment.LoginFragment;
 import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.VocabModule.VocabModule;
@@ -164,6 +166,12 @@ public class MainActivity extends AppCompatActivity {
             analytics.getSessionClient().resumeSession();
         }
         mHandler.post(mBackgroundThread);
+        //create RootListing if none exists (eg. 1st time app download)
+        if (fileList().length == 0) {
+            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
+        } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
+            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
+        }
     }
 
     public static MainActivity getMainActivity(){
@@ -175,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(listingType, objectToLoad)).addToBackStack(null).commit();
     }
 
-    public void loadModuleListing(int i) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ModuleSelection.newInstance(i)).addToBackStack(null).commit();
+    public void loadModuleListing(int i,Lesson lesson) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ModuleSelection.newInstance(i, lesson)).addToBackStack(null).commit();
     }
 
     public void loadReadingModule() {
@@ -295,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 1:
                         //Goes to Grade
-                        newFragment = ListingFragment.newInstance(ListingFragment.GRADE_LISTING, null);
+                        newFragment = ListingFragment.newInstance(ListingFragment.GRADE_LISTING, LocalSave.loadObject(getString(R.string.S3_Object_Listing)));
                         break;
                     case 2:
                         newFragment = new TextToSpeech();

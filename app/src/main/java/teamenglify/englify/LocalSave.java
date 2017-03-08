@@ -95,17 +95,14 @@ public class LocalSave {
     }
 
     public static String saveMedia(String fileName, S3Object s3Object) {
-        ContextWrapper cw = new ContextWrapper(mainActivity.getApplicationContext());
-        File directory = cw.getDir("mediaDir", Context.MODE_PRIVATE);
-        File myPath = new File (directory, fileName);
         try {
-            FileOutputStream fos = new FileOutputStream(myPath);
+            FileOutputStream fos = mainActivity.openFileOutput(fileName, Context.MODE_PRIVATE);
             fos.write(IOUtils.toByteArray(s3Object.getObjectContent()));
             fos.close();
         } catch (Exception e) {
             Log.d("Englify", "Class LocalSave: Method saveMedia: Tried saving " + fileName + " but caught Exception: " + e);
             return null;
         }
-        return myPath.getAbsolutePath();
+        return mainActivity.getFilesDir().toString() + fileName;
     }
 }

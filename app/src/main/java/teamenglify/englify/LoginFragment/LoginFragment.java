@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import teamenglify.englify.Listing.ListingFragment;
+import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
@@ -76,7 +77,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 MainActivity mainActivity = MainActivity.getMainActivity();
-                mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, null);
+                mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing)));
             }
         });
         return view;

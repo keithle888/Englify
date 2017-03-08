@@ -16,4 +16,7 @@
     <string name="No">No</string>
     <string name="Download_Prompt_Title">Save To Memory</string>
     <string name="Download_Prompt_Message">Would you like to download and save</string>
+    <string name="Coversation_Folder_Name">Conversation</string>
+    <string name="Vocab_Folder_Name">Vocabulary</string>
+    <string name="Exercise_Folder_Name">Exercise</string>
 </resources>
