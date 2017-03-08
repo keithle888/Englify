@@ -172,24 +172,24 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             int delimitedKeyLength = delimitedKey.length;
             if (delimitedKeyLength == 3) { //it is a Lesson!
                 Lesson lesson = new Lesson(delimitedKey[2]);
-                Log.d("Englify", "Class DownloadService: Method downloadGrade: " + grade.name + " <- " + lesson.name  + " added.");
+                Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.name + " <- " + lesson.name  + " added.");
                 grade.addLesson(lesson);
             } else if (delimitedKeyLength == 4) { //It is a module
                 //Need to identify which module it is
                 if (delimitedKey[3].equalsIgnoreCase("Conversation")) { // It is a conversation
                     Conversation conversation = new Conversation(delimitedKey[3]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade: " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name  + " added.");
+                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name  + " added.");
                     grade.findLesson(delimitedKey[2]).addModule(conversation);
                 } else if (delimitedKey[3].equalsIgnoreCase("Vocabulary")) {//It is a vocabulary
                     Vocab vocab = new Vocab(delimitedKey[3]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade: " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name  + " added.");
+                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name  + " added.");
                     grade.findLesson(delimitedKey[2]).addModule(vocab);
                 } else if (delimitedKey[3].equalsIgnoreCase("Exercise")) {//It is an exercise
                     Exercise exercise = new Exercise(delimitedKey[3]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade: " + grade.findLesson(delimitedKey[2]).name + " <- " + exercise.name  + " added.");
+                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + exercise.name  + " added.");
                     grade.findLesson(delimitedKey[2]).addModule(exercise);
                 } else { //unidentified module
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade: Unknown module found -> " + key);
+                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): Unknown module found -> " + key);
                 }
             }
         }
@@ -207,7 +207,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                 if (module instanceof Conversation) {
                     Conversation conversation = (Conversation) module;
                     //get the reads
-                    System.out.print(rootDirectory + grade.name + lesson.name + conversation.name);
+                    Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): " + rootDirectory + grade.name + lesson.name + conversation.name);
                     String prefix = generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name);
                     List<S3ObjectSummary> summaries = getSummaries(prefix);
                     for (S3ObjectSummary summary : summaries) {
@@ -235,7 +235,6 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                                 String[] delimitedKey = key.split("/");
                                 if (delimitedKey.length == 5) { // Its a vocab part
                                     if (isTextFile(delimitedKey[4])) { //Text for all vocab parts
-                                        System.out.println(rootDirectory + " " + grade.name + " " + lesson.name + vocab.name + delimitedKey[4]);
                                         String prefix = generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]);
                                         System.out.println("Prefix -> " + prefix);
                                         texts = readTextFile(s3Client.getObject(bucketName, prefix));
@@ -308,10 +307,10 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
     public String generatePrefix(String...params) {
         String toReturn = "";
         for (String param : params) {
-            toReturn.concat(param + "/");
+            toReturn = toReturn + param + "/";
         }
         //get rid of last "/"
-        toReturn = toReturn.substring(0, toReturn.length()-2);
+        toReturn = toReturn.substring(0, toReturn.length()-1);
         return toReturn;
     }
 

@@ -1,6 +1,8 @@
 package teamenglify.englify;
 
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.os.Environment;
 import android.util.Log;
 
 import com.amazonaws.services.s3.model.S3Object;
@@ -93,17 +95,17 @@ public class LocalSave {
     }
 
     public static String saveMedia(String fileName, S3Object s3Object) {
-        String fileAbsolutePath = null;
+        ContextWrapper cw = new ContextWrapper(mainActivity.getApplicationContext());
+        File directory = cw.getDir("mediaDir", Context.MODE_PRIVATE);
+        File myPath = new File (directory, fileName);
         try {
-            File file = new File(mainActivity.getFilesDir(), fileName);
-            fileAbsolutePath = file.getAbsolutePath();
-            FileOutputStream fos = new FileOutputStream(file);
+            FileOutputStream fos = new FileOutputStream(myPath);
             fos.write(IOUtils.toByteArray(s3Object.getObjectContent()));
             fos.close();
         } catch (Exception e) {
             Log.d("Englify", "Class LocalSave: Method saveMedia: Tried saving " + fileName + " but caught Exception: " + e);
             return null;
         }
-        return fileAbsolutePath;
+        return myPath.getAbsolutePath();
     }
 }
