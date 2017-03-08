@@ -9,15 +9,20 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import java.util.ArrayList;
 
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Vocab;
+import teamenglify.englify.Model.VocabPart;
 
 
 public class VocabFragmentStateAdapter extends FragmentStatePagerAdapter {
-
+    private Vocab vocab;
     private ArrayList<String> imageUrlList = new ArrayList<>();
 
-    public VocabFragmentStateAdapter(FragmentManager fm, ArrayList<String> imageUrlList) {
+    public VocabFragmentStateAdapter(FragmentManager fm, Vocab vocab) {
         super(fm);
-        this.imageUrlList = imageUrlList;
+        this.vocab = vocab;
+        for (VocabPart vocabPart : vocab.vocabParts) {
+            imageUrlList.add(vocabPart.imgURL);
+        }
     }
 
 

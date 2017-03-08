@@ -42,7 +42,9 @@ import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LoginFragment.LoginFragment;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.RootListing;
+import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.VocabModule.VocabModule;
@@ -86,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private String mActivityTitle;
     //variable for SpeechRecognition
     public boolean readyForSpeechRecognitionToLoad = false;
 
@@ -187,12 +188,12 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ModuleSelection.newInstance(i, lesson)).addToBackStack(null).commit();
     }
 
-    public void loadReadingModule() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new ReadingModule()).addToBackStack(null).commit();
+    public void loadReadingModule(Read read) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ReadingModule.newInstance(read)).addToBackStack(null).commit();
     }
 
-    public void loadVocabModule() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new VocabModule()).addToBackStack(null).commit();
+    public void loadVocabModule(Vocab vocab) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, VocabModule.newInstance(vocab)).addToBackStack(null).commit();
     }
 
     private Runnable startS3Client = new Runnable() {
@@ -324,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        mActivityTitle = getTitle().toString();
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 

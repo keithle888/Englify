@@ -82,8 +82,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
                     Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Asked mainActivity to loadNextListing()");
                 } else if (listingType == ListingFragment.LESSON_LISTING) {
-                    //check if the lesson selected is the same as before, if not, wipe cached data for unit and vocab.
-                    if(mainActivity.lesson != null && !mainActivity.lesson.equalsIgnoreCase(selected)) {
+                    if(mainActivity.lesson != null && !mainActivity.lesson.equalsIgnoreCase(selected)) {//check if the lesson selected is the same as before, if not, wipe cached data for unit and vocab.
                         mainActivity.readListing = null;
                         mainActivity.vocabListing = null;
                         mainActivity.readyForAudioBarToLoad = false;
@@ -94,17 +93,14 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     MainActivity.lesson = selected;
                     mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
                 } else if (listingType == ListingFragment.READ_LISTING) {
-                    //update Action Bar Title
-                    mainActivity.getSupportActionBar().setTitle("Study Read");
                     MainActivity.read = selected;
-                    mainActivity.currentPage = 0;
-                    //mainActivity.loadNextListing();
+                    mainActivity.position = 0;
+                    mainActivity.loadReadingModule(((Conversation)object).reads.get(position));
                 } else if (listingType == ListingFragment.VOCAB_LISTING) {
                     mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                     MainActivity.position = position;
-                    mainActivity.currentPage = position;
                     MainActivity.vocab = selected;
-                    //mainActivity.loadVocabModule();
+                    mainActivity.loadVocabModule((Vocab)object);
                 }
             }
         });

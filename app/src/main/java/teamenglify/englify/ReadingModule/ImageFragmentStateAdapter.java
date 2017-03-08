@@ -8,13 +8,19 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 
-public class ImageFragmentStateAdapter extends FragmentStatePagerAdapter {
+import teamenglify.englify.Model.Read;
+import teamenglify.englify.Model.ReadPart;
 
+public class ImageFragmentStateAdapter extends FragmentStatePagerAdapter {
+    private Read read;
     private ArrayList<String> imageUrlList = new ArrayList<>();
 
-    public ImageFragmentStateAdapter(FragmentManager fm, ArrayList<String> imageUrlList) {
+    public ImageFragmentStateAdapter(FragmentManager fm, Read read) {
         super(fm);
-        this.imageUrlList = imageUrlList;
+        this.read = read;
+        for (ReadPart readPart : read.readParts) {
+            imageUrlList.add(readPart.imgURL);
+        }
     }
 
 

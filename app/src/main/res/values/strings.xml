@@ -19,4 +19,8 @@
     <string name="Coversation_Folder_Name">Conversation</string>
     <string name="Vocab_Folder_Name">Vocabulary</string>
     <string name="Exercise_Folder_Name">Exercise</string>
+    <string name="Speech_Recognition_Unavailable">Speech Recognition not available.</string>
+    <string name="Loading">Loading</string>
+    <string name="Ready">Ready</string>
+    <string name="Audio_File_Not_Found">Audio file not found.</string>
 </resources>

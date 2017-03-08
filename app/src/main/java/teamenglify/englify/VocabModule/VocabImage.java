@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
+
+import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,44 +23,20 @@ import teamenglify.englify.R;
  * create an instance of this fragment.
  */
 public class VocabImage extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private ViewPager viewPager;
     private VocabFragmentStateAdapter vocabFragmentStateAdapter;
-
-    private String mParam1;
-    private String mParam2;
-
+    private Vocab vocab;
 
     public VocabImage() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment VocabImage.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static VocabImage newInstance(String param1, String param2) {
+    public static VocabImage newInstance(Vocab vocab) {
         VocabImage fragment = new VocabImage();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        fragment.vocab = vocab;
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -66,8 +45,7 @@ public class VocabImage extends Fragment {
         // Inflate the layout for this fragment
         View v= inflater.inflate(R.layout.fragment_vocab_image, container, false);
         viewPager = (ViewPager) v.findViewById(R.id.vocabViewPager);
-        ArrayList<String> listOfVocab = MainActivity.getMainActivity().getVocabListing();
-        vocabFragmentStateAdapter = new VocabFragmentStateAdapter(MainActivity.getMainActivity().getSupportFragmentManager(), listOfVocab);
+        vocabFragmentStateAdapter = new VocabFragmentStateAdapter(MainActivity.getMainActivity().getSupportFragmentManager(), vocab);
         viewPager.setAdapter(vocabFragmentStateAdapter);
         viewPager.setCurrentItem(MainActivity.position);
         Log.d("VocabImage", MainActivity.position+"");
@@ -80,8 +58,8 @@ public class VocabImage extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 Log.d("VocabImage", "viewPager:onPageSelected: " + Integer.toString(position));
-                if (MainActivity.getMainActivity().getCurrentPage() != position) {
-                    MainActivity.getMainActivity().setCurrentPage(position);
+                if (mainActivity.position != position) {
+                    mainActivity.position = position;
                 }
             }
 

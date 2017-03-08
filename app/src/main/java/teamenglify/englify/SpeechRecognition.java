@@ -18,6 +18,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import teamenglify.englify.Model.Conversation;
+import teamenglify.englify.Model.Read;
+import teamenglify.englify.Model.ReadPart;
+import teamenglify.englify.Model.Vocab;
+import teamenglify.englify.Model.VocabPart;
+
+import static teamenglify.englify.MainActivity.mainActivity;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,15 +33,6 @@ import java.util.Locale;
  * create an instance of this fragment.
  * */
 public class SpeechRecognition extends Fragment implements RecognitionListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private TextView speechDisplayTextView;
     private TextView speechToMatchTextView;
     private TextView speechReturnTextView;
@@ -42,28 +41,18 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     private ImageButton speechButton;
     private Intent recognizerIntent;
     private String textToMatch;
-    private int currentPage = 99999; //arbitrary value to ensure speechRecognition works when loaded.
+    private int position;
     private Handler mHandler = new Handler();
-
+    private Object object;
 
     public SpeechRecognition() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SpeechRecognition.
-     */
-
-    public static SpeechRecognition newInstance(String param1, String param2) {
+    public static SpeechRecognition newInstance(Object object) {
         SpeechRecognition fragment = new SpeechRecognition();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        fragment.object = object;
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,10 +60,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -100,12 +85,11 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             speechDisplayTextView.setText(R.string.press_hold_b);
             setButtonListener();
         } else {
-            speechDisplayTextView.setText("Speech Recognition not available.");
+            speechDisplayTextView.setText(R.string.Speech_Recognition_Unavailable);
             speechToMatchTextView.setText("");
             speechReturnTextView.setText("");
             speechButton.setClickable(false);
         }
-
         return view;
     }
 
@@ -180,8 +164,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         Log.d("SpeechRecognition", "onResults");
         ArrayList<String> matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        String text = "";
-
         speechReturnTextView.setText(matches.get(0));
     }
 
@@ -234,7 +216,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             speech = null;
         }
         mHandler.removeCallbacks(mBackgroundThread);
-        mHandler.removeCallbacks(mUpdateUI);
     }
 
     @Override
@@ -245,32 +226,24 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     private Runnable mBackgroundThread = new Runnable() {
         public void run() {
-            if (currentPage != MainActivity.getMainActivity().currentPage) {
-                //if the currentPage on mainActivity has changed, it will be detected and this instance's value will be updated.
-                currentPage = MainActivity.getMainActivity().currentPage;
-                //wait until readyForSpeechRecognitionToLoad is true then load the URL and TextsToMatch
-                if (MainActivity.getMainActivity().readyForSpeechRecognitionToLoad) {
-                    mHandler.post(mUpdateUI);
-                }
+            //check for page changes
+            if (mainActivity.position != position) {
+                //page has changed
+                position = mainActivity.position;
+                updateUI();
+                //wipe the returnTextView
+                speechReturnTextView.setText("");
             }
-            //ensure that the correct texts are loaded when instantiated for the first time
-            if (currentPage != 99999 && textToMatch == null) {
-                mHandler.post(mUpdateUI);
-            }
-            mHandler.postDelayed(mBackgroundThread, 100);
         }
     };
 
-    private Runnable mUpdateUI = new Runnable() {
-        public void run() {
-            if (mParam1.equalsIgnoreCase("Conversation")) {
-                Log.d("SpeechRecognition", "mUpdateUI: " + mParam1 + "," + MainActivity.getMainActivity().audioConversationTextsToMatch.toString());
-                textToMatch = MainActivity.getMainActivity().audioConversationTextsToMatch.get(currentPage);
-            } else if (mParam1.equalsIgnoreCase("Vocab")) {
-                Log.d("SpeechRecognition", "mUpdateUI: " + mParam1 + "," + MainActivity.getMainActivity().vocabListing.toString());
-                textToMatch = MainActivity.getMainActivity().vocabListing.get(currentPage);
-            }
-            speechToMatchTextView.setText(textToMatch);
+    public void updateUI() {
+        if (object instanceof Vocab) {
+            VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
+            speechToMatchTextView.setText(vocabPart.text);
+        } else if (object instanceof Read) {
+            ReadPart readPart = ((Read)object).readParts.get(position);
+            speechToMatchTextView.setText(readPart.reading);
         }
-    };
+    }
 }
