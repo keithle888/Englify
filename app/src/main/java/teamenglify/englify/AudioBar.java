@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import teamenglify.englify.Model.Read;
@@ -38,6 +39,7 @@ public class AudioBar extends Fragment {
     private boolean readyToPlay = false;
     private String audioURL;
     private Object object;
+    private FileInputStream fis;
 
     public AudioBar() {
         // Required empty public constructor
@@ -81,15 +83,15 @@ public class AudioBar extends Fragment {
                 audioSeekBar.setProgress(mediaPlayer.getCurrentPosition() / 100);
             }
             //check whether current page is has changed.
-            if (position != mainActivity.currentPage) {
+            if (position != mainActivity.position) {
+                position = mainActivity.position;
                 mHandler.removeCallbacks(mBackgroundThread);
                 readyToPlay = false;
                 updateAudioBar();
                 Log.d("Englify", "Class AudioBar: Method mBackgroundThread(): Change of image detected.");
-            } else {
-                // Running this thread after 300 milliseconds
-                mHandler.postDelayed(this, 300);
             }
+            mHandler.postDelayed(this, 100);
+            Log.d("Englify", "Class AudioBar: Method mBackgroundThread(): Background thread running.");
         }
     };
 
@@ -117,19 +119,14 @@ public class AudioBar extends Fragment {
         } else if (object instanceof Vocab) {
             audioURL = ((Vocab)object).vocabParts.get(position).audioURL;
         }
-        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                audioTextView.setText("MediaPlayer Error: " + Integer.toString(i));
-                return false;
-            }
-        });
+
         audioTextView.setText(R.string.Loading);
         if (audioURL == null) {
             audioTextView.setText(R.string.Audio_File_Not_Found);
         } else {
             try {
-                mediaPlayer.setDataSource(audioURL);
+                fis = LocalSave.loadAudio(audioURL);
+                mediaPlayer.setDataSource(fis.getFD());
                 Log.d("Englify", "Class AudioBar: Method updateAudioBar(): Set data source to: " + audioURL+ " and started preparing MediaPlayer");
                 mediaPlayer.prepareAsync();
             } catch (Exception e) {
@@ -164,12 +161,19 @@ public class AudioBar extends Fragment {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                audioTextView.setText(audioBarMessageDisplay);
+                audioTextView.setText(mainActivity.getString(R.string.Ready));
                 audioSeekBar.setMax(mediaPlayer.getDuration()/100);
                 readyToPlay = true;
                 //Set buttons to be clickable once the audiofile is loaded. To avoid MediaPlayer error -38.
                 audioPlayPauseButton.setClickable(true);
                 audioReplayButton.setClickable(true);
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (Exception e) {
+                        Log.d(mainActivity.getString(R.string.app_name), "Class AudioBar: Method setListeners(): Caught Exception -> " + e.toString());
+                    }
+                }
             }
         });
 
@@ -178,6 +182,22 @@ public class AudioBar extends Fragment {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 mediaPlayer.seekTo(0);
                 audioPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+            }
+        });
+
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                audioTextView.setText("MediaPlayer Error: " + Integer.toString(i));
+                mediaPlayer.reset();
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (Exception e) {
+                        Log.d(mainActivity.getString(R.string.app_name), "Class AudioBar: Method setListeners(): Caught Exception -> " + e.toString());
+                    }
+                }
+                return false;
             }
         });
 

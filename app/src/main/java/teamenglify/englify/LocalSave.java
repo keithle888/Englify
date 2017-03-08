@@ -85,6 +85,20 @@ public class LocalSave {
         }
     }
 
+    public static Object loadObject(int stringID) {
+        try {
+            FileInputStream fis = mainActivity.openFileInput(mainActivity.getString(stringID));
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Object object = ois.readObject();
+            ois.close();
+            fis.close();
+            return object;
+        } catch (Exception e) {
+            Log.d("Englify", "Class LocalSave: Method loadObject: Caught Exception:" + e);
+            return null;
+        }
+    }
+
     public static boolean doesFileExist(String fileName) {
         for (String file : mainActivity.fileList()) {
             if (file.equalsIgnoreCase(fileName)) {
@@ -103,6 +117,16 @@ public class LocalSave {
             Log.d("Englify", "Class LocalSave: Method saveMedia: Tried saving " + fileName + " but caught Exception: " + e);
             return null;
         }
-        return mainActivity.getFilesDir().toString() + fileName;
+        return mainActivity.getFilesDir().getAbsolutePath() + fileName;
+    }
+
+    public static FileInputStream loadAudio(String fileName) {
+        FileInputStream fis = null;
+        try {
+            fis = mainActivity.openFileInput(fileName);
+        } catch (Exception e) {
+            Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
+        }
+        return fis;
     }
 }

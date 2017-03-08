@@ -23,4 +23,5 @@
     <string name="Loading">Loading</string>
     <string name="Ready">Ready</string>
     <string name="Audio_File_Not_Found">Audio file not found.</string>
+    <string name="Reject_Download_Message">Sorry the app only supports locally saved formats. We are working on the rest.</string>
 </resources>

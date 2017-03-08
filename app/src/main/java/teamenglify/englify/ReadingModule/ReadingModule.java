@@ -48,10 +48,4 @@ public class ReadingModule extends Fragment {
         fm.beginTransaction().add(R.id.readSpeechBar, speechRecognition).commit();
         return v;
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MainActivity.getMainActivity().currentPage = 0;
-    }
 }

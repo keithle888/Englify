@@ -79,7 +79,6 @@ public class ListingDataService implements Runnable{
         } else if (listingType.equalsIgnoreCase("vocabListing")) {
             //set boolean values to false so audiobar and speechrecognition wait until all the data is loaded.
             MainActivity.getMainActivity().readyForSpeechRecognitionToLoad = false;
-            MainActivity.getMainActivity().readyForAudioBarToLoad = false;
             String s3UrlPrefix =  "https://s3-ap-southeast-1.amazonaws.com/englify/";
             prefix = "res/" + MainActivity.grade + "/" + MainActivity.lesson;
             s3objects = s3Client.listObjects("englify",prefix).getObjectSummaries();
@@ -103,11 +102,11 @@ public class ListingDataService implements Runnable{
             MainActivity.getMainActivity().readyForSpeechRecognitionToLoad = true;
             if (audioListOfChoices.size() != 0) {
                 MainActivity.getMainActivity().audioVocabURLListing = audioListOfChoices;
-                MainActivity.getMainActivity().readyForAudioBarToLoad = true;
+                //MainActivity.getMainActivity().readyForAudioBarToLoad = true;
             }
         } else if (listingType.equalsIgnoreCase("readImageListing")){
             //set boolean values so audioBar and speechRecognition do not load until all the data is loaded.
-            MainActivity.getMainActivity().readyForAudioBarToLoad = false;
+            //MainActivity.getMainActivity().readyForAudioBarToLoad = false;
             MainActivity.getMainActivity().readyForSpeechRecognitionToLoad = false;
             Log.d("ListingDataService", "listing for read image is loaded");
             String s3UrlPrefix =  "https://s3-ap-southeast-1.amazonaws.com/englify/";
@@ -142,7 +141,7 @@ public class ListingDataService implements Runnable{
             MainActivity.getMainActivity().setReadImageListing(listOfChoices);
             if (audioListOfChoices.size() != 0) {
                 MainActivity.getMainActivity().audioConversationURLListing = audioListOfChoices;
-                MainActivity.getMainActivity().readyForAudioBarToLoad = true;
+                //MainActivity.getMainActivity().readyForAudioBarToLoad = true;
 
             } else {
                 Log.d("ListingDataService", "Error: audioListOfChoices.size = 0");

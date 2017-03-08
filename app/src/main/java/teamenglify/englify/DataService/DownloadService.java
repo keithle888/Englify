@@ -242,7 +242,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                                     } else if (isAudioFile(delimitedKey[4])) { //Audio for vocabPart
                                         S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
                                         String audioAbsolutePath = LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]) ,s3Object);
-                                        vocab.addVocabPartAudio(removeExtension(delimitedKey[4]), audioAbsolutePath);
+                                        vocab.addVocabPartAudio(removeExtension(delimitedKey[4]), createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
                                         Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Audio file for " + generatePrefix(grade.name, lesson.name, vocab.name) + " saved to " + audioAbsolutePath);
                                     } else if (isImg(delimitedKey[4])) {//Img for vocabPart
                                         S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
@@ -282,7 +282,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                             } else if (isAudioFile(key)) {
                                 S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                 String audioAbsolutePath = LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
-                                read.addReadPartAudio(removeExtension(dKey[5]), audioAbsolutePath);
+                                read.addReadPartAudio(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                 Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Audio file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + audioAbsolutePath);
                             } else if (isImg(key)) {
                                 S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));

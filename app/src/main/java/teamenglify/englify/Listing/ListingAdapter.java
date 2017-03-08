@@ -76,7 +76,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                         mainActivity.lessonListing = null;
                         mainActivity.readListing = null;
                         mainActivity.vocabListing = null;
-                        mainActivity.readyForAudioBarToLoad = false;
+                        //mainActivity.readyForAudioBarToLoad = false;
                         Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Deleting Cache.");
                     }
                     mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
@@ -85,7 +85,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     if(mainActivity.lesson != null && !mainActivity.lesson.equalsIgnoreCase(selected)) {//check if the lesson selected is the same as before, if not, wipe cached data for unit and vocab.
                         mainActivity.readListing = null;
                         mainActivity.vocabListing = null;
-                        mainActivity.readyForAudioBarToLoad = false;
+                        //mainActivity.readyForAudioBarToLoad = false;
                         mainActivity.audioConversationURLListing = null;
                         mainActivity.audioVocabURLListing = null;
                         Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder: Deleting Cache.");

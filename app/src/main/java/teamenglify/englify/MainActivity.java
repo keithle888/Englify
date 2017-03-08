@@ -78,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
     public static Object downloadedObject;
     //analytics variable
     public static MobileAnalyticsManager analytics;
-    //media player
-    public int currentPage;
-    public boolean readyForAudioBarToLoad;
     //permissions variables
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     //variables for Navigation Drawer
@@ -105,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
         //initialize variables
         bucketName = getString(R.string.Bucket_Name);
         currentDirectory = rootDirectory = getString(R.string.Root_Directory);
-        currentPage = 0;
-        readyForAudioBarToLoad = false;
         transferUtility = new TransferUtility(s3Client, getApplicationContext());
         //check permissions, else request for them
         checkAndRequestPermissions();
@@ -124,6 +119,18 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mHandler.post(mBackgroundThread);
+        //create RootListing if none exists (eg. 1st time app download)
+        if (fileList().length == 0) {
+            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
+        } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
+            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
+        }
     }
 
     @Override
@@ -165,13 +172,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if(analytics != null) {
             analytics.getSessionClient().resumeSession();
-        }
-        mHandler.post(mBackgroundThread);
-        //create RootListing if none exists (eg. 1st time app download)
-        if (fileList().length == 0) {
-            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
-        } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
-            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
         }
     }
 
@@ -237,14 +237,6 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<String> getReadImageURLListing() {
         return readImageURLListing;
-    }
-
-    public void setCurrentPage(int i) {
-        currentPage = i;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
     }
 
     private void checkAndRequestPermissions() {

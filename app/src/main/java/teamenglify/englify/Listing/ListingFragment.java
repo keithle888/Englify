@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.provider.DocumentsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -82,7 +83,7 @@ public class ListingFragment extends Fragment {
         Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
         mHandler = new Handler();
         //objectToLoad not present, download
-        if (listingType == GRADE_LISTING) {
+        if (listingType == GRADE_LISTING && ((RootListing)objectToLoad).grades == null) {
             //set the correct Title in action bar
             mainActivity.getSupportActionBar().setTitle("Grade Listing");
             new DataManager().getListing();

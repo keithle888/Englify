@@ -84,6 +84,8 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         if (SpeechRecognizer.isRecognitionAvailable(getContext())) {
             speechDisplayTextView.setText(R.string.press_hold_b);
             setButtonListener();
+            mHandler.post(mBackgroundThread);
+            updateUI();
         } else {
             speechDisplayTextView.setText(R.string.Speech_Recognition_Unavailable);
             speechToMatchTextView.setText("");
@@ -234,10 +236,12 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                 //wipe the returnTextView
                 speechReturnTextView.setText("");
             }
+            mHandler.postDelayed(mBackgroundThread, 500);
         }
     };
 
     public void updateUI() {
+        Log.d("Englify", "Class SpeechRecognition: Method updateUI(): Updating UI");
         if (object instanceof Vocab) {
             VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
             speechToMatchTextView.setText(vocabPart.text);

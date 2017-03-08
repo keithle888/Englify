@@ -4,12 +4,14 @@ package teamenglify.englify.DataService;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -22,7 +24,7 @@ public class DataManager {
 
     public void getListing() {
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
-        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing))) {
+        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null) {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
             MainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         } else {
@@ -56,7 +58,8 @@ public class DataManager {
                 .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        mainActivity.onBackPressed();
+                        Toast.makeText(mainActivity,R.string.Reject_Download_Message,Toast.LENGTH_LONG);
                     }
                 })
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
