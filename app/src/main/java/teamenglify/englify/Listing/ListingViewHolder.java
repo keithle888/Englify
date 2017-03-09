@@ -19,7 +19,7 @@ public class ListingViewHolder extends RecyclerView.ViewHolder {
     public ListingViewHolder(View itemView) {
         super(itemView);
         this.textUpdate = (TextView) itemView.findViewById(R.id.textUpdate);
-        this.imageUpdate = (ImageView)itemView.findViewById(R.id.listing_image);
+        //this.imageUpdate = (ImageView)itemView.findViewById(R.id.listing_image);
     }
 
     public void updateUI (String text){
