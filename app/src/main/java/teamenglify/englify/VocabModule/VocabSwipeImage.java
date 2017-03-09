@@ -6,11 +6,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 
 import teamenglify.englify.DataService.ImageLoadService;
+import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
@@ -25,7 +28,7 @@ public class VocabSwipeImage extends Fragment {
     private String mParam1;
     private String mParam2;
     String imageUrl;
-    NetworkImageView networkImageView;
+    ImageView imageView;
 
     public VocabSwipeImage() {
         // Required empty public constructor
@@ -56,10 +59,13 @@ public class VocabSwipeImage extends Fragment {
         View v = inflater.inflate(R.layout.fragment_vocab_swipe_image, container, false);
         Bundle bundle = getArguments();
         imageUrl = bundle.getString("imageUrl").trim();
-        networkImageView = (NetworkImageView) v.findViewById(R.id.vocabNetworkImageView);
-        networkImageView.setDefaultImageResId(R.drawable.loadinglogo);
-        ImageLoader imageLoader = ImageLoadService.getInstance(MainActivity.getMainActivity().getApplicationContext()).getImageLoader();
-        networkImageView.setImageUrl(imageUrl, imageLoader);
+        imageView = (ImageView) v.findViewById(R.id.vocabImageView);
+        Glide.with(this)
+                .load(LocalSave.loadImage(imageUrl))
+                .fitCenter()
+                .placeholder(R.drawable.loadinglogo)
+                .crossFade()
+                .into(imageView);
 
         return v;
     }

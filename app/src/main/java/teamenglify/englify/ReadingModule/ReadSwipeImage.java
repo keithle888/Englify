@@ -6,17 +6,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
 
 import teamenglify.englify.DataService.ImageLoadService;
+import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 public class ReadSwipeImage extends Fragment {
     String imageUrl;
-    NetworkImageView networkImageView;
+    ImageView imageView;
 
     public ReadSwipeImage() {
         // Required empty public constructor
@@ -33,10 +36,13 @@ public class ReadSwipeImage extends Fragment {
         View v = inflater.inflate(R.layout.fragment_read_swipe_image, container, false);
         Bundle bundle = getArguments();
         imageUrl = bundle.getString("imageUrl");
-        networkImageView = (NetworkImageView) v.findViewById(R.id.readNetworkImageView);
-        networkImageView.setDefaultImageResId(R.drawable.loadinglogo);
-        ImageLoader imageLoader = ImageLoadService.getInstance(MainActivity.getMainActivity().getApplicationContext()).getImageLoader();
-        networkImageView.setImageUrl(imageUrl, imageLoader);
+        imageView = (ImageView) v.findViewById(R.id.readImageView);
+        Glide.with(this)
+                .load(LocalSave.loadImage(imageUrl))
+                .fitCenter()
+                .placeholder(R.drawable.loadinglogo)
+                .crossFade()
+                .into(imageView);
 
         return v;
     }

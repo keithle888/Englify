@@ -27,7 +27,6 @@ import static teamenglify.englify.MainActivity.mainActivity;
  */
 public class ReadImage extends Fragment {
     private ViewPager viewPager;
-    private ProgressDialog progressDialog;
     private ImageFragmentStateAdapter imageFragmentStateAdapter;
     private Read read;
 

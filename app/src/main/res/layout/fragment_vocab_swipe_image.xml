@@ -4,9 +4,8 @@
     android:layout_height="match_parent"
     tools:context="teamenglify.englify.VocabModule.VocabSwipeImage">
 
-    <!-- TODO: Update blank fragment layout -->
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/vocabNetworkImageView"
+    <ImageView
+        android:id="@+id/vocabImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true" />

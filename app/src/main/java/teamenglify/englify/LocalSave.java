@@ -129,4 +129,15 @@ public class LocalSave {
         }
         return fis;
     }
+
+    public static byte[] loadImage(String fileName) {
+        byte[] array = null;
+        try {
+            FileInputStream fis = mainActivity.openFileInput(fileName);
+            array = IOUtils.toByteArray(fis);
+        } catch (Exception e) {
+            Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
+        }
+        return array;
+    }
 }

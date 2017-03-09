@@ -29,7 +29,6 @@ public class ImageFragmentStateAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = new ReadSwipeImage();
         Bundle bundle = new Bundle();
         bundle.putString("imageUrl", imageUrlList.get(i));
-        //Log.d("StateAdapter", imageUrlList.get(i));
         fragment.setArguments(bundle);
         return fragment;
     }
