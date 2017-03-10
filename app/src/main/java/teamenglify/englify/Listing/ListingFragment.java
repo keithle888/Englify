@@ -2,6 +2,7 @@ package teamenglify.englify.Listing;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.AsyncTask;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.MainActivity;
@@ -29,7 +31,23 @@ import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
+
+import static teamenglify.englify.MainActivity.getMainActivity;
 import static teamenglify.englify.MainActivity.mainActivity;
+
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,12 +56,14 @@ import static teamenglify.englify.MainActivity.mainActivity;
  */
 public class ListingFragment extends Fragment {
     //Fixed variables to be used to determine listing type
+    public static ListingFragment listingFragment;
     public static final int GRADE_LISTING = 0;
     public static final int LESSON_LISTING = 1;
     public static final int MODULE_LISTING = 2;
     public static final int READ_LISTING = 3;
     public static final int VOCAB_LISTING = 4;
     public static final int EXERCISE_LISTING = 5;
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private RecyclerView recyclerView;
@@ -52,6 +72,7 @@ public class ListingFragment extends Fragment {
     private int listingType;
     private Handler mHandler;
     private Object objectToLoad;
+    private Context mContext;
 
 
     public ListingFragment() {
@@ -73,6 +94,7 @@ public class ListingFragment extends Fragment {
         if (getArguments() != null) {
             listingType = getArguments().getInt(ARG_PARAM1);
         }
+        listingFragment = this;
     }
 
     @Override
@@ -80,7 +102,12 @@ public class ListingFragment extends Fragment {
                              Bundle savedInstanceState) {
         //inflate view
         View view = inflater.inflate(R.layout.fragment_listing, container, false);
+
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(),2 );
+        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setHasFixedSize(true);
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
@@ -103,6 +130,8 @@ public class ListingFragment extends Fragment {
         }
         return view;
     }
+
+
 
     /**
      * RecyclerView item decoration - give equal margin around grid item

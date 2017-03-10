@@ -13,13 +13,13 @@ import teamenglify.englify.R;
 
 
 public class ListingViewHolder extends RecyclerView.ViewHolder {
-    private TextView textUpdate;
-    private ImageView imageUpdate;
+    public TextView textUpdate;
+    public ImageView overflow;
 
     public ListingViewHolder(View itemView) {
         super(itemView);
         this.textUpdate = (TextView) itemView.findViewById(R.id.textUpdate);
-        //this.imageUpdate = (ImageView)itemView.findViewById(R.id.listing_image);
+        overflow = (ImageView) itemView.findViewById(R.id.overflow);
     }
 
     public void updateUI (String text){
