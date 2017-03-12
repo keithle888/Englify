@@ -34,23 +34,12 @@
                 android:paddingLeft="@dimen/album_title_padding"
                 android:paddingRight="@dimen/album_title_padding"
                 android:paddingTop="@dimen/album_title_padding"
-                android:textColor="@color/album_title"
+                android:textColor="@color/grade_title"
                 android:textSize="@dimen/album_title"
                 android:layout_below="@+id/thumbnail"
                 android:layout_toLeftOf="@+id/overflow"
                 android:layout_toStartOf="@+id/overflow" />
 
-            <TextView
-                android:id="@+id/count"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/textUpdate"
-                android:paddingBottom="@dimen/songs_count_padding_bottom"
-                android:paddingLeft="@dimen/album_title_padding"
-                android:paddingRight="@dimen/album_title_padding"
-                android:textSize="@dimen/songs_count"
-                android:layout_toLeftOf="@+id/overflow"
-                android:layout_toStartOf="@+id/overflow" />
 
             <ImageView
                 android:id="@+id/overflow"

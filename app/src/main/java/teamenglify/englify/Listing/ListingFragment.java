@@ -1,6 +1,7 @@
 package teamenglify.englify.Listing;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -72,7 +73,6 @@ public class ListingFragment extends Fragment {
     private int listingType;
     private Handler mHandler;
     private Object objectToLoad;
-    private Context mContext;
 
 
     public ListingFragment() {
@@ -94,7 +94,6 @@ public class ListingFragment extends Fragment {
         if (getArguments() != null) {
             listingType = getArguments().getInt(ARG_PARAM1);
         }
-        listingFragment = this;
     }
 
     @Override
@@ -106,9 +105,8 @@ public class ListingFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
 
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(),2 );
-        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
         Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
@@ -130,7 +128,6 @@ public class ListingFragment extends Fragment {
         }
         return view;
     }
-
 
 
     /**
@@ -184,14 +181,15 @@ public class ListingFragment extends Fragment {
         //get the listings based on which listingType
         if (listingType == GRADE_LISTING) {
             RootListing grades = (RootListing) object;
-            Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded: Received RootListing: " + grades.grades.toString());
         }
         listingAdapter = new ListingAdapter(object, listingType);
         recyclerView.setAdapter(listingAdapter);
         //load additional settings
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
+        mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
+        recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        //recyclerView.setLayoutManager(layoutManager);
     }
 
     private Runnable mBackgroundThread = new Runnable() {

@@ -20,6 +20,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     public static int position;
     public static AmazonS3Client s3Client;
     public static TransferUtility transferUtility;
+    public static RecyclerView.LayoutManager mLayoutManager;
     //variables for Background Thread that updates internet status
     private Handler mHandler;
     public boolean hasInternetConnection;
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
     //variable for SpeechRecognition
     public boolean readyForSpeechRecognitionToLoad = false;
 
@@ -108,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         mainActivity = this;
         //initialize mobile analytics
         initializeMobileAnalytics();
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this,2 );
         //initialize s3Client variable on another thread.
         mHandler.post(startS3Client);
         //initialize navigation drawer
