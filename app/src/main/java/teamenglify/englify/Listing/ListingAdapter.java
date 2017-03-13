@@ -50,6 +50,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     public ListingAdapter(Object object, int listingType) {
         this.object = object;
         this.listingType = listingType;
+        this.mContext = mainActivity.getApplicationContext();
         //Generate listings on constructor
         listings = new ArrayList<>();
         if (listingType == ListingFragment.GRADE_LISTING) {
