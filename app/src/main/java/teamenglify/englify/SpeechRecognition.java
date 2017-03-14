@@ -215,6 +215,8 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     public void onPause() {
         super.onPause();
         if (speech != null) {
+            speech.cancel();
+            speech.destroy();
             speech = null;
         }
         mHandler.removeCallbacks(mBackgroundThread);
