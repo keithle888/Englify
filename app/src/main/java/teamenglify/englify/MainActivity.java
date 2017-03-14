@@ -37,6 +37,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import teamenglify.englify.DataService.S3Properties;
 import teamenglify.englify.FeedbackModule.Feedback;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     public static Object downloadedObject;
     //analytics variable
     public static MobileAnalyticsManager analytics;
+    public static HashMap<String,ArrayList<String>> analyticList = new HashMap<>();
     //permissions variables
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     //variables for Navigation Drawer
@@ -165,9 +168,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("Main Activity", "paused ");
         if(analytics != null) {
             analytics.getSessionClient().pauseSession();
-            analytics.getEventClient().submitEvents();
+            //analytics.getEventClient().submitEvents();
+            Iterator it = analyticList.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                ArrayList<String> dataList = (ArrayList<String>) pair.getValue();
+                if(dataList.size()>10){
+                    AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey());
+                    analytics.getEventClient().recordEvent(event);
+                    Log.d("main activity", "event recorded");
+                } else {
+                    Log.d("main activity", "event not recorded");
+                }
+                //it.remove(); // avoids a ConcurrentModificationException
+            }
         }
         mHandler.removeCallbacks(mBackgroundThread);
     }

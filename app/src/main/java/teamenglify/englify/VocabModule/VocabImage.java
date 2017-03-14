@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Vocab;
@@ -61,6 +62,27 @@ public class VocabImage extends Fragment {
                 if (mainActivity.position != position) {
                     mainActivity.position = position;
                 }
+                HashMap<String,ArrayList<String>> analyticList= MainActivity.analyticList;
+                ArrayList<String> dataRecorded = analyticList.get(MainActivity.grade+MainActivity.lesson);
+                if(dataRecorded==null){
+                    analyticList.put(MainActivity.grade+MainActivity.lesson, new ArrayList<String>());
+                    Log.d("analytic vocab", "null");
+                    dataRecorded = new ArrayList<>();
+                    dataRecorded.add(Integer.toString(position));
+                    analyticList.put(MainActivity.grade+MainActivity.lesson, dataRecorded);
+                } else {
+                    boolean isExist = false;
+                    for(String temp : dataRecorded){
+                        if(temp.equalsIgnoreCase(Integer.toString(position))){
+                            isExist = true;
+                        }
+                    }
+                    if(!isExist){
+                        dataRecorded.add(Integer.toString(position));
+                        analyticList.put(MainActivity.grade+MainActivity.lesson, dataRecorded);
+                    }
+                }
+                Log.d("VocabImage", dataRecorded.toString());
             }
 
             @Override

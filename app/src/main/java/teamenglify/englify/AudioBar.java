@@ -91,7 +91,7 @@ public class AudioBar extends Fragment {
                 Log.d("Englify", "Class AudioBar: Method mBackgroundThread(): Change of image detected.");
             }
             mHandler.postDelayed(this, 100);
-            Log.d("Englify", "Class AudioBar: Method mBackgroundThread(): Background thread running.");
+            //Log.d("Englify", "Class AudioBar: Method mBackgroundThread(): Background thread running.");
         }
     };
 
