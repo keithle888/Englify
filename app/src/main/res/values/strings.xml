@@ -24,7 +24,7 @@
     <string name="Ready">Ready</string>
     <string name="Audio_File_Not_Found">Audio file not found.</string>
     <string name="Reject_Download_Message">Sorry the app only supports locally saved formats. We are working on the rest.</string>
-
+    <string name="Speech_Recognition_Requires_Internet">Speech Recognition requires internet access.</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_favourite">change add fav</string>
     <string name="action_play_next">Change action play next</string>

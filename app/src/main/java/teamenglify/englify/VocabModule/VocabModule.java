@@ -54,7 +54,7 @@ public class VocabModule extends Fragment {
         AudioBar audioBar = AudioBar.newInstance(vocab);
         fm.beginTransaction().add(R.id.vocabImage,vocabImage).commit();
         fm.beginTransaction().add(R.id.vocabAudioBar, audioBar).commit();
-        //fm.beginTransaction().add(R.id.vocabSpeechBar, speechRecognition).commit();
+        fm.beginTransaction().add(R.id.vocabSpeechBar, speechRecognition).commit();
         return v;
     }
 

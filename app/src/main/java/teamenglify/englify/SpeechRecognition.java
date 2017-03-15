@@ -67,13 +67,26 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_speech_recognition, container, false);
-
         speechDisplayTextView = (TextView) view.findViewById(R.id.speechDisplayTextView);
         speechToMatchTextView = (TextView) view.findViewById(R.id.speechToMatchTextView);
         speechReturnTextView = (TextView) view.findViewById(R.id.speechReturnTextView);
         speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
         speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
         speechProgressBar.setVisibility(View.INVISIBLE);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mainActivity.hasInternetConnection == true) {
+            initializeSpeechRecognition();
+        } else {
+            speechDisplayTextView.setText(R.string.Speech_Recognition_Requires_Internet);
+        }
+    }
+
+    public void initializeSpeechRecognition() {
         //initialize speech recognizer
         speech = SpeechRecognizer.createSpeechRecognizer(getContext());
         speech.setRecognitionListener(this);
@@ -92,7 +105,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             speechReturnTextView.setText("");
             speechButton.setClickable(false);
         }
-        return view;
     }
 
     public void setButtonListener() {
@@ -215,9 +227,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     public void onPause() {
         super.onPause();
         if (speech != null) {
-            speech.cancel();
-            speech.destroy();
-            speech = null;
+            releaseResources();
         }
         mHandler.removeCallbacks(mBackgroundThread);
     }
@@ -238,6 +248,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                 //wipe the returnTextView
                 speechReturnTextView.setText("");
             }
+            if (speech == null && mainActivity.hasInternetConnection == true) {
+                initializeSpeechRecognition();
+            }
             mHandler.postDelayed(mBackgroundThread, 500);
         }
     };
@@ -250,6 +263,13 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         } else if (object instanceof Read) {
             ReadPart readPart = ((Read)object).readParts.get(position);
             speechToMatchTextView.setText(readPart.reading);
+        }
+    }
+
+    public void releaseResources() {
+        if (speech != null) {
+            speech.destroy();
+            speech = null;
         }
     }
 }
