@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //default code
         super.onCreate(savedInstanceState);
+        Log.d("MainActivity", "onCreate");
         setContentView(R.layout.activity_main);
         //initialize background thread
         HandlerThread mHandlerThread = new HandlerThread(getLocalClassName());
@@ -168,20 +169,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("Main Activity", "paused ");
+        Log.d("MainActivity", "onPaused");
         if(analytics != null) {
+            Log.d("MainActivity", "event not recorded");
             analytics.getSessionClient().pauseSession();
             //analytics.getEventClient().submitEvents();
             Iterator it = analyticList.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 ArrayList<String> dataList = (ArrayList<String>) pair.getValue();
+                Log.d("main activity", ""+dataList.toString());
                 if(dataList.size()>10){
                     AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey());
                     analytics.getEventClient().recordEvent(event);
                     Log.d("main activity", "event recorded");
                 } else {
                     Log.d("main activity", "event not recorded");
+
                 }
                 //it.remove(); // avoids a ConcurrentModificationException
             }
@@ -380,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Log.d("MainActivity", "Record Audio Permission Denied.");
                 }
-                return;
+
             }
         }
     }
