@@ -59,7 +59,7 @@ public class DataManager {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         mainActivity.onBackPressed();
-                        Toast.makeText(mainActivity,R.string.Reject_Download_Message,Toast.LENGTH_LONG);
+                        Toast.makeText(mainActivity,R.string.Reject_Download_Message,Toast.LENGTH_LONG).show();
                     }
                 })
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {

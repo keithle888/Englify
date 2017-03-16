@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
@@ -51,6 +52,7 @@ import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.ReadingModule.ReadingModule;
+import teamenglify.englify.Settings.DeleteGrade;
 import teamenglify.englify.VocabModule.VocabModule;
 
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
@@ -71,15 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler;
     public boolean hasInternetConnection;
     public boolean isWiFiConnection;
-    //variables from ListingDataService
-    public ArrayList<String> gradeListing;
-    public ArrayList<String> lessonListing;
-    public ArrayList<String> readListing;
-    public ArrayList<String> vocabListing;
-    public ArrayList<String> readImageURLListing;
-    public ArrayList<String> audioConversationURLListing;
-    public ArrayList<String> audioVocabURLListing;
-    public ArrayList<String> audioConversationTextsToMatch;
+    //variables from DataManager
     public static Object downloadedObject;
     //analytics variable
     public static MobileAnalyticsManager analytics;
@@ -228,39 +222,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setGradeListing(ArrayList<String> array) {
-        gradeListing = array;
-        Log.d("New gradeListing: ", array.toString());
-    }
-
-    public void setLessonListing(ArrayList<String> array) {
-        lessonListing = array;
-        Log.d("New lessonListing: ", array.toString());
-    }
-
-    public void setReadListing(ArrayList<String> array) {
-        readListing = array;
-        Log.d("New unitListing: ", array.toString());
-    }
-
-    public void setVocabListing(ArrayList<String> array) {
-        vocabListing = array;
-        Log.d("New vocabListing: ", array.toString());
-    }
-
-    public void setReadImageListing(ArrayList<String> array) {
-        readImageURLListing = array;
-        Log.d("New readURL: ", array.toString());
-    }
-
-    public ArrayList<String> getVocabListing() {
-        return vocabListing;
-    }
-
-    public ArrayList<String> getReadImageURLListing() {
-        return readImageURLListing;
-    }
-
     private void checkAndRequestPermissions() {
         //Record Audio Permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -327,6 +288,13 @@ public class MainActivity extends AppCompatActivity {
                         newFragment = new Feedback();
                         break;
                     case 4:
+                        //redirects user back if nothing has been downloaded
+                        RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+                        if (root == null || root.grades == null) {
+                            Toast.makeText(mainActivity,"No grades downloaded.",Toast.LENGTH_LONG).show();
+                        } else {
+                            newFragment = new DeleteGrade();
+                        }
                         break;
                 }
                 if (newFragment != null) {

@@ -1,8 +1,6 @@
 package teamenglify.englify.ReadingModule;
 
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -11,9 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
-import teamenglify.englify.DataService.ListingDataService;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;

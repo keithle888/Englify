@@ -95,25 +95,9 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 view.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 //load lesson list if the current listing is grade
                 if(listingType == ListingFragment.GRADE_LISTING) {
-                    //check if the grade selected is the same as before, if not, wipe cached data for lesson, unit and vocab.
-                    if(mainActivity.grade != null) {
-                        mainActivity.lessonListing = null;
-                        mainActivity.readListing = null;
-                        mainActivity.vocabListing = null;
-                        //mainActivity.readyForAudioBarToLoad = false;
-                        Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Deleting Cache.");
-                    }
                     mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
                     Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Asked mainActivity to loadNextListing()");
                 } else if (listingType == ListingFragment.LESSON_LISTING) {
-                    if(mainActivity.lesson != null && !mainActivity.lesson.equalsIgnoreCase(selected)) {//check if the lesson selected is the same as before, if not, wipe cached data for unit and vocab.
-                        mainActivity.readListing = null;
-                        mainActivity.vocabListing = null;
-                        //mainActivity.readyForAudioBarToLoad = false;
-                        mainActivity.audioConversationURLListing = null;
-                        mainActivity.audioVocabURLListing = null;
-                        Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder: Deleting Cache.");
-                    }
                     MainActivity.lesson = selected;
                     mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
                 } else if (listingType == ListingFragment.READ_LISTING) {

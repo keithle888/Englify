@@ -8,13 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.bumptech.glide.Glide;
 
-import teamenglify.englify.DataService.ImageLoadService;
 import teamenglify.englify.LocalSave;
-import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 public class ReadSwipeImage extends Fragment {
