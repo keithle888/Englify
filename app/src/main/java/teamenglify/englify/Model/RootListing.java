@@ -13,4 +13,23 @@ public class RootListing implements Serializable{
     public RootListing (ArrayList<Grade> grades) {
         this.grades = grades;
     }
+
+    public void overrideGrade(Grade grade) {
+        //locate grade
+        for (int i = 0; i < grades.size(); i++) {
+            Grade oldGrade = grades.get(i);
+            if (oldGrade.name.equalsIgnoreCase(grade.name)) {
+                grades.set(i, grade);
+            }
+        }
+    }
+
+    public Grade findGrade(String gradeName) {
+        for (Grade grade : grades) {
+            if (grade.name.equalsIgnoreCase(gradeName)) {
+                return grade;
+            }
+        }
+        return null;
+    }
 }

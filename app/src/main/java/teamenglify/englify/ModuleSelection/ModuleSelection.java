@@ -62,7 +62,7 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Read Selection");
-                mainActivity.loadNextListing(ListingFragment.READ_LISTING, lesson.findModule(getString(R.string.Coversation_Folder_Name)));
+                mainActivity.loadNextListing(ListingFragment.READ_LISTING, lesson.findModule(getString(R.string.Conversation_Folder_Name)));
 
             }
         });

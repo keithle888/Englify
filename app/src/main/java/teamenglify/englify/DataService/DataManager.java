@@ -37,10 +37,11 @@ public class DataManager {
     public void getGrade(Grade grade) {
         //get grade from local memory
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for " + grade.name + " availability.");
-        if (LocalSave.doesFileExist(grade.name)) {
-            grade = (Grade) LocalSave.loadObject(grade.name);
+        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing))) {
+            RootListing rootListing = (RootListing) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
+            grade = rootListing.findGrade(grade.name);
         }
-        if (grade.isDownloaded) {
+        if (grade != null && grade.isDownloaded) {
             Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " was found in internal memory.");
             mainActivity.downloadedObject = grade;
         } else {
@@ -48,6 +49,10 @@ public class DataManager {
             Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " downloaded to internal memory. Moving to download listing from AWS S3");
             promptForDownload(grade);
         }
+    }
+
+    public void deleteGrade(Grade grade) {
+        promptForDeletion(grade);
     }
 
     public void promptForDownload(final Grade grade) {
@@ -66,6 +71,26 @@ public class DataManager {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         new DownloadService(DownloadService.DOWNLOAD_GRADE, grade).execute();
+                    }
+                })
+                .show();
+    }
+
+    public void promptForDeletion(final Grade grade) {
+        //create a dialog to ask whether they want to download the grade
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setTitle(mainActivity.getString(R.string.Deletion_Prompt_Title))
+                .setMessage(mainActivity.getString(R.string.Deletion_Check) + " " + grade.name + " ?")
+                .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        mainActivity.onBackPressed();
+                    }
+                })
+                .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        new DeleteService(grade).execute();
                     }
                 })
                 .show();

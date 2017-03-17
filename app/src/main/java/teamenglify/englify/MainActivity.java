@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean isWiFiConnection;
     //variables from DataManager
     public static Object downloadedObject;
+    //variables from ListingFragment
     //analytics variable
     public static MobileAnalyticsManager analytics;
     public static HashMap<String,ArrayList<String>> analyticList = new HashMap<>();
@@ -360,6 +361,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
+        }
+    }
+
+    public void clearBackStack() {
+        Log.d("Englify", "Class MainActivity: Method clearBackStack(): Clearing Back Stack.");
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            FragmentManager.BackStackEntry first = fm.getBackStackEntryAt(0);
+            fm.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 }

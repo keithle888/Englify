@@ -106,6 +106,9 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         if (downloadType == DOWNLOAD_LISTING) {
             Log.d("Englify", "Class DownloadService: Method doInBackground(): Updating downloadedObject in MainActivity.");
             mainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
+        } else if (downloadType == DOWNLOAD_GRADE) {
+            Log.d("Englify", "Class DownloadService: Method doInBackground(): Updating downloadedObject in MainActivity.");
+            mainActivity.downloadedObject = grade;
         }
     }
 
@@ -149,7 +152,8 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             ArrayList<Grade> grades = new ArrayList<Grade>();
             for (String gradeName : sortedListOfGrades) {
                 //save each grade into internal storage
-                Grade newGrade = new Grade(gradeName, null, null, false);
+                Grade newGrade = new Grade(gradeName, new ArrayList<Lesson>(), null, false);
+                Log.d("Englify", "Class DownloadService: Method downloadListing(): Created grade -> " + newGrade.toString());
                 LocalSave.saveObject(newGrade.name, newGrade);
                 grades.add(newGrade);
             }
@@ -157,49 +161,56 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             LocalSave.saveObject(mainActivity.getString(R.string.S3_Object_Listing), new RootListing(grades));
         } catch (Exception e) {
             Log.d("Englify", "Class DownloadService: Method downloadListing(): Caught Exception: " + e.toString());
-            return false;
+            throw e;
         }
         return true;
     }
 
     public void downloadGrade() {
-        //download grade tree from S3.
-        List<S3ObjectSummary> summaries = getSummaries(mainActivity.getString(R.string.Root_Directory) + "/" + grade.name);
-        //Iterate through all summaries and use each entry to generate the correct Model.
-        for (S3ObjectSummary summary : summaries) {
-            String key = summary.getKey();
-            String[] delimitedKey = key.split("/");
-            int delimitedKeyLength = delimitedKey.length;
-            if (delimitedKeyLength == 3) { //it is a Lesson!
-                Lesson lesson = new Lesson(delimitedKey[2]);
-                Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.name + " <- " + lesson.name  + " added.");
-                grade.addLesson(lesson);
-            } else if (delimitedKeyLength == 4) { //It is a module
-                //Need to identify which module it is
-                if (delimitedKey[3].equalsIgnoreCase("Conversation")) { // It is a conversation
-                    Conversation conversation = new Conversation(delimitedKey[3]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name  + " added.");
-                    grade.findLesson(delimitedKey[2]).addModule(conversation);
-                } else if (delimitedKey[3].equalsIgnoreCase("Vocabulary")) {//It is a vocabulary
-                    Vocab vocab = new Vocab(delimitedKey[3]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name  + " added.");
-                    grade.findLesson(delimitedKey[2]).addModule(vocab);
-                } else if (delimitedKey[3].equalsIgnoreCase("Exercise")) {//It is an exercise
-                    Exercise exercise = new Exercise(delimitedKey[3]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + exercise.name  + " added.");
-                    grade.findLesson(delimitedKey[2]).addModule(exercise);
-                } else { //unidentified module
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): Unknown module found -> " + key);
+        try {
+            //download grade tree from S3.
+            List<S3ObjectSummary> summaries = getSummaries(mainActivity.getString(R.string.Root_Directory) + "/" + grade.name);
+            //Iterate through all summaries and use each entry to generate the correct Model.
+            for (S3ObjectSummary summary : summaries) {
+                String key = summary.getKey();
+                String[] delimitedKey = key.split("/");
+                int delimitedKeyLength = delimitedKey.length;
+                if (delimitedKeyLength == 3) { //it is a Lesson!
+                    Lesson lesson = new Lesson(delimitedKey[2]);
+                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.name + " <- " + lesson.name + " added.");
+                    grade.addLesson(lesson);
+                } else if (delimitedKeyLength == 4) { //It is a module
+                    //Need to identify which module it is
+                    if (delimitedKey[3].equalsIgnoreCase("Conversation")) { // It is a conversation
+                        Conversation conversation = new Conversation(delimitedKey[3]);
+                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name + " added.");
+                        grade.findLesson(delimitedKey[2]).addModule(conversation);
+                    } else if (delimitedKey[3].equalsIgnoreCase("Vocabulary")) {//It is a vocabulary
+                        Vocab vocab = new Vocab(delimitedKey[3]);
+                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name + " added.");
+                        grade.findLesson(delimitedKey[2]).addModule(vocab);
+                    } else if (delimitedKey[3].equalsIgnoreCase("Exercise")) {//It is an exercise
+                        Exercise exercise = new Exercise(delimitedKey[3]);
+                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + exercise.name + " added.");
+                        grade.findLesson(delimitedKey[2]).addModule(exercise);
+                    } else { //unidentified module
+                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): Unknown module found -> " + key);
+                    }
                 }
             }
+            //download all the data in each module (it is seperated from the iterator above due to key naming overlaps.
+            downloadGradeModules(grade);
+            //once all the data has been downloaded. Set isDownloaded in grade to true and save the grade to internal memory
+            grade.isDownloaded = true;
+            RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+            rootListing.overrideGrade(grade);
+            LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
+            Log.d("Englify", "Class DownloadService: Method downloadGrade(): Finished downloading " + grade.name + " and saved to internal memory.");
+        } catch (Exception e) {
+            //data downloading failed. Delete all downloaded Data.
+            mainActivity.onBackPressed();
+            Toast.makeText(mainActivity, R.string.Download_Failed, Toast.LENGTH_LONG).show();
         }
-        //download all the data in each module (it is seperated from the iterator above due to key naming overlaps.
-        downloadGradeModules(grade);
-        //once all the data has been downloaded. Set isDownloaded in grade to true and save the grade to internal memory
-        grade.isDownloaded = true;
-        LocalSave.saveObject(grade.name, grade);
-        Log.d("Englify", "Class DownloadService: Method downloadGrade(): Finished downloading " + grade.name + " and saved to internal memory.");
-        mainActivity.downloadedObject = grade;
     }
 
     public void downloadGradeModules(Grade grade) {

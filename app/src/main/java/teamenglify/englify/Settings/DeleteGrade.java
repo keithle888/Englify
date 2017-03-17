@@ -5,6 +5,7 @@ import android.provider.DocumentsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
@@ -65,12 +69,16 @@ public class DeleteGrade extends Fragment {
 
         public DeleteGradeAdapter(RootListing rootListing) {
             //filter and remove grades that are not downloaded
+            RootListing newListing = new RootListing(new ArrayList<Grade>());
             for (int i = 0; i < rootListing.grades.size(); i++) {
-                if (rootListing.grades.get(i).isDownloaded == false) {
-                    rootListing.grades.remove(i);
+                Grade grade = rootListing.grades.get(i);
+                Log.d("Englify", "Class DeleteGrade: Method Constructor DeleteGradeAdapter: Looking at -> " + grade.toString());
+                if (grade.isDownloaded == true) {
+                    Log.d("Englify", "Class DeleteGrade: Method Constructor DeleteGradeAdapter: " + grade.name + " has been downloaded.");
+                    newListing.grades.add(grade);
                 }
             }
-            this.rootListing = rootListing;
+            this.rootListing = newListing;
         }
 
         @Override
@@ -80,8 +88,14 @@ public class DeleteGrade extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(DeleteGradeViewHolder holder, int position) {
+        public void onBindViewHolder(DeleteGradeViewHolder holder, final int position) {
             holder.updateUI(rootListing.grades.get(position).name);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new DataManager().deleteGrade(rootListing.grades.get(position));
+                }
+            });
         }
 
         @Override

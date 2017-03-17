@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.*;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ServiceCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -44,6 +45,8 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     private int position;
     private Handler mHandler = new Handler();
     private Object object;
+    private long replyTimeOut = 3000;
+    private StopWatch stopWatch;
 
     public SpeechRecognition() {
         // Required empty public constructor
@@ -86,6 +89,15 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (speech != null) {
+            releaseResources();
+        }
+        mHandler.removeCallbacks(mBackgroundThread);
+    }
+
     public void initializeSpeechRecognition() {
         //initialize speech recognizer
         speech = SpeechRecognizer.createSpeechRecognizer(getContext());
@@ -125,6 +137,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                         speechProgressBar.setIndeterminate(false);
                         speechReturnTextView.setText("Translating audio...");
                         speech.stopListening();
+                        startTimeoutTimer();
                         break;
                     }
                 }
@@ -223,21 +236,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         return message;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (speech != null) {
-            releaseResources();
-        }
-        mHandler.removeCallbacks(mBackgroundThread);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mHandler.post(mBackgroundThread);
-    }
-
     private Runnable mBackgroundThread = new Runnable() {
         public void run() {
             //check for page changes
@@ -247,9 +245,16 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                 updateUI();
                 //wipe the returnTextView
                 speechReturnTextView.setText("");
+                //stop the timeout stopwatch
+                if (stopWatch != null && stopWatch.isRunning()) {
+                    resetTimeoutTimer();
+                }
             }
             if (speech == null && mainActivity.hasInternetConnection == true) {
                 initializeSpeechRecognition();
+            }
+            if (stopWatch != null && stopWatch.isRunning()) {
+                checkTimeoutTimer();
             }
             mHandler.postDelayed(mBackgroundThread, 500);
         }
@@ -272,4 +277,28 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             speech = null;
         }
     }
+
+    public void startTimeoutTimer() {
+        if (stopWatch == null) {
+            stopWatch = new StopWatch();
+        }
+        stopWatch.start();
+        Log.d("Englify", "Class SpeechRecognition: Method startTimeoutTimer(): Timer started." );
+    }
+
+    public void checkTimeoutTimer() {
+        if (stopWatch.isRunning() && stopWatch.lapTime() > replyTimeOut) {
+            speechReturnTextView.setText(R.string.Speech_Recognition_Timeout);
+            resetTimeoutTimer();
+            Log.d("Englify", "Class SpeechRecognition: Method checkTimeoutTimer(): Timed out." );
+        }
+        Log.d("Englify", "Class SpeechRecognition: Method checkTimeoutTimer(): Timer has not timed out. " + (replyTimeOut - stopWatch.lapTime()) + "ms left." );
+    }
+
+    public void resetTimeoutTimer() {
+        stopWatch.stop();
+        Log.d("Englify", "Class SpeechRecognition: Method resetTimeoutTimer: Timer reset." );
+    }
+
+
 }

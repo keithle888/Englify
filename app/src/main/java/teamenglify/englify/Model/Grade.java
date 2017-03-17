@@ -40,4 +40,9 @@ public class Grade implements Serializable{
         }
         return toReturn;
     }
+
+    @Override
+    public String toString() {
+        return "Grade[name:\"" + name + "\", lessons:\"" + lessons.toString() + "\",imgURL:\"" + imgURL + "\",isDownloaded:\"" + isDownloaded + "\"]";
+    }
 }

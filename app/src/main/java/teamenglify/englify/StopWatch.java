@@ -8,19 +8,30 @@ package teamenglify.englify;
 public class StopWatch {
     private long start;
 
-    public StopWatch() { }
+    public StopWatch() {
+        start = 0;
+    }
 
     public void start() {
         start = System.currentTimeMillis();
     }
 
     public long lapTime() {
-        long lapTime = start - System.currentTimeMillis();
+        long lapTime = System.currentTimeMillis() - start;
         return lapTime;
     }
 
     public long stop() {
-        long elapsedTime = start - System.currentTimeMillis();
+        long elapsedTime = System.currentTimeMillis() - start;
+        start = 0;
         return elapsedTime;
+    }
+
+    public boolean isRunning() {
+        if (start != 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

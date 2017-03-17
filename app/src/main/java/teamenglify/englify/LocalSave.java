@@ -53,6 +53,21 @@ public class LocalSave {
         return true;
     }
 
+    public static boolean saveObject(int stringID, Object input) {
+        String fileName = mainActivity.getString(stringID);
+        try {
+            FileOutputStream fos = mainActivity.openFileOutput(fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(input);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            Log.d("Englify", "Class LocalSave: Method saveObject: Trying to save " + fileName + " but caught Exception: " + e);
+            return false;
+        }
+        return true;
+    }
+
     public static String loadString(String fileName) {
         String line = null;
         StringBuilder sb = new StringBuilder();

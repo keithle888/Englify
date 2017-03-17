@@ -202,9 +202,7 @@ public class ListingFragment extends Fragment {
                 Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject.");
             } else {
                 mHandler.postDelayed(mBackgroundThread, 500);
-                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Looping.");
             }
-            Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Loop is running.");
         }
     };
 
