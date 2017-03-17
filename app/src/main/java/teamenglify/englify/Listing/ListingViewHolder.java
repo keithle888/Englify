@@ -1,6 +1,7 @@
 package teamenglify.englify.Listing;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +21,12 @@ public class ListingViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         this.textUpdate = (TextView) itemView.findViewById(R.id.textUpdate);
         overflow = (ImageView) itemView.findViewById(R.id.overflow);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("ListingViewHolder", "card view clicked");
+            }
+        });
     }
 
     public void updateUI (String text){

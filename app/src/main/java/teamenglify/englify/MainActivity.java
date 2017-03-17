@@ -53,6 +53,7 @@ import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.Settings.DeleteGrade;
+import teamenglify.englify.Tutorial.Tutorial;
 import teamenglify.englify.VocabModule.VocabModule;
 
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
@@ -176,6 +177,8 @@ public class MainActivity extends AppCompatActivity {
                 if(dataList.size()>10){
                     AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey());
                     analytics.getEventClient().recordEvent(event);
+                    Log.d("main activity", (String)pair.getKey());
+                    //Log.d("main activity", event.toString());
                     Log.d("main activity", "event recorded");
                 } else {
                     Log.d("main activity", "event not recorded");
@@ -299,6 +302,9 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             newFragment = new DeleteGrade();
                         }
+                        break;
+                    case 5:
+                        newFragment = new Tutorial();
                         break;
                 }
                 if (newFragment != null) {
