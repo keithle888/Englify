@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +16,10 @@ import android.widget.ImageView;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Tutorial#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Tutorial extends Fragment {
     ViewPager viewPager;
+    SwipeTutorial swipeTutorial;
+    //public Drawable [] drawablesList;
 
 
     public Tutorial() {
@@ -46,20 +44,29 @@ public class Tutorial extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
         viewPager = (ViewPager) v.findViewById(R.id.tutorialViewPager);
+        swipeTutorial = new SwipeTutorial();
+        viewPager.setAdapter(swipeTutorial);
 
-        Resources res = MainActivity.getMainActivity().getResources();
-        //res.getDrawable(res.getIdentifier(R.mipmap.screenshot1.));
+        //Resources res = MainActivity.getMainActivity().getResources();
+        //res.getDrawable(res.getIdentifier());
 
-        String [] tutorialRes= getResources().getStringArray(R.array.tutorial);
+        /*String [] tutorialRes= getResources().getStringArray(R.array.tutorial);
         Log.d("Tutorial", tutorialRes[0]);
         Log.d("Tutorial", tutorialRes[1]);
-        Log.d("Tutorial", tutorialRes[2]);
-        ImageView imageView = (ImageView) v.findViewById(R.id.imagetemptutorial);
+        Log.d("Tutorial", tutorialRes[2]);*/
+        /*ImageView imageView = (ImageView) v.findViewById(R.id.imagetemptutorial);
+        Drawable d = getResources().getDrawable(R.drawable.card_image);
+        imageView.setImageDrawable(d);*/
+        /*ImageView imageView = (ImageView) v.findViewById(R.id.imagetemptutorial);
         for (int j = 1; j < 3; j++) {
             Drawable drawable = getResources().getDrawable(getResources()
-                    .getIdentifier("screenshot"+j, "drawable", MainActivity.getMainActivity().getPackageName()));
+                    .getIdentifier("tutorial"+j, "drawable", MainActivity.getMainActivity().getPackageName()));
             Log.d("tutorial", drawable.toString());
-        }
+            imageView.setImageDrawable(drawable);
+        }*/
+
+
+
 
         return v;
     }
