@@ -37,6 +37,7 @@ import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.Model.VocabPart;
 import teamenglify.englify.R;
+import teamenglify.englify.VocabModule.VocabImage;
 
 import static teamenglify.englify.MainActivity.mainActivity;
 
@@ -95,6 +96,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 view.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 //load lesson list if the current listing is grade
                 if(listingType == ListingFragment.GRADE_LISTING) {
+                    MainActivity.strGrade = selected;
                     mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
                     Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Asked mainActivity to loadNextListing()");
                 } else if (listingType == ListingFragment.LESSON_LISTING) {
@@ -108,6 +110,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                     MainActivity.position = position;
                     MainActivity.vocab = selected;
+                    VocabImage.recordData(position);
                     mainActivity.loadVocabModule((Vocab)object);
                 }
             }

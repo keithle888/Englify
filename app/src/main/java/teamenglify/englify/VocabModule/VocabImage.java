@@ -40,6 +40,30 @@ public class VocabImage extends Fragment {
         return fragment;
     }
 
+    public static void recordData (int position){
+        HashMap<String,ArrayList<String>> analyticList= MainActivity.analyticList;
+        ArrayList<String> dataRecorded = analyticList.get(MainActivity.strGrade+MainActivity.lesson);
+        if(dataRecorded==null){
+            analyticList.put(MainActivity.strGrade+MainActivity.lesson, new ArrayList<String>());
+            Log.d("analytic vocab", "null");
+            dataRecorded = new ArrayList<>();
+            dataRecorded.add(Integer.toString(position));
+            analyticList.put(MainActivity.strGrade+MainActivity.lesson, dataRecorded);
+        } else {
+            boolean isExist = false;
+            for(String temp : dataRecorded){
+                if(temp.equalsIgnoreCase(Integer.toString(position))){
+                    isExist = true;
+                }
+            }
+            if(!isExist){
+                dataRecorded.add(Integer.toString(position));
+                analyticList.put(MainActivity.strGrade+MainActivity.lesson, dataRecorded);
+            }
+        }
+        Log.d("VocabImage", dataRecorded.toString());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,27 +86,7 @@ public class VocabImage extends Fragment {
                 if (mainActivity.position != position) {
                     mainActivity.position = position;
                 }
-                HashMap<String,ArrayList<String>> analyticList= MainActivity.analyticList;
-                ArrayList<String> dataRecorded = analyticList.get(MainActivity.grade+MainActivity.lesson);
-                if(dataRecorded==null){
-                    analyticList.put(MainActivity.grade+MainActivity.lesson, new ArrayList<String>());
-                    Log.d("analytic vocab", "null");
-                    dataRecorded = new ArrayList<>();
-                    dataRecorded.add(Integer.toString(position));
-                    analyticList.put(MainActivity.grade+MainActivity.lesson, dataRecorded);
-                } else {
-                    boolean isExist = false;
-                    for(String temp : dataRecorded){
-                        if(temp.equalsIgnoreCase(Integer.toString(position))){
-                            isExist = true;
-                        }
-                    }
-                    if(!isExist){
-                        dataRecorded.add(Integer.toString(position));
-                        analyticList.put(MainActivity.grade+MainActivity.lesson, dataRecorded);
-                    }
-                }
-                Log.d("VocabImage", dataRecorded.toString());
+                recordData(position);
             }
 
             @Override

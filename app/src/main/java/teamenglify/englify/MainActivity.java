@@ -60,6 +60,7 @@ import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
     public static Grade grade;
+    public static String strGrade;
     public static String lesson;
     public static String vocab;
     public static String read;
@@ -124,11 +125,15 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
         }
 
+        AnalyticsEvent event = analytics.getEventClient().createEvent("LessonCompleted").withAttribute("lessonOne","lessonOne");
+        analytics.getEventClient().recordEvent(event);
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        mHandler.post(mBackgroundThread);
         mHandler.post(mBackgroundThread);
         //create RootListing if none exists (eg. 1st time app download)
         if (fileList().length == 0) {
@@ -167,8 +172,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.d("MainActivity", "onPaused");
         if(analytics != null) {
-            Log.d("MainActivity", "event not recorded");
-            analytics.getSessionClient().pauseSession();
+            //Log.d("MainActivity", "event not recorded");
             //analytics.getEventClient().submitEvents();
             Iterator it = analyticList.entrySet().iterator();
             while (it.hasNext()) {
@@ -176,10 +180,10 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> dataList = (ArrayList<String>) pair.getValue();
                 Log.d("main activity", ""+dataList.toString());
                 if(dataList.size()>10){
-                    AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey());
+                    AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed");
                     analytics.getEventClient().recordEvent(event);
                     Log.d("main activity", (String)pair.getKey());
-                    //Log.d("main activity", event.toString());
+                    Log.d("main activity", event.toString());
                     Log.d("main activity", "event recorded");
                 } else {
                     Log.d("main activity", "event not recorded");
@@ -188,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 //it.remove(); // avoids a ConcurrentModificationException
             }
         }
+        analytics.getSessionClient().pauseSession();
         mHandler.removeCallbacks(mBackgroundThread);
     }
 
