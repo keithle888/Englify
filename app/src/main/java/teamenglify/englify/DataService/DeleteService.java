@@ -9,15 +9,9 @@ import java.util.ArrayList;
 
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.LoginFragment.LoginFragment;
-import teamenglify.englify.Model.Conversation;
-import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
-import teamenglify.englify.Model.Module;
-import teamenglify.englify.Model.Read;
-import teamenglify.englify.Model.ReadPart;
 import teamenglify.englify.Model.RootListing;
-import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
