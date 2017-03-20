@@ -5,8 +5,9 @@
         <item>Grade တန်း</item>
         <item>Pronounce ကွညောခ</item>
         <item>Feedback တုံ့ပြန်ချက်</item>
-        <item>Settings</item>
+        <item>Delete Grade</item>
         <item>Tutorial</item>
+        <item>Check For Updates</item>
     </string-array>
 
     <string-array name="tutorial">

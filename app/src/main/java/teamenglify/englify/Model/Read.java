@@ -2,6 +2,7 @@ package teamenglify.englify.Model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 /**
@@ -11,10 +12,17 @@ import java.util.LinkedList;
 public class Read implements Serializable{
     public String name;
     public ArrayList<ReadPart> readParts;
+    public Date lastModified;
 
     public Read (String name, ArrayList<ReadPart> readParts) {
         this.name = name;
         this.readParts = readParts;
+    }
+
+    public Read (String name, ArrayList<ReadPart> readParts, Date lastModified) {
+        this.name = name;
+        this.readParts = readParts;
+        this.lastModified = lastModified;
     }
 
     public Read(String name) {
