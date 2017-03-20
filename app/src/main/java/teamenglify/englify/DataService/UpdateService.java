@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,6 +67,8 @@ public class UpdateService extends AsyncTask<Void, String, Void> {
         List<S3ObjectSummary> summaries = mainActivity.s3Client.listObjects(bucketName, rootDirectory).getObjectSummaries();                //get all the listings from S3
         for (S3ObjectSummary summary : summaries) {                                                                                         //loop through all the listings in S3
             String key = summary.getKey();
+            Date date = summary.getLastModified();
+            Log.d("Englify", "Class UpdateService: Method checkAndUpdateGrades(): " + key + " -> " + date.toString());
             if (existingGradeNames.hasMatch(key)) {                                                                                         //the key from S3 is matched against grades that are locally stored in the device.
 
             }
