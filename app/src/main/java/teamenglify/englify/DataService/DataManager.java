@@ -99,22 +99,24 @@ public class DataManager {
     public void checkForUpdates() {
         ArrayList<Grade> gradesToBeChecked = new ArrayList<>();
         //check whether anything has been downloaded. If not, throw a toast.
-        if (LocalSave.loadObject(R.string.S3_Object_Listing) == null) {
+        if (LocalSave.loadObject(R.string.S3_Object_Listing) == null ) {
             Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
         } else {
             RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
-
-            for (Grade grade : rootListing.grades) {
-                if (grade.isDownloaded) {
-                    gradesToBeChecked.add(grade);
+            if (rootListing.grades != null && rootListing.grades.size() != 0) {
+                for (Grade grade : rootListing.grades) {
+                    if (grade.isDownloaded) {
+                        gradesToBeChecked.add(grade);
+                    }
                 }
-            }
-            if (gradesToBeChecked.size() == 0) { //no grades have been downloaded, only RootListing was downloaded.
-                Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
+                if (gradesToBeChecked.size() == 0) { //no grades have been downloaded, only RootListing was downloaded.
+                    Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
+                } else {
+                    new UpdateService(gradesToBeChecked).execute();
+                }
             } else {
-                new UpdateService(gradesToBeChecked).execute();
+                Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
             }
         }
-
     }
 }
