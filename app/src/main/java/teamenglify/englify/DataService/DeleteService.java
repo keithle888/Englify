@@ -9,15 +9,11 @@ import java.util.ArrayList;
 
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.LoginFragment.LoginFragment;
-import teamenglify.englify.Model.Conversation;
-import teamenglify.englify.Model.Exercise;
+
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
-import teamenglify.englify.Model.Module;
-import teamenglify.englify.Model.Read;
-import teamenglify.englify.Model.ReadPart;
 import teamenglify.englify.Model.RootListing;
-import teamenglify.englify.Model.Vocab;
+
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -29,6 +25,8 @@ import static teamenglify.englify.MainActivity.mainActivity;
 public class DeleteService extends AsyncTask<Void, Void, Void>{
     private ProgressDialog pd;
     private Grade grade;
+
+    public DeleteService() {}
 
     public DeleteService(Grade grade) {
         this.grade = grade;
@@ -73,7 +71,6 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
             if (fileName.contains(grade.name)) {
                 Log.d("Englify", "Class DeleteService: Method deleteGrade(): Deleting -> " + fileName);
                 mainActivity.deleteFile(fileName);
-                pd.setProgress(pd.getProgress() + 1);
             }
         }
         Grade newGrade = new Grade(grade.name, new ArrayList<Lesson>(), null, false);
@@ -83,5 +80,9 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
         rootListing.overrideGrade(newGrade);
         LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
+    }
+
+    public void deleteRootListing() {
+        mainActivity.deleteFile(mainActivity.getString(R.string.S3_Object_Listing));
     }
 }

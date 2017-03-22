@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.DataService.S3Properties;
 import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
@@ -59,7 +60,6 @@ import teamenglify.englify.VocabModule.VocabModule;
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
-    public static Grade grade;
     public static String strGrade;
     public static String lesson;
     public static String vocab;
@@ -312,6 +312,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 5:
                         newFragment = new Tutorial();
+                        break;
+                    case 6:
+                        new DataManager().checkForUpdates();
                         break;
                 }
                 if (newFragment != null) {

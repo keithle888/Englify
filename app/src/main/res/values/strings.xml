@@ -34,4 +34,8 @@
     <string name="Speech_Recognition_Timeout">Timed out. Please try again.</string>
     <string name="Download_Failed">Download failed.</string>
     <string name="Deletion_Check">Are you sure you want to delete</string>
+    <string name="Update_Reject">No grade(s) have been downloaded.</string>
+    <string name="Update_Prompt_Message">An update is available. Would you like to update?</string>
+    <string name="Update_Not_Available">There are no updates available.</string>
+    <string name="Update_Complete">Update completed.</string>
 </resources>

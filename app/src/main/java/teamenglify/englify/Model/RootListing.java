@@ -2,6 +2,7 @@ package teamenglify.englify.Model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Keith on 07-Mar-17.
@@ -9,9 +10,15 @@ import java.util.ArrayList;
 
 public class RootListing implements Serializable{
     public ArrayList<Grade> grades;
+    public Date lastModified;
 
     public RootListing (ArrayList<Grade> grades) {
         this.grades = grades;
+    }
+
+    public RootListing (ArrayList<Grade> grades, Date lastModified) {
+        this.grades = grades;
+        this.lastModified = lastModified;
     }
 
     public void overrideGrade(Grade grade) {

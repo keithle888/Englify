@@ -1,8 +1,13 @@
 package teamenglify.englify.Model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
+
+import static teamenglify.englify.MainActivity.bucketName;
 
 /**
  * Created by Keith on 06-Mar-17.
@@ -11,10 +16,17 @@ import java.util.LinkedList;
 public class Read implements Serializable{
     public String name;
     public ArrayList<ReadPart> readParts;
+    public Date lastModified;
 
     public Read (String name, ArrayList<ReadPart> readParts) {
         this.name = name;
         this.readParts = readParts;
+    }
+
+    public Read (String name, ArrayList<ReadPart> readParts, Date lastModified) {
+        this.name = name;
+        this.readParts = readParts;
+        this.lastModified = lastModified;
     }
 
     public Read(String name) {
@@ -60,7 +72,8 @@ public class Read implements Serializable{
     }
 
     public void overwriteTexts(LinkedList<String> texts) {
-        if (texts != null) {
+        if (texts != null && readParts.size() != 0) {
+            Log.d(bucketName, "Class Read, Method overwriteTexts(): Overwriting read texts with contents -> " + texts.toString());
             for (ReadPart readPart : readParts) {
                 String text = texts.pop();
                 readPart.reading = text;
