@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/tutorialLayout"
     tools:context="teamenglify.englify.Tutorial.Tutorial">
 
     <android.support.v4.view.ViewPager
@@ -10,5 +11,25 @@
         android:background="#ffffff"
         android:id="@+id/tutorialViewPager">
     </android.support.v4.view.ViewPager>
+
+    <ImageButton
+        android:id="@+id/btnLeftPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="90dp"
+        android:maxHeight="40dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_gravity="bottom|left" />
+
+    <ImageButton
+        android:id="@+id/btnRightPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="90dp"
+        android:maxHeight="40dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_gravity="bottom|right" />
 
 </FrameLayout>

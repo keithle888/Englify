@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         analytics.getSessionClient().pauseSession();
+        analytics.getEventClient().submitEvents();
         mHandler.removeCallbacks(mBackgroundThread);
     }
 
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
             analytics = MobileAnalyticsManager.getOrCreateInstance(
                     this.getApplicationContext(),
                     S3Properties.ANALYTICSID, //Amazon Mobile Analytics App ID
-                    S3Properties.IDENTITYPOOLID //Amazon Cognito Identity Pool ID
+                    S3Properties.IDENTITYPOOLID//Amazon Cognito Identity Pool ID
             );
         } catch(InitializationException ex) {
             Log.e(this.getClass().getName(), "Failed to initialize Amazon Mobile Analytics", ex);

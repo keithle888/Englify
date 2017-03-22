@@ -1,18 +1,18 @@
 package teamenglify.englify.Tutorial;
 
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
+import teamenglify.englify.LoginFragment.LoginFragment;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
@@ -42,33 +42,74 @@ public class Tutorial extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
+        final View v = inflater.inflate(R.layout.fragment_tutorial, container, false);
         viewPager = (ViewPager) v.findViewById(R.id.tutorialViewPager);
         swipeTutorial = new SwipeTutorial();
         viewPager.setAdapter(swipeTutorial);
 
-        //Resources res = MainActivity.getMainActivity().getResources();
-        //res.getDrawable(res.getIdentifier());
-
-        /*String [] tutorialRes= getResources().getStringArray(R.array.tutorial);
-        Log.d("Tutorial", tutorialRes[0]);
-        Log.d("Tutorial", tutorialRes[1]);
-        Log.d("Tutorial", tutorialRes[2]);*/
-        /*ImageView imageView = (ImageView) v.findViewById(R.id.imagetemptutorial);
-        Drawable d = getResources().getDrawable(R.drawable.card_image);
-        imageView.setImageDrawable(d);*/
-        /*ImageView imageView = (ImageView) v.findViewById(R.id.imagetemptutorial);
-        for (int j = 1; j < 3; j++) {
-            Drawable drawable = getResources().getDrawable(getResources()
-                    .getIdentifier("tutorial"+j, "drawable", MainActivity.getMainActivity().getPackageName()));
-            Log.d("tutorial", drawable.toString());
-            imageView.setImageDrawable(drawable);
-        }*/
+        final ImageButton previousPageBtn = (ImageButton) v.findViewById(R.id.btnLeftPage);
+        previousPageBtn.setImageResource(R.drawable.stop);
+        previousPageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(getItem(-1));
+            }
+        });
 
 
+        final ImageButton nextPageBtn = (ImageButton) v.findViewById(R.id.btnRightPage);
+        nextPageBtn.setImageResource(R.drawable.right_arrow);
+        nextPageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(getItem(+1));
+            }
+        });
 
+        final SwipeTutorial swipeTutorial = new SwipeTutorial();
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(viewPager.getCurrentItem()+1==swipeTutorial.getCount()){
+                    FrameLayout tutorialLayout = (FrameLayout) v.findViewById(R.id.tutorialLayout);
+                    Button gotoMainPage = new Button(getContext());
+                    gotoMainPage.setText("Congratulation, you have finished the tutorial. Click me to go to Main Page");
+                    gotoMainPage.setTextSize(30);
+                    //gotoMainPage.setPadding(0,0,0,1000);
+                    tutorialLayout.addView(gotoMainPage);
+                    nextPageBtn.setImageResource(R.drawable.stop);
+                    gotoMainPage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            MainActivity.getMainActivity().getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
+                        }
+                    });
+                }
+
+                if(viewPager.getCurrentItem()>0){
+                    previousPageBtn.setImageResource(R.drawable.left_arrow);
+                } else {
+                    previousPageBtn.setImageResource(R.drawable.stop);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         return v;
+    }
+
+    private int getItem(int i){
+        return viewPager.getCurrentItem() + i;
     }
 
 }
