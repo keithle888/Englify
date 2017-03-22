@@ -68,9 +68,9 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         Log.d("Englify", "Class DownloadService: Method onPreExecute(): Download Service starting, opening ProgressDialog.");
         pd = new ProgressDialog(mainActivity);
         pd.setTitle("Download");
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pd.setMessage(baseMessage);
         pd.setCancelable(false);
-        pd.setIndeterminate(true);
         pd.show();
     }
 
@@ -103,7 +103,10 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
 
     @Override
     protected void onProgressUpdate(String...progress) {
-        pd.setMessage(baseMessage + "\n" + progress[0]);
+        if (progress != null) {
+            pd.setMessage(baseMessage + "\n" + progress[0]);
+        }
+        pd.setProgress(pd.getProgress() + 1);
     }
 
     @Override
@@ -133,11 +136,14 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         //download all objects
         try {
             List<S3ObjectSummary> summaries = getSummaries(mainActivity.rootDirectory);
+            pd.setMax(summaries.size());
+            pd.setProgress(0);
             Log.d("Englify", "Class DownloadService: Method downloadListing(): Downloaded object listing from AWS S3.");
             //identify grades
             HashMap<String, String> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();
+                publishProgress(key);
                 String[] keyParts = key.split("/");
                 if (keyParts.length == 2) { //the listing for grades will always only have 2 parts ("res/grade01/")
                     //identify if its a grade or a grade picture
@@ -171,7 +177,6 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                 //save each grade into internal storage
                 Grade newGrade = new Grade(gradeName, new ArrayList<Lesson>(), null, false);
                 Log.d("Englify", "Class DownloadService: Method downloadListing(): Created grade -> " + newGrade.toString());
-                publishProgress(gradeName);
                 grades.add(newGrade);
             }
             //save the grades to internal storage
@@ -187,6 +192,8 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         try {
             //download grade tree from S3.
             List<S3ObjectSummary> summaries = getSummaries(mainActivity.getString(R.string.Root_Directory) + "/" + grade.name);
+            pd.setMax(summaries.size());
+            pd.setProgress(0);
             //Iterate through all summaries and use each entry to generate the correct Model.
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();
