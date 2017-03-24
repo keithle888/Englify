@@ -15,6 +15,7 @@
     <string name="Yes">Yes</string>
     <string name="No">No</string>
     <string name="Download_Prompt_Title">Save To Memory</string>
+    <string name="Download_Prompt_Title_b">မွတ္ဥဏ္(memory)ထဲတြင္သိမ္းပါ။</string>
     <string name="Deletion_Prompt_Title">Delete From Memory</string>
     <string name="Download_Prompt_Message">Would you like to download and save</string>
     <string name="Conversation_Folder_Name">Conversation</string>
