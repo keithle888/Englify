@@ -4,6 +4,7 @@ package teamenglify.englify.Tutorial;
 import android.content.Context;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 public class SwipeTutorial extends PagerAdapter{
-    private int [] imageResource = {R.drawable.tutorial1, R.drawable.tutorial2};
+    private int [] imageResource = {R.drawable.tutorial1, R.drawable.tutorial2, R.drawable.tutorial3};
 
     //private Context context;
     private LayoutInflater layoutInflater;
@@ -41,5 +42,10 @@ public class SwipeTutorial extends PagerAdapter{
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return (view == object);
+    }
+
+    @Override
+    public void destroyItem(View container, int position, Object object) {
+        ((ViewPager) container).removeView((View) object);
     }
 }
