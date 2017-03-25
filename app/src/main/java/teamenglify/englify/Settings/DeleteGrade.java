@@ -110,7 +110,6 @@ public class DeleteGrade extends Fragment {
             public DeleteGradeViewHolder(View view) {
                 super(view);
                 mTextView = (TextView) itemView.findViewById(R.id.textUpdate);
-                mImageView = (ImageView) itemView.findViewById(R.id.overflow);
             }
 
             public void updateUI(String text) {mTextView.setText(text);}
