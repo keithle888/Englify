@@ -181,12 +181,25 @@ public class ListingFragment extends Fragment {
         //get the listings based on which listingType
         if (listingType == GRADE_LISTING) {
             RootListing grades = (RootListing) object;
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            //load additional settings
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        }else if (listingType == LESSON_LISTING || listingType == READ_LISTING){
+
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+
+        }else {
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         }
-        listingAdapter = new ListingAdapter(object, listingType);
-        recyclerView.setAdapter(listingAdapter);
-        //load additional settings
-        mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
-        recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //recyclerView.setLayoutManager(layoutManager);
