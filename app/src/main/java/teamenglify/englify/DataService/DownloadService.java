@@ -211,7 +211,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                         Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name + " added.");
                         publishProgress(key);
                         grade.findLesson(delimitedKey[2]).addModule(conversation);
-                    } else if (delimitedKey[3].equalsIgnoreCase("Vocab")) {//It is a vocabulary
+                    } else if (delimitedKey[3].equalsIgnoreCase("Vocabulary")) {//It is a vocabulary
                         Vocab vocab = new Vocab(delimitedKey[3]);
                         Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name + " added.");
                         publishProgress(key);
