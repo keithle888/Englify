@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                         //redirects user back if nothing has been downloaded
                         RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                         if (root == null || root.grades == null) {
-                            Toast.makeText(mainActivity,"No grades downloaded.",Toast.LENGTH_LONG).show();
+                            Toast.makeText(mainActivity,"No grades downloaded.မည္သည့္အဆင့္မွ် ထုတ္ယူ (download) ၿခင္းမရွိပ္။",Toast.LENGTH_LONG).show();
                         } else {
                             newFragment = new DeleteGrade();
                         }
