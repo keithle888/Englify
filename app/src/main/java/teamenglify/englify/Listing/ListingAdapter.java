@@ -80,22 +80,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     @Override
     public ListingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        if (listingType == ListingFragment.GRADE_LISTING) {
-            View choice = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.selection_box, parent, false);
-
-            return new ListingViewHolder(choice);
-        } else if (listingType == ListingFragment.LESSON_LISTING) {
-            View choice = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.selection_box, parent, false);
-
-            return new ListingViewHolder(choice);
-        } else if (listingType == ListingFragment.READ_LISTING) {
-            View choice = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.selection_box, parent, false);
-
-            return new ListingViewHolder(choice);
-        } else if (listingType == ListingFragment.VOCAB_LISTING){ //When the listing is VOCAB_LISTING
+        if (listingType == ListingFragment.VOCAB_LISTING){ //When the listing is VOCAB_LISTING
             View choice = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.selection_box_list, parent, false);
 
@@ -103,7 +88,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
         }
 
         View choice = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.selection_box_list, parent, false);
+                .inflate(R.layout.selection_box, parent, false);
 
         return new ListingViewHolder(choice);
     }

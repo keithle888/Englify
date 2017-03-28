@@ -57,6 +57,15 @@ import teamenglify.englify.Settings.DeleteGrade;
 import teamenglify.englify.Tutorial.Tutorial;
 import teamenglify.englify.VocabModule.VocabModule;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.os.Environment;
+import android.widget.ArrayAdapter;
+
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
@@ -88,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private File root;
+    private ArrayList<File> fileList = new ArrayList<File>();
 
     //variable for SpeechRecognition
     public boolean readyForSpeechRecognitionToLoad = false;
@@ -141,7 +153,15 @@ public class MainActivity extends AppCompatActivity {
         } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
             LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
         }
+        File dir = getFilesDir();
+        File[] subFiles = dir.listFiles();
+
+        for(File f : subFiles){
+            Log.d("DOWNLOADED FILES -- ",f.getName());
+        }
     }
+
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

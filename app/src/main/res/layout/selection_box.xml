@@ -25,19 +25,19 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/card_image"/>
+                android:src="@drawable/card_image" />
 
             <TextView
                 android:id="@+id/textUpdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/thumbnail"
+                android:paddingBottom="10dp"
                 android:paddingLeft="@dimen/album_title_padding"
                 android:paddingRight="@dimen/album_title_padding"
                 android:paddingTop="@dimen/album_title_padding"
-                android:paddingBottom="10dp"
                 android:textColor="@color/grade_title"
-                android:textSize="@dimen/album_title"
-                android:layout_below="@+id/thumbnail" />
+                android:textSize="@dimen/album_title" />
 
 
         </RelativeLayout>

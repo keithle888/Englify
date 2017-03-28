@@ -15,7 +15,7 @@ import teamenglify.englify.R;
 
 public class ListingViewHolder extends RecyclerView.ViewHolder {
     public TextView textUpdate;
-    public ImageView overflow;
+    //public ImageView overflow;
 
     public ListingViewHolder(View itemView) {
         super(itemView);
