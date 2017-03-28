@@ -211,7 +211,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                         Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name + " added.");
                         publishProgress(key);
                         grade.findLesson(delimitedKey[2]).addModule(conversation);
-                    } else if (delimitedKey[3].equalsIgnoreCase("Vocabulary")) {//It is a vocabulary
+                    } else if (delimitedKey[3].equalsIgnoreCase("Vocab")) {//It is a vocabulary
                         Vocab vocab = new Vocab(delimitedKey[3]);
                         Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name + " added.");
                         publishProgress(key);
@@ -308,6 +308,8 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             downloadReadParts(grade);
         } catch (Exception e) {
             Log.d(bucketName, "Class DownloadService: Method downloadGradeModules(): Exception caught -> " + e.toString());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -319,6 +321,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                         Conversation conversation = (Conversation) module;
                         for (Read read : conversation.reads) { //FOR EACH READ
                             List<S3ObjectSummary> summaries = getSummaries(generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name));
+                            Log.d(bucketName, "Class DownloadService: Method downloadReadParts(): Downloading ReadParts for => " + generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name));
                             for (S3ObjectSummary summary : summaries) { // DO EACH READ PART ONE BY ONE (ANGRY CODING!)
                                 String key = summary.getKey();
                                 String[] dKey = key.split("/");
