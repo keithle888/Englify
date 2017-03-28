@@ -2,11 +2,14 @@ package teamenglify.englify;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -136,10 +139,10 @@ public class MainActivity extends AppCompatActivity {
             fragment = new LoginFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
         }
-
         AnalyticsEvent event = analytics.getEventClient().createEvent("LessonCompleted").withAttribute("lessonOne","lessonOne");
         analytics.getEventClient().recordEvent(event);
-
+        //Initialize Myanmar-Dictionary App
+        initializeDictionary();
     }
 
     @Override
@@ -399,6 +402,43 @@ public class MainActivity extends AppCompatActivity {
         if (fm.getBackStackEntryCount() > 0) {
             FragmentManager.BackStackEntry first = fm.getBackStackEntryAt(0);
             fm.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
+    public void initializeDictionary() {
+        //Initialize Myanmar-Dictionary App
+        Intent externalApp = getPackageManager().getLaunchIntentForPackage("com.naing.englishmyanmardictionary");
+        if (externalApp == null) {
+            //Ask them whether they want to download another app?
+            if (hasInternetConnection == false) {
+                Toast.makeText(this, R.string.Dictionary_Download_Unavailable, Toast.LENGTH_LONG).show();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.Dictionary_Download_Prompt);
+                builder.setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent market = new Intent(Intent.ACTION_VIEW);
+                        market.setData(Uri.parse("market://details?id=com.naing.englishmyanmardictionary&hl=en"));
+                        startActivity(market);
+                    }
+                });
+                builder.setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(mainActivity, R.string.Dictionary_Download_Reject, Toast.LENGTH_LONG).show();
+                    }
+                });
+                AlertDialog ap = builder.create();
+                ap.show();
+            }
+        } else {
+            externalApp.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            startActivity(externalApp);
+            Toast.makeText(this, R.string.Dictionary_Load_Success, Toast.LENGTH_LONG).show();
+            Intent mApp = getPackageManager().getLaunchIntentForPackage("teamenglify.englify");
+            mApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(mApp);
         }
     }
 }
