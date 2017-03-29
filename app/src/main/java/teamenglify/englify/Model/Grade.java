@@ -1,8 +1,11 @@
 package teamenglify.englify.Model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * Created by Keith on 06-Mar-17.
@@ -54,5 +57,22 @@ public class Grade implements Serializable{
     @Override
     public String toString() {
         return "Grade[name:\"" + name + "\", lessons:\"" + lessons.toString() + "\",imgURL:\"" + imgURL + "\",isDownloaded:\"" + isDownloaded + "\"]";
+    }
+
+    public void overwriteLessonDescriptions(LinkedList<String> texts) {
+        if (lessons != null && lessons.size() != 0) {
+            for (String description : texts) {
+                String[] keys = description.split(":");
+                for (String k : keys) {
+                    k.trim();
+                }
+                Lesson lesson = findLesson(keys[0]);
+                if (lesson != null) {
+                    lesson.description = keys[1];
+                } else {
+                    Log.d("Englify", "Class Grade: Method overwriteLessonDescriptions(): Description found without matching lesson -> " + description);
+                }
+            }
+        }
     }
 }

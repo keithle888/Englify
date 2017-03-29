@@ -17,15 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
-import android.support.v7.widget.PopupMenu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-
 
 
 import teamenglify.englify.MainActivity;
@@ -47,6 +38,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     private int listingType;
     private Object object;
     private ArrayList<String> listings;
+    private ArrayList<String> listingLessonDesc;
 
     public ListingAdapter(Object object, int listingType) {
         this.object = object;
@@ -54,6 +46,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
         this.mContext = mainActivity.getApplicationContext();
         //Generate listings on constructor
         listings = new ArrayList<>();
+        listingLessonDesc = new ArrayList<>();
         if (listingType == ListingFragment.GRADE_LISTING) {
             RootListing root = (RootListing) object;
             for (Grade grade : root.grades) {
@@ -63,6 +56,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
             Grade grade = (Grade) object;
             for (Lesson lesson : grade.lessons) {
                 listings.add(lesson.name);
+                listingLessonDesc.add(lesson.description);
             }
         } else if (listingType == ListingFragment.READ_LISTING) {
             Conversation conversation = (Conversation) object;
@@ -83,6 +77,20 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
         if (listingType == ListingFragment.VOCAB_LISTING){ //When the listing is VOCAB_LISTING
             View choice = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.selection_box_list, parent, false);
+
+            return new ListingViewHolder(choice);
+        }
+
+        if (listingType == ListingFragment.LESSON_LISTING){ //When the listing is VOCAB_LISTING
+            View choice = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.selection_box_lesson, parent, false);
+
+            return new ListingViewHolder(choice);
+        }
+
+        if (listingType == ListingFragment.READ_LISTING){ //When the listing is VOCAB_LISTING
+            View choice = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.selection_box_read, parent, false);
 
             return new ListingViewHolder(choice);
         }

@@ -51,6 +51,7 @@ public class ListingFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private RecyclerView recyclerView;
     private ListingAdapter listingAdapter;
+    private ListingAdapterLesson listingAdapterLesson;
     private ImageView noContentImage;
     private int listingType;
     private Handler mHandler;
@@ -167,6 +168,12 @@ public class ListingFragment extends Fragment {
             recyclerView.setAdapter(listingAdapter);
             //load additional settings
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        } else if (listingType == LESSON_LISTING) {
+            listingAdapterLesson = new ListingAdapterLesson(object, listingType);
+            recyclerView.setAdapter(listingAdapterLesson);
+            //load additional settings
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         }else{
 

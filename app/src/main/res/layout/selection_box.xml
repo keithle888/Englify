@@ -9,36 +9,25 @@
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/card_margin"
         android:elevation="3dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/album_cover_height"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:scaleType="fitXY"
-                android:src="@drawable/card_image" />
+            android:layout_height="200dp"
+            android:background="@drawable/card_image">
 
             <TextView
                 android:id="@+id/textUpdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/thumbnail"
-                android:paddingBottom="10dp"
-                android:paddingLeft="@dimen/album_title_padding"
-                android:paddingRight="@dimen/album_title_padding"
-                android:paddingTop="@dimen/album_title_padding"
-                android:textColor="@color/grade_title"
-                android:textSize="@dimen/album_title" />
-
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center_vertical|center_horizontal"
+                android:paddingTop="80dp"
+                android:textColor="@color/speechDisplayTextView"
+                android:textSize="20dp" />
 
         </RelativeLayout>
 
