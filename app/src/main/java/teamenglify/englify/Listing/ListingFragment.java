@@ -22,33 +22,15 @@ import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import teamenglify.englify.DataService.DataManager;
-import teamenglify.englify.MainActivity;
-import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
-import static teamenglify.englify.MainActivity.getMainActivity;
 import static teamenglify.englify.MainActivity.mainActivity;
 
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.ImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -178,12 +160,20 @@ public class ListingFragment extends Fragment {
         //get the listings based on which listingType
         if (listingType == GRADE_LISTING) {
             RootListing grades = (RootListing) object;
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            //load additional settings
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        }else{
+
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+
         }
-        listingAdapter = new ListingAdapter(object, listingType);
-        recyclerView.setAdapter(listingAdapter);
-        //load additional settings
-        mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
-        recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         //recyclerView.setLayoutManager(layoutManager);

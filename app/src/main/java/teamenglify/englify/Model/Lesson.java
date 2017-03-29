@@ -29,11 +29,12 @@ public class Lesson implements Serializable{
 
     public Lesson (String name) {
         this.name = name;
+        this.modules = new ArrayList<>();
     }
 
     public void addModule(Module module) {
         if (modules == null) {
-            modules = new ArrayList<Module>();
+            modules = new ArrayList<>();
         }
         modules.add(module);
     }

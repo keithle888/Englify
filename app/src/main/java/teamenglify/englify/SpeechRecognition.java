@@ -288,7 +288,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     public void checkTimeoutTimer() {
         if (stopWatch.isRunning() && stopWatch.lapTime() > replyTimeOut) {
-            speechReturnTextView.setText(R.string.Speech_Recognition_Timeout);
+            speechReturnTextView.setText(R.string.Speech_Recognition_Timeout+"/"+R.string.Speech_Recognition_Timeout_b);
             resetTimeoutTimer();
             Log.d("Englify", "Class SpeechRecognition: Method checkTimeoutTimer(): Timed out." );
         }

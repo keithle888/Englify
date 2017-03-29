@@ -13,8 +13,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_menu_revert"
-            android:background="#4885ed"
+            app:srcCompat="@drawable/replay"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:id="@+id/audioReplayButton"
@@ -48,8 +47,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_media_play"
-            android:background="#4885ed"
+            app:srcCompat="@drawable/play"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:id="@+id/audioPlayPauseButton"
