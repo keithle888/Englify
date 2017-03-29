@@ -42,9 +42,6 @@ import static teamenglify.englify.MainActivity.read;
 import static teamenglify.englify.MainActivity.rootDirectory;
 import static teamenglify.englify.MainActivity.s3Client;
 
-/**
- * Created by Keith on 05-Mar-17.
- */
 
 public class DownloadService extends AsyncTask<Void, String, Boolean>{
     public final static int DOWNLOAD_LISTING = 0;
@@ -205,6 +202,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                     Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.name + " <- " + lesson.name + " added.");
                     publishProgress(key);
                     grade.addLesson(lesson);
+                    if(isTextFile(delimitedKey[2])){
+                        texts = readTextFile(s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, delimitedKey[2])));
+
+
+                    }
                 } else if (delimitedKeyLength == 4) { //It is a module
                     //Need to identify which module it is
                     if (delimitedKey[3].equalsIgnoreCase("Conversation")) { // It is a conversation
@@ -228,6 +230,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                     }
                 }
             }
+            //Insert lesson descriptions
+            if (texts != null & texts.size() != 0) {
+                grade.overwriteLessonDescriptions(texts);
+                texts = null;
+            }
             //download all the data in each module (it is seperated from the iterator above due to key naming overlaps.
             downloadGradeModules(grade);
             //once all the data has been downloaded. Set isDownloaded in grade to true and save the grade to internal memory
@@ -237,6 +244,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             rootListing.overrideGrade(grade);
             LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
             Log.d("Englify", "Class DownloadService: Method downloadGrade(): Finished downloading " + grade.name + " and saved to internal memory.");
+
         } catch (Exception e) {
             //data downloading failed. Delete all downloaded Data.
             Log.d("Englify", "Class DownloadService: Method downloadGrade(): Caught Exception -> " + e.toString());

@@ -12,6 +12,7 @@ import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.R;
+import android.widget.ImageButton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,7 +62,6 @@ public class ModuleSelection extends Fragment {
         readingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Read Selection");
                 mainActivity.loadNextListing(ListingFragment.READ_LISTING, lesson.findModule(getString(R.string.Conversation_Folder_Name)));
 
@@ -71,7 +71,6 @@ public class ModuleSelection extends Fragment {
         vocabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                 mainActivity.loadNextListing(ListingFragment.VOCAB_LISTING, lesson.findModule(getString(R.string.Vocab_Folder_Name)));
             }

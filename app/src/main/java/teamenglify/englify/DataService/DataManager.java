@@ -16,9 +16,7 @@ import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
 
-/**
- * Created by Keith on 06-Mar-17.
- */
+
 //Used to decide whether to download grades from the internet or from internal storage
 public class DataManager {
 

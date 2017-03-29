@@ -13,6 +13,7 @@ public class Lesson implements Serializable{
     public String name;
     public String imgURL;
     public Date lastModified;
+    public String description;
 
     public Lesson (String name, ArrayList<Module> modules, String imgURL) {
         this.modules = modules;
@@ -37,6 +38,10 @@ public class Lesson implements Serializable{
             modules = new ArrayList<>();
         }
         modules.add(module);
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     public Module findModule(String moduleName) {
