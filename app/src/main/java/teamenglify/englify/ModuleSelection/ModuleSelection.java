@@ -53,9 +53,9 @@ public class ModuleSelection extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_module_selection, container, false);
-        Button readingBtn = (Button) view.findViewById(R.id.ReadingBtn);
-        Button vocabBtn = (Button) view.findViewById(R.id.VocabBtn);
-        Button execiseBtn = (Button) view.findViewById(R.id.ExerciseBtn);
+        ImageButton readingBtn = (ImageButton) view.findViewById(R.id.ReadingBtn);
+        ImageButton vocabBtn = (ImageButton) view.findViewById(R.id.VocabBtn);
+        ImageButton execiseBtn = (ImageButton) view.findViewById(R.id.ExerciseBtn);
         mainActivity = MainActivity.getMainActivity();
         mainActivity.getSupportActionBar().setTitle("Module Selection");
 

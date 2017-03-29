@@ -146,8 +146,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
             LocalSave.saveObject("TutorialObj", new TutorialObj(false));
         } else {
-            fragment = new LoginFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
+            loadLoginFragment();
         }
     }
 
@@ -243,6 +242,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static MainActivity getMainActivity(){
         return mainActivity;
+    }
+
+    public void loadLoginFragment() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
     }
 
     public void loadNextListing(int listingType, Object objectToLoad) {

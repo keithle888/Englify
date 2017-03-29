@@ -16,6 +16,8 @@ import teamenglify.englify.LoginFragment.LoginFragment;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
+import static teamenglify.englify.MainActivity.mainActivity;
+
 public class Tutorial extends Fragment {
     ViewPager viewPager;
     SwipeTutorial swipeTutorial;
@@ -87,7 +89,7 @@ public class Tutorial extends Fragment {
                     gotoMainPage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            MainActivity.getMainActivity().getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
+                            mainActivity.loadLoginFragment();
                         }
                     });
                 }
