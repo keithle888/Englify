@@ -25,7 +25,6 @@ public class VocabFragmentStateAdapter extends FragmentStatePagerAdapter {
         }
     }
 
-
     @Override
     public Fragment getItem(int i) {
         Fragment fragment = new VocabSwipeImage();

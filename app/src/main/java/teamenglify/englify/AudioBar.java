@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
+import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.Vocab;
 
@@ -114,11 +115,7 @@ public class AudioBar extends Fragment {
         //draw on the "new"/refresh set of variables from MainActivity
         position = mainActivity.position;
         //set dataSourceURL depending on who called the Audio Bar , "Conversation" or "Vocab"
-        if (object instanceof Read) {
-            audioURL = ((Read)object).readParts.get(position).audioURL;
-        } else if (object instanceof Vocab) {
-            audioURL = ((Vocab)object).vocabParts.get(position).audioURL;
-        }
+        audioURL = getDataSourceFromObject();
 
         audioTextView.setText(R.string.Loading);
         if (audioURL == null) {
@@ -250,5 +247,26 @@ public class AudioBar extends Fragment {
                 mHandler.post(mBackgroundThread);
             }
         });
+    }
+
+    public String getDataSourceFromObject() {
+        String toReturn = null;
+        if (object instanceof Read) {
+            Read read =  (Read)object;
+            if (read.readParts != null && read.readParts.size() != 0) {
+                toReturn = read.readParts.get(position).audioURL;
+            }
+        } else if (object instanceof Vocab) {
+            Vocab vocab =  (Vocab)object;
+            if (vocab.vocabParts != null && vocab.vocabParts.size() != 0) {
+                toReturn = vocab.vocabParts.get(position).audioURL;
+            }
+        } else if (object instanceof ExerciseChapter) {
+            ExerciseChapter exerciseChapter = (ExerciseChapter)object;
+            if (exerciseChapter.chapterParts != null && exerciseChapter.chapterParts.size() != 0) {
+                toReturn = exerciseChapter.chapterParts.get(position).audioURL;
+            }
+        }
+        return toReturn;
     }
 }

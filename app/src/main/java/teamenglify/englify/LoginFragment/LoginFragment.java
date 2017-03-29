@@ -80,6 +80,8 @@ public class LoginFragment extends Fragment {
                 mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing)));
             }
         });
+        //initialize dictionary
+        mainActivity.initializeDictionary();
         return view;
     }
 }

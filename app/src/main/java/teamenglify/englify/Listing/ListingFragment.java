@@ -111,6 +111,53 @@ public class ListingFragment extends Fragment {
         return view;
     }
 
+    public void mUpdateUIAfterDataLoaded(Object object) {
+        Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
+        //get the listings based on which listingType
+        if (listingType == GRADE_LISTING) {
+            RootListing grades = (RootListing) object;
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            //load additional settings
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        }else{
+            listingAdapter = new ListingAdapter(object, listingType);
+            recyclerView.setAdapter(listingAdapter);
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        }
+    }
+
+    private Runnable mBackgroundThread = new Runnable() {
+        @Override
+        public void run() {
+            if (mainActivity.downloadedObject != null) {
+                objectToLoad = mainActivity.downloadedObject;
+                mUpdateUIAfterDataLoaded(objectToLoad);
+                mainActivity.downloadedObject = null;
+                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject.");
+            } else {
+                mHandler.postDelayed(mBackgroundThread, 500);
+            }
+        }
+    };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mHandler.removeCallbacks(mBackgroundThread);
+    }
+
+    /**
+     * Converting dp to pixel
+     */
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+
 
     /**
      * RecyclerView item decoration - give equal margin around grid item
@@ -148,57 +195,5 @@ public class ListingFragment extends Fragment {
                 }
             }
         }
-    }
-
-    /**
-     * Converting dp to pixel
-     */
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
-    }
-
-    public void mUpdateUIAfterDataLoaded(Object object) {
-        Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
-        //get the listings based on which listingType
-        if (listingType == GRADE_LISTING) {
-            RootListing grades = (RootListing) object;
-            listingAdapter = new ListingAdapter(object, listingType);
-            recyclerView.setAdapter(listingAdapter);
-            //load additional settings
-            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
-            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
-        }else{
-
-            listingAdapter = new ListingAdapter(object, listingType);
-            recyclerView.setAdapter(listingAdapter);
-            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
-            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
-
-        }
-
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //recyclerView.setLayoutManager(layoutManager);
-    }
-
-    private Runnable mBackgroundThread = new Runnable() {
-        @Override
-        public void run() {
-            if (mainActivity.downloadedObject != null) {
-                objectToLoad = mainActivity.downloadedObject;
-                mUpdateUIAfterDataLoaded(objectToLoad);
-                mainActivity.downloadedObject = null;
-                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject.");
-            } else {
-                mHandler.postDelayed(mBackgroundThread, 500);
-            }
-        }
-    };
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mHandler.removeCallbacks(mBackgroundThread);
     }
 }

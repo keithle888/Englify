@@ -14,4 +14,10 @@ public class ExerciseChapterPart implements Serializable{
     public ExerciseChapterPart(String text) {
         this.text = text;
     }
+
+    public ExerciseChapterPart(String text, String imageURL, String audioURL) {
+        this.text = text;
+        this.imageURL = imageURL;
+        this.audioURL = audioURL;
+    }
 }

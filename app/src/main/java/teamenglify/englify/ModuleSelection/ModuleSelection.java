@@ -51,9 +51,10 @@ public class ModuleSelection extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_module_selection, container, false);
-        Button readingBtn = (Button) v.findViewById(R.id.ReadingBtn);
-        Button vocabBtn = (Button) v.findViewById(R.id.VocabBtn);
+        View view = inflater.inflate(R.layout.fragment_module_selection, container, false);
+        Button readingBtn = (Button) view.findViewById(R.id.ReadingBtn);
+        Button vocabBtn = (Button) view.findViewById(R.id.VocabBtn);
+        Button execiseBtn = (Button) view.findViewById(R.id.ExerciseBtn);
         mainActivity = MainActivity.getMainActivity();
         mainActivity.getSupportActionBar().setTitle("Module Selection");
 
@@ -75,6 +76,15 @@ public class ModuleSelection extends Fragment {
                 mainActivity.loadNextListing(ListingFragment.VOCAB_LISTING, lesson.findModule(getString(R.string.Vocab_Folder_Name)));
             }
         });
-        return v;
+
+        execiseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setBackgroundColor(Color.parseColor("#ffffbb33"));
+                mainActivity.getSupportActionBar().setTitle("Exercise Selection");
+                mainActivity.loadNextListing(ListingFragment.EXERCISE_LISTING, lesson.findModule(getString(R.string.Exercise_Folder_Name)));
+            }
+        });
+        return view;
     }
 }

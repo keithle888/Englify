@@ -46,9 +46,12 @@ import java.util.Map;
 
 import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.DataService.S3Properties;
+import teamenglify.englify.ExerciseModule.ExerciseModule;
 import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LoginFragment.LoginFragment;
+import teamenglify.englify.Model.Exercise;
+import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.Read;
@@ -141,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
         }
         AnalyticsEvent event = analytics.getEventClient().createEvent("LessonCompleted").withAttribute("lessonOne","lessonOne");
         analytics.getEventClient().recordEvent(event);
-        //Initialize Myanmar-Dictionary App
-        initializeDictionary();
     }
 
     @Override
@@ -246,6 +247,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadVocabModule(Vocab vocab) {
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, VocabModule.newInstance(vocab)).addToBackStack(null).commit();
+    }
+
+    public void loadExerciseModule(ExerciseChapter exerciseChapter) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ExerciseModule.newInstance(exerciseChapter)).addToBackStack(null).commit();
     }
 
     private Runnable startS3Client = new Runnable() {

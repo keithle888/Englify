@@ -344,17 +344,17 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                                 String[] dKey = key.split("/");
                                 if (dKey.length == 6) {
                                     if (isTextFile(key)) {
-                                        texts = readTextFile(s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5])));
+                                        texts = readTextFile(s3Client.getObject(bucketName, key));
                                         publishProgress(key);
                                         Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Text file found for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name));
                                     } else if (isAudioFile(key)) {
-                                        S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
+                                        S3Object s3Object = s3Client.getObject(bucketName, key);
                                         LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
                                         publishProgress(key);
                                         read.addReadPartAudio(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                         Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Audio file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                     } else if (isImg(key)) {
-                                        S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
+                                        S3Object s3Object = s3Client.getObject(bucketName, key);
                                         LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
                                         publishProgress(key);
                                         read.addReadPartImg(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
@@ -384,6 +384,38 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                     Exercise exercise = (Exercise) module;
                     for (ExerciseChapter exerciseChapter : exercise.chapters) {
                         List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name);
+                        for (S3ObjectSummary summary : summaries) {
+                            String key = summary.getKey();
+                            if (key.contains(grade.name) && key.contains(lesson.name) && key.contains(exercise.name) && key.contains(exerciseChapter.name)) {
+                                String[] dKey = key.split("/");
+                                if (dKey.length == 6) { //Length 6 is only for ExerciseChapterPart
+                                    if (isTextFile(key)) {
+                                        publishProgress(key);
+                                        texts = readTextFile(s3Client.getObject(bucketName, key));
+                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Found text file -> " + key);
+                                    } else if (isAudioFile(key)) {
+                                        publishProgress(key);
+                                        String localAbsolutePath = createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]);
+                                        LocalSave.saveMedia(localAbsolutePath, s3Client.getObject(bucketName, key));
+                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Audio file -> " + key + " saved to " + localAbsolutePath);
+                                        exerciseChapter.addExerciseChapterPartAudio(removeExtension(key), localAbsolutePath);
+                                    } else if (isImg(key)) {
+                                        publishProgress(key);
+                                        String localAbsolutePath = createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]);
+                                        LocalSave.saveMedia(localAbsolutePath, s3Client.getObject(bucketName, key));
+                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Audio file -> " + key + " saved to " + localAbsolutePath);
+                                        exerciseChapter.addExerciseChapterPartImg(removeExtension(key), localAbsolutePath);
+                                    } else {
+                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Unknown key -> " + key);
+                                    }
+                                }
+                            }
+                        }
+                        //Overwrite ExerciseChapterPartNames
+                        if (texts != null && texts.size() != 0) {
+                            exerciseChapter.overwriteExerciseChapterPartsText(texts);
+                            texts = null;
+                        }
                     }
                 }
             }

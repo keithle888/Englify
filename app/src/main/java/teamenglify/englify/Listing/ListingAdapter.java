@@ -1,5 +1,6 @@
 package teamenglify.englify.Listing;
 
+import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -30,6 +31,8 @@ import com.bumptech.glide.Glide;
 
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Conversation;
+import teamenglify.englify.Model.Exercise;
+import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.Read;
@@ -73,6 +76,11 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
             Vocab vocab = (Vocab) object;
             for (VocabPart vocabPart : vocab.vocabParts) {
                 listings.add(vocabPart.text);
+            }
+        } else if (listingType == ListingFragment.EXERCISE_LISTING) {
+            Exercise exercise = (Exercise) object;
+            for (ExerciseChapter exerciseChapter : exercise.chapters) {
+                listings.add(exerciseChapter.name);
             }
         }
     }
@@ -119,6 +127,9 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     MainActivity.vocab = selected;
                     VocabImage.recordData(position);
                     mainActivity.loadVocabModule((Vocab)object);
+                } else if (listingType == ListingFragment.EXERCISE_LISTING) {
+                    mainActivity.position = 0;
+                    mainActivity.loadExerciseModule((ExerciseChapter)((Exercise) object).chapters.get(position));
                 }
             }
         });

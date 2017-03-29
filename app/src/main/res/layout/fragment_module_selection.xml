@@ -17,6 +17,13 @@
         android:id="@+id/ReadingBtn"
         android:layout_below="@+id/VocabBtn" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Study Exercise"
+        android:id="@+id/ExerciseBtn"
+        android:layout_below="@+id/ReadingBtn" />
+
 
 
 </RelativeLayout>

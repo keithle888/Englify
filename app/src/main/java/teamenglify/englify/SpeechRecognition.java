@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import teamenglify.englify.Model.Conversation;
+import teamenglify.englify.Model.ExerciseChapter;
+import teamenglify.englify.Model.ExerciseChapterPart;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.ReadPart;
 import teamenglify.englify.Model.Vocab;
@@ -268,6 +270,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         } else if (object instanceof Read) {
             ReadPart readPart = ((Read)object).readParts.get(position);
             speechToMatchTextView.setText(readPart.reading);
+        } else if (object instanceof ExerciseChapter) {
+            ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
+            speechToMatchTextView.setText(exerciseChapterPart.text);
         }
     }
 
