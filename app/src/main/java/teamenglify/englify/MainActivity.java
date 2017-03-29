@@ -55,6 +55,7 @@ import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.RootListing;
+import teamenglify.englify.Model.TutorialObj;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.ReadingModule.ReadingModule;
@@ -136,26 +137,38 @@ public class MainActivity extends AppCompatActivity {
         initializeNavigationDrawer();
         //initialize login Page (default starting fragment)
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.activity_main_container);
-        if (fragment == null) {
+        //Initialize Myanmar-Dictionary App
+        initializeDictionary();
+        TutorialObj tutorialObj = (TutorialObj) LocalSave.loadObject("TutorialObj");
+        if(tutorialObj==null ){
+            fragment = new Tutorial();
+            getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
+            LocalSave.saveObject("TutorialObj", new TutorialObj(false));
+        } else {
             fragment = new LoginFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
         }
-        AnalyticsEvent event = analytics.getEventClient().createEvent("LessonCompleted").withAttribute("lessonOne","lessonOne");
-        analytics.getEventClient().recordEvent(event);
-        //Initialize Myanmar-Dictionary App
-        initializeDictionary();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         mHandler.post(mBackgroundThread);
-        mHandler.post(mBackgroundThread);
         //create RootListing if none exists (eg. 1st time app download)
         if (fileList().length == 0) {
             LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
+            //create AppUsage object for first time use
+            Random rd = new Random();
+            int userID = rd.nextInt();
+            LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>()));
+
+
         } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
-            LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
+            //create AppUsage object for first time use
+            LocalSave.saveObject("S3_Object_Listing", new RootListing(null));
+            Random rd = new Random();
+            int userID = rd.nextInt();
+            LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>()));
         }
         File dir = getFilesDir();
         File[] subFiles = dir.listFiles();
@@ -164,9 +177,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("DOWNLOADED FILES -- ",f.getName());
         }
 
-        Random rd = new Random();
-        int userID = rd.nextInt();
-        LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>()));
+
     }
 
 
@@ -198,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("MainActivity", "onPaused");
+        TutorialObj tutorialObj = (TutorialObj) LocalSave.loadObject("TutorialObj");
+        Log.d("MainActivity OnPaused", tutorialObj.toString());
         if(analytics != null) {
             //Log.d("MainActivity", "event not recorded");
             //analytics.getEventClient().submitEvents();
@@ -210,16 +222,17 @@ public class MainActivity extends AppCompatActivity {
                 if(dataList.size()>10){
                     AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed");
                     analytics.getEventClient().recordEvent(event);
-                    Log.d("main activity", (String)pair.getKey());
-                    Log.d("main activity", event.toString());
-                    Log.d("main activity", "event recorded");
+//                    Log.d("main activity", (String)pair.getKey());
+//                    Log.d("main activity", event.toString());
+//                    Log.d("main activity", "event recorded");
                 } else {
-                    Log.d("main activity", "event not recorded");
+//                    Log.d("main activity", "event not recorded");
 
                 }
-                //it.remove(); // avoids a ConcurrentModificationException
             }
         }
+
+        Log.d("Main Activity", LocalSave.loadObject("TutorialObj").toString());
         analytics.getSessionClient().pauseSession();
         analytics.getEventClient().submitEvents();
         mHandler.removeCallbacks(mBackgroundThread);
