@@ -300,8 +300,10 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                             }
                         }
                         //overwrite the texts in VocabParts from the txt file
-                        Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): LinkedTextArray contents before overwriting Vocab -> " + texts.toString());
-                        vocab.overwriteTexts(texts);
+                        if (texts != null && texts.size() != 0) {
+                            Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): LinkedTextArray contents before overwriting Vocab -> " + texts.toString());
+                            vocab.overwriteTexts(texts);
+                        }
                         texts = null;
                     } else if (module instanceof Exercise) {
                         Exercise exercise = (Exercise) module;
@@ -377,6 +379,14 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
 
     public void downloadExerciseChapterParts(Grade grade) {
         for (Lesson lesson : grade.lessons) {
+            for (Module module : lesson.modules) {
+                if (module instanceof Exercise) {
+                    Exercise exercise = (Exercise) module;
+                    for (ExerciseChapter exerciseChapter : exercise.chapters) {
+                        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name);
+                    }
+                }
+            }
         }
     }
 
