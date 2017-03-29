@@ -42,9 +42,6 @@ import static teamenglify.englify.MainActivity.read;
 import static teamenglify.englify.MainActivity.rootDirectory;
 import static teamenglify.englify.MainActivity.s3Client;
 
-/**
- * Created by Keith on 05-Mar-17.
- */
 
 public class DownloadService extends AsyncTask<Void, String, Boolean>{
     public final static int DOWNLOAD_LISTING = 0;

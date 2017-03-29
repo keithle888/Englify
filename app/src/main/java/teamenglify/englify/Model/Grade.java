@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
-/**
- * Created by Keith on 06-Mar-17.
- */
+
 
 public class Grade implements Serializable{
     public String name;

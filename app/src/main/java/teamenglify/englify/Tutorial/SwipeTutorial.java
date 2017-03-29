@@ -18,7 +18,7 @@ public class SwipeTutorial extends PagerAdapter{
 
     //private Context context;
     private LayoutInflater layoutInflater;
-
+    //
     /*public SwipeTutorial(Context context){
         context = MainActivity.getMainActivity().getApplicationContext();
     }*/

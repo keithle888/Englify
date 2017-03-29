@@ -84,10 +84,7 @@ public class ListingFragment extends Fragment {
                              Bundle savedInstanceState) {
         //inflate view
         View view = inflater.inflate(R.layout.fragment_listing, container, false);
-
-
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
