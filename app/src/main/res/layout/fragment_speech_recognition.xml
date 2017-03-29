@@ -61,9 +61,9 @@
                     android:id="@+id/speechReturnTextView"
                     style="@android:style/TextAppearance.Small"
                     android:ellipsize="none"
-                    android:maxLines="5"
+                    android:maxLines="2"
                     android:scrollHorizontally="false"
-                    android:gravity="center_vertical"
+                    android:gravity="top"
                     android:layout_weight="1"/>
 
             </LinearLayout>

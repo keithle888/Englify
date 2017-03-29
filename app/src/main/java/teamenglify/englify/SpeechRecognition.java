@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 import teamenglify.englify.Model.Conversation;
@@ -28,6 +29,7 @@ import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.Model.VocabPart;
 
 import static teamenglify.englify.MainActivity.mainActivity;
+import static teamenglify.englify.MainActivity.read;
 
 
 /**
@@ -193,7 +195,16 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         Log.d("SpeechRecognition", "onResults");
         ArrayList<String> matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        speechReturnTextView.setText(matches.get(0));
+        int score = calculateScore(results);
+        if (score == 999) {
+            speechReturnTextView.setText(matches.get(0));
+        } else {
+            speechReturnTextView.setText(matches.get(0) + ". Score: " + score + "%");
+        }
+        //Call off the timeout timer.
+        if (stopWatch != null && stopWatch.isRunning()) {
+            resetTimeoutTimer();
+        }
     }
 
     @Override
@@ -266,13 +277,18 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         Log.d("Englify", "Class SpeechRecognition: Method updateUI(): Updating UI");
         if (object instanceof Vocab) {
             VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
-            speechToMatchTextView.setText(vocabPart.text);
+            textToMatch = vocabPart.text;
         } else if (object instanceof Read) {
             ReadPart readPart = ((Read)object).readParts.get(position);
-            speechToMatchTextView.setText(readPart.reading);
+            textToMatch = readPart.reading;
         } else if (object instanceof ExerciseChapter) {
             ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
-            speechToMatchTextView.setText(exerciseChapterPart.text);
+            textToMatch = exerciseChapterPart.text;
+        }
+        if (textToMatch == null) {
+            speechToMatchTextView.setText("Text is missing.");
+        } else {
+            speechToMatchTextView.setText(textToMatch);
         }
     }
 
@@ -293,7 +309,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     public void checkTimeoutTimer() {
         if (stopWatch.isRunning() && stopWatch.lapTime() > replyTimeOut) {
-            speechReturnTextView.setText(R.string.Speech_Recognition_Timeout+"/"+R.string.Speech_Recognition_Timeout_b);
+            speechReturnTextView.setText(getString(R.string.Speech_Recognition_Timeout) + " - " + getString(R.string.Speech_Recognition_Timeout_b));
             resetTimeoutTimer();
             Log.d("Englify", "Class SpeechRecognition: Method checkTimeoutTimer(): Timed out." );
         }
@@ -305,5 +321,33 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         Log.d("Englify", "Class SpeechRecognition: Method resetTimeoutTimer: Timer reset." );
     }
 
+    public int calculateScore(Bundle results) {
+        String returnText = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
+        float[] scores = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
+        if (scores != null && scores.length != 0) {
+            float score = scores[0];
+            Log.d("Englify", "Class SpeechRecognition: Method calculateScore(): Base score received from results is => " + score);
+            String[] dReturnText = returnText.split(" ");
+            String[] dMatchText = (textToMatch.split("-"))[0].trim().split(" "); //Seperate the myanmese part out, then trim whitespaces, then break the english part down into words.
+            Log.d("Englify", "Class SpeechRecognition: Method calculateScore(): MatchText => " + Arrays.toString(dMatchText) + " ReturnText => " + Arrays.toString(dReturnText));
+            int correctWords = 0;
+            if (dReturnText.length >= dMatchText.length) {
+                for (int i = 0; i < dMatchText.length ; i++) {
+                    if (dMatchText[i].toLowerCase().contains(dReturnText[i].toLowerCase())) {
+                        correctWords++;
+                    }
+                }
+            } else {
+                for (int i = 0; i < dReturnText.length ; i++) {
+                    if (dReturnText[i].toLowerCase().contains(dMatchText[i].toLowerCase())) {
+                        correctWords++;
+                    }
+                }
+            }
+            Log.d("Englify", "Class SpeechRecognition: Method calculateScore(): Number of correct words => " + correctWords);
+            return (int)((score * (correctWords / (double) dMatchText.length)) * 100);
+        }
+        return 999;
+    }
 
 }

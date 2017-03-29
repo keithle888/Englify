@@ -37,7 +37,7 @@
     <string name="action_play_next">Change action play next</string>
     <string name="backdrop_title">Englify</string>
     <string name="backdrop_subtitle">Listing Type Here</string>
-    <string name="Speech_Recognition_Timeout">Timed out. Please try again.</string>
+    <string name="Speech_Recognition_Timeout">Try again.</string>
     <string name="Speech_Recognition_Timeout_b">အခ်ိန္ကုန္ပါၿပီ။ ထပ္၍ႀကီးစားပါ။</string>
     <string name="Download_Failed">Download failed.</string>
     <string name="Download_Failed_b">ထုတ္ယူ (download) ၍မရပါ။</string>
