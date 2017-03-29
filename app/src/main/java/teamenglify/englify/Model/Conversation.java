@@ -16,6 +16,7 @@ public class Conversation extends Module {
 
     public Conversation(String name) {
         super(name);
+        this.reads = new ArrayList<>();
     }
 
     public void addRead(Read read) {
