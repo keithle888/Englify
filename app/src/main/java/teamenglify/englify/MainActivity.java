@@ -40,12 +40,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.DataService.S3Properties;
 import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LoginFragment.LoginFragment;
+import teamenglify.englify.Model.AppUsage;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.Read;
@@ -97,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //default code
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "onCreate");
         setContentView(R.layout.activity_main);
         //initialize background thread
         HandlerThread mHandlerThread = new HandlerThread(getLocalClassName());
@@ -124,10 +125,6 @@ public class MainActivity extends AppCompatActivity {
             fragment = new LoginFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_main_container, fragment).commit();
         }
-
-        AnalyticsEvent event = analytics.getEventClient().createEvent("LessonCompleted").withAttribute("lessonOne","lessonOne");
-        analytics.getEventClient().recordEvent(event);
-
     }
 
     @Override
@@ -141,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
             LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
         }
+
+        Random rd = new Random();
+        int userID = rd.nextInt();
+        LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>()));
     }
 
     @Override

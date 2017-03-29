@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by Keith on 06-Mar-17.
- */
+
 
 public class Grade implements Serializable{
     public String name;

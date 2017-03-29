@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by Keith on 07-Mar-17.
- */
 
 public class RootListing implements Serializable{
     public ArrayList<Grade> grades;
