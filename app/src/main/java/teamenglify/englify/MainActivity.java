@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mHandler.post(mBackgroundThread);
-        mHandler.post(mBackgroundThread);
         //create RootListing if none exists (eg. 1st time app download)
         if (fileList().length == 0) {
             LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));

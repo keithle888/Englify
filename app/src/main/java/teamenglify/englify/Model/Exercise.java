@@ -7,14 +7,25 @@ import java.util.ArrayList;
  */
 
 public class Exercise extends Module {
-    public ArrayList<String> exercises;
+    public ArrayList<ExerciseChapter> chapters;
 
-    public Exercise(String name, String imgURL, ArrayList<String> exercises) {
+    public Exercise(String name, String imgURL, ArrayList<ExerciseChapter> chapters) {
         super(name, imgURL);
-        this.exercises = exercises;
+        this.chapters = chapters;
     }
 
     public Exercise (String name) {
         super(name);
+        this.chapters = new ArrayList<>();
+    }
+
+    public ExerciseChapter findExerciseChapter(String chapterName) {
+        ExerciseChapter toReturn = null;
+        for (ExerciseChapter chapter : chapters) {
+            if (chapter.name.equalsIgnoreCase(chapterName)) {
+                toReturn = chapter;
+            }
+        }
+        return toReturn;
     }
 }
