@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;
@@ -28,6 +31,29 @@ public class ReadImage extends Fragment {
         ReadImage fragment = new ReadImage();
         fragment.read = read;
         return fragment;
+    }
+
+    public static void recordDataRead (int position){
+        HashMap<String,ArrayList<String>> analyticListRead = MainActivity.analyticListRead;
+        ArrayList<String> dataRecorded = analyticListRead.get(MainActivity.strGrade+MainActivity.lesson);
+        if(dataRecorded==null){
+            analyticListRead.put(MainActivity.strGrade+MainActivity.lesson, new ArrayList<String>());
+            Log.d("analytic read", "null");
+            dataRecorded = new ArrayList<>();
+            dataRecorded.add(Integer.toString(position));
+            analyticListRead.put(MainActivity.strGrade+MainActivity.lesson, dataRecorded);
+        } else {
+            boolean isExist = false;
+            for(String temp : dataRecorded){
+                if(temp.equalsIgnoreCase(Integer.toString(position))){
+                    isExist = true;
+                }
+            }
+            if(!isExist){
+                dataRecorded.add(Integer.toString(position));
+                analyticListRead.put(MainActivity.strGrade+MainActivity.lesson, dataRecorded);
+            }
+        }
     }
 
     @Override

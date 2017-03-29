@@ -61,6 +61,8 @@ public class Feedback extends Fragment {
                     Toast.makeText(getContext(), "Please Enter Your Email", Toast.LENGTH_SHORT).show();
                 } else if(feedback.getText().toString().length()==0){
                     Toast.makeText(getContext(), "Please Enter Your Feedback", Toast.LENGTH_SHORT).show();
+//                } else if (){
+//                    Toast.makeText(getContext(), "Please Enter Your Feedback", Toast.LENGTH_SHORT).show();
                 } else {
                     new AsyncSendMail(MainActivity.getMainActivity(),name.getText().toString(), email.getText().toString(), feedback.getText().toString()).execute();
                 }

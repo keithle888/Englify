@@ -51,11 +51,13 @@ import teamenglify.englify.ExerciseModule.ExerciseModule;
 import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LoginFragment.LoginFragment;
+import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.AppUsage;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.Module;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.TutorialObj;
@@ -98,7 +100,11 @@ public class MainActivity extends AppCompatActivity {
     //variables from ListingFragment
     //analytics variable
     public static MobileAnalyticsManager analytics;
-    public static HashMap<String,ArrayList<String>> analyticList = new HashMap<>();
+    private int userID;
+    public static ArrayList<String> completedList;
+    public static HashMap<String,ArrayList<String>> analyticListVocab;
+    public static HashMap<String,ArrayList<String>> analyticListRead;
+    private AppUsage appUsage;
     //permissions variables
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     //variables for Navigation Drawer
@@ -148,6 +154,20 @@ public class MainActivity extends AppCompatActivity {
         } else {
             loadLoginFragment();
         }
+
+        appUsage = (AppUsage) LocalSave.loadObject("AppUsage_Listing");
+        if(appUsage == null){
+            Random rd = new Random();
+            userID = rd.nextInt();
+            LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>(), new HashMap<String,ArrayList<String>>(), new ArrayList<String>()));
+            appUsage = (AppUsage) LocalSave.loadObject("AppUsage_Listing");
+        }
+
+        userID = appUsage.getUserID();
+        completedList = appUsage.getCompletedList();
+        analyticListVocab =  appUsage.getAnalyticListVocab();
+        analyticListRead = appUsage.getAnalyticListRead();
+        Log.d("load from object", appUsage.getAnalyticListVocab().toString());
     }
 
     @Override
@@ -158,27 +178,108 @@ public class MainActivity extends AppCompatActivity {
         if (fileList().length == 0) {
             LocalSave.saveObject(getString(R.string.S3_Object_Listing), new RootListing(null));
             //create AppUsage object for first time use
-            Random rd = new Random();
-            int userID = rd.nextInt();
-            LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>()));
-
 
         } else if (!LocalSave.doesFileExist(getString(R.string.S3_Object_Listing))) {
             //create AppUsage object for first time use
             LocalSave.saveObject("S3_Object_Listing", new RootListing(null));
-            Random rd = new Random();
-            int userID = rd.nextInt();
-            LocalSave.saveObject("AppUsage_Listing", new AppUsage(userID, new HashMap<String,ArrayList<String>>()));
-        }
-        File dir = getFilesDir();
-        File[] subFiles = dir.listFiles();
-
-        for(File f : subFiles){
-            Log.d("DOWNLOADED FILES -- ",f.getName());
         }
     }
 
+    public void submitMobileAnalytics (){
+        int analyticsPercentage = S3Properties.analyticsPercentage;
+        if(analytics != null) {
+            //Log.d("MainActivity", "event not recorded");
+            //analytics.getEventClient().submitEvents();
+            Iterator itVocab = analyticListVocab.entrySet().iterator();
+            while (itVocab.hasNext()) {
+                Map.Entry pair = (Map.Entry)itVocab.next();
+                ArrayList<String> dataListVocab = (ArrayList<String>) pair.getValue();
+                //Log.d("main activity", ""+dataListVocab.toString());
+                String eventName = pair.getKey().toString();
+                String gradeName = pair.getKey().toString().substring(0,7);
+                String lessonName = pair.getKey().toString().substring(7,15);
+                RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+                Grade grade = root.findGrade(gradeName);
+                Lesson lesson = grade.findLesson(lessonName);
+                Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
+                int vocabLength = vocab.vocabParts.size();
+                int vocabRequiredLength = vocabLength*analyticsPercentage/100;
 
+                Conversation conversation = (Conversation) lesson.findModule((getString(R.string.Conversation_Folder_Name)));
+                int readLength = conversation.reads.size();
+                int readRequiredLength = readLength*analyticsPercentage/100;
+
+                int vocabCompleted = dataListVocab.size();
+                ArrayList<String> dataListRead = analyticListRead.get(eventName);
+                int readCompleted = 0;
+                if(dataListRead!=null){
+                    readCompleted= dataListRead.size();
+                }
+
+                if(vocabCompleted > vocabRequiredLength && readCompleted > readRequiredLength){
+                    AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed").withAttribute("UserID", userID+"");;
+                    boolean eventRecorded = false;
+                    for(String eventNameTemp : completedList){
+                        if (eventNameTemp.equals(eventName)){
+                            eventRecorded = true;
+                        }
+                    }
+                    if(!eventRecorded){
+                        analytics.getEventClient().recordEvent(event);
+                        completedList.add(eventName);
+                    }
+                }
+            }
+
+            Iterator itRead = analyticListRead.entrySet().iterator();
+            while (itRead.hasNext()){
+                Map.Entry pair = (Map.Entry)itRead.next();
+                ArrayList<String> dataListRead = (ArrayList<String>) pair.getValue();
+                String eventName = pair.getKey().toString();
+                String gradeName = pair.getKey().toString().substring(0,7);
+                String lessonName = pair.getKey().toString().substring(7,15);
+                RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+                Grade grade = root.findGrade(gradeName);
+                Lesson lesson = grade.findLesson(lessonName);
+                Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
+                Conversation conversation = (Conversation) lesson.findModule(getString(R.string.Conversation_Folder_Name));
+                if(vocab.vocabParts.size()==0){
+                    int readLength = conversation.reads.size();
+                    int readRequiredLength = readLength*analyticsPercentage/100;
+                    if(dataListRead.size() > readRequiredLength){
+                        AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed").withAttribute("UserID", userID+"");;
+                        boolean eventRecorded = false;
+                        for(String eventNameTemp : completedList){
+                            if (eventNameTemp.equals(eventName)){
+                                eventRecorded = true;
+                            }
+                        }
+                        if(!eventRecorded){
+                            analytics.getEventClient().recordEvent(event);
+                            completedList.add(eventName);
+                        }
+                    }
+                }
+            }
+        }
+
+        //recording of event if 3 lessons are completed
+        if(completedList.contains("Grade04Lesson01") && completedList.contains("Grade04Lesson02") && completedList.contains("Grade04Lesson03") && !appUsage.isFirstThreeLessonSubmitted()){
+            AnalyticsEvent event = analytics.getEventClient().createEvent("completedFirst3Lessons").withAttribute("UserID", userID+"");
+            analytics.getEventClient().recordEvent(event);
+            appUsage.setFirstThreeLessonSubmitted(true);
+            Log.d("completed event", "submit 3 lessons completed");
+        } else {
+            Log.d("completed event", "submit 3 lessons before");
+        }
+
+        appUsage.setAnalyticListVocab(analyticListVocab);
+        appUsage.setAnalyticListRead(analyticListRead);
+        appUsage.setCompletedList(completedList);
+        LocalSave.saveObject("AppUsage_Listing", appUsage);
+        analytics.getEventClient().submitEvents();
+        analytics.getSessionClient().pauseSession();
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -207,28 +308,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        TutorialObj tutorialObj = (TutorialObj) LocalSave.loadObject("TutorialObj");
-        if(analytics != null) {
-            //Log.d("MainActivity", "event not recorded");
-            //analytics.getEventClient().submitEvents();
-            Iterator it = analyticList.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                ArrayList<String> dataList = (ArrayList<String>) pair.getValue();
-                Log.d("Englify", "Class MainActivty: Method onPause(): Printing dataList -> " + dataList.toString());
-                if(dataList.size()>10){
-                    AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed");
-                    analytics.getEventClient().recordEvent(event);
-                } else {
-                    Log.d("Englify", "Class MainActivity: Method onPause(): event not recorded");
-
-                }
-            }
-        }
-
-        Log.d("Main Activity", LocalSave.loadObject("TutorialObj").toString());
-        analytics.getSessionClient().pauseSession();
-        analytics.getEventClient().submitEvents();
+        submitMobileAnalytics();
         mHandler.removeCallbacks(mBackgroundThread);
     }
 

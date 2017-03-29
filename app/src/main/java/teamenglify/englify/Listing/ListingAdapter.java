@@ -31,6 +31,7 @@ import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.Model.VocabPart;
 import teamenglify.englify.R;
+import teamenglify.englify.ReadingModule.ReadImage;
 import teamenglify.englify.VocabModule.VocabImage;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -127,13 +128,14 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
                 } else if (listingType == ListingFragment.READ_LISTING) {
                     MainActivity.read = selected;
+                    ReadImage.recordDataRead(position);
                     mainActivity.position = 0;
                     mainActivity.loadReadingModule(((Conversation)object).reads.get(position));
                 } else if (listingType == ListingFragment.VOCAB_LISTING) {
                     mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                     MainActivity.position = position;
                     MainActivity.vocab = selected;
-                    VocabImage.recordData(position);
+                    VocabImage.recordDataVocab(position);
                     mainActivity.loadVocabModule((Vocab)object);
                 } else if (listingType == ListingFragment.EXERCISE_LISTING) {
                     mainActivity.position = 0;
