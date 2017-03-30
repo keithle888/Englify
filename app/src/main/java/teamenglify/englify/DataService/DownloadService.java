@@ -129,7 +129,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
                 new DeleteService(grade).deleteGrade();
             }
             mainActivity.onBackPressed();
-            Toast.makeText(mainActivity, R.string.Download_Failed, Toast.LENGTH_LONG).show();
+            if (mainActivity.hasInternetConnection == false) {
+                Toast.makeText(mainActivity, "Download failed due to no internet connection.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mainActivity, R.string.Download_Failed, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
