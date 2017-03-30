@@ -479,8 +479,8 @@ public class MainActivity extends AppCompatActivity {
             //update internet connectivity
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            if (hasInternetConnection != (activeNetwork != null && activeNetwork.isConnected()) ) {
-                hasInternetConnection = activeNetwork != null && activeNetwork.isConnected();
+            if (activeNetwork != null && hasInternetConnection != activeNetwork.isConnected() ) {
+                hasInternetConnection = activeNetwork.isConnected();
                 isWiFiConnection = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
                 Log.d("Englify", "Class MainActivity: Method mBackgroundThread: Internet Status -> " + hasInternetConnection);
             }
