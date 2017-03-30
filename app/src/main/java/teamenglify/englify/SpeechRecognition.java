@@ -263,8 +263,11 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                     resetTimeoutTimer();
                 }
             }
+            //update speech recognition status based on change in wifi status.
             if (speech == null && mainActivity.hasInternetConnection == true) {
                 initializeSpeechRecognition();
+            } else if (speech != null && mainActivity.hasInternetConnection == false) {
+                disableSpeechRecognition();
             }
             if (stopWatch != null && stopWatch.isRunning()) {
                 checkTimeoutTimer();
@@ -354,4 +357,13 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         return 999;
     }
 
+    public void disableSpeechRecognition() {
+        speech.destroy();
+        if (stopWatch != null && stopWatch.isRunning()) {
+            resetTimeoutTimer();
+        }
+        speechDisplayTextView.setText(R.string.Speech_Recognition_Requires_Internet);
+        speechReturnTextView.setText("");
+        speechToMatchTextView.setText("");
+    }
 }

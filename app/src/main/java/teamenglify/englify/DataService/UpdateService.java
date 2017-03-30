@@ -79,7 +79,7 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
                 String key = summary.getKey();
                 Date lastModified = summary.getLastModified();
                 String[] dKey = key.split("/");
-                if (dKey.length >= 2 && dKey[1].equalsIgnoreCase(grade.name)) {                     //Summary is part of the grade being checked.
+                if (dKey.length >= 2 && key.contains(grade.name)) {                     //Summary is part of the grade being checked.
                     if (grade.lastModified.before(lastModified)) {                                  //If true, grade has have a modification inside.
                         gradesToBeUpdated.add(grade);
                     }
