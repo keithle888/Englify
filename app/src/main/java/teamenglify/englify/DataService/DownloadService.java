@@ -118,8 +118,8 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             } else if (downloadType == DOWNLOAD_GRADE) {
                 Log.d("Englify", "Class DownloadService: Method doInBackground(): Updating downloadedObject in MainActivity.");
                 //mainActivity.downloadedObject = grade;    //Old code for when grade has been downloaded, the lessons are listed straight away. Keep code if revert happens.
-                mainActivity.loadLoginFragment();           //New format of pushing user back to home back.
                 mainActivity.clearBackStack();
+                mainActivity.loadLoginFragment();           //New format of pushing user back to home back.
                 Toast.makeText(mainActivity, "Successfully downloaded grade.", Toast.LENGTH_SHORT).show();
             }
         } else {
