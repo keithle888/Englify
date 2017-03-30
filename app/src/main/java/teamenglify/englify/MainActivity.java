@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 String lessonName = pair.getKey().toString().substring(7, 15);
                 RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                 Grade grade = root.findGrade(gradeName);
-                if (grade != null) {
+                if (grade!=null && grade.lessons.size()!=0) {
                     Lesson lesson = grade.findLesson(lessonName);
                     Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
                     int vocabLength = vocab.vocabParts.size();
@@ -243,7 +243,8 @@ public class MainActivity extends AppCompatActivity {
                 String lessonName = pair.getKey().toString().substring(7,15);
                 RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                 Grade grade = root.findGrade(gradeName);
-                if (grade!=null) {
+                Log.d("grade root check", grade.toString());
+                if (grade!=null && grade.lessons.size()!=0) {
                     Lesson lesson = grade.findLesson(lessonName);
                     Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
                     Conversation conversation = (Conversation) lesson.findModule(getString(R.string.Conversation_Folder_Name));

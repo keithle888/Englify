@@ -1,6 +1,7 @@
 package teamenglify.englify.FeedbackModule;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,7 +47,7 @@ public class Feedback extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_feedback, container, false);
         final EditText name = (EditText) v.findViewById(R.id.nameEditText);
-        final EditText email = (EditText) v.findViewById(R.id.emailEditText);
+        final EditText phoneNumber = (EditText) v.findViewById(R.id.emailEditText);
         final EditText feedback = (EditText) v.findViewById(R.id.feedEditText);
 
         Button sendBtn = (Button)v.findViewById(R.id.sendFeedback);
@@ -57,19 +58,19 @@ public class Feedback extends Fragment {
             public void onClick(View v) {
                 if(name.getText().toString().length()==0){
                     Toast.makeText(getContext(), "Please Enter Your Name", Toast.LENGTH_SHORT).show();
-                } else if(email.getText().toString().length()==0){
+                } else if(phoneNumber.getText().toString().length()==0){
                     Toast.makeText(getContext(), "Please Enter Your Email", Toast.LENGTH_SHORT).show();
                 } else if(feedback.getText().toString().length()==0){
                     Toast.makeText(getContext(), "Please Enter Your Feedback", Toast.LENGTH_SHORT).show();
-//                } else if (){
-//                    Toast.makeText(getContext(), "Please Enter Your Feedback", Toast.LENGTH_SHORT).show();
+                } else if (name.getText().toString().matches(".*\\d+.*")){
+                    Toast.makeText(getContext(), "Please Enter a Valid Name", Toast.LENGTH_SHORT).show();
+                    name.setTextColor(Color.RED);
+                } else if (!phoneNumber.getText().toString().matches("-?\\d+(\\.\\d+)?")){
+                    Toast.makeText(getContext(), "Please Enter a Valid Number", Toast.LENGTH_SHORT).show();
+                    phoneNumber.setTextColor(Color.RED);
                 } else {
-                    new AsyncSendMail(MainActivity.getMainActivity(),name.getText().toString(), email.getText().toString(), feedback.getText().toString()).execute();
-                }
-                if(sendResult==true){
-                    name.setText("");
-                    email.setText("");
-                    feedback.setText("");
+                    name.setTextColor(Color.BLACK);
+                    new AsyncSendMail(MainActivity.getMainActivity(),name.getText().toString(), phoneNumber.getText().toString(), feedback.getText().toString()).execute();
                 }
             }
         });
@@ -121,12 +122,10 @@ public class Feedback extends Fragment {
             progressDialog.dismiss();
             if(sendResult==true) {
                 Toast.makeText(getContext(), "Thanks for Your Feedback! Your Feedback Is Sent Successfully.", Toast.LENGTH_SHORT).show();
-
             }
             else {
                 Toast.makeText(getContext(), "Error! Your Feedback Cannot Be Sent.", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
 }
