@@ -35,8 +35,10 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
 
         Grade grade = (Grade) object;
         for (Lesson lesson : grade.lessons) {
-            listings.add(lesson.name);
-            listingLessonDesc.add(lesson.description);
+            if(!lesson.name.endsWith(".txt")){
+                listings.add(lesson.name);
+                listingLessonDesc.add(lesson.description);
+            }
         }
     }
 

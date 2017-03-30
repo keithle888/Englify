@@ -261,6 +261,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+            appUsage.setAnalyticListVocab(analyticListVocab);
+            appUsage.setAnalyticListRead(analyticListRead);
+            appUsage.setCompletedList(completedList);
+            LocalSave.saveObject("AppUsage_Listing", appUsage);
+            analytics.getEventClient().submitEvents();
+            analytics.getSessionClient().pauseSession();
         }
 
         //recording of event if 3 lessons are completed
@@ -273,12 +279,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("completed event", "submit 3 lessons before");
         }
 
-        appUsage.setAnalyticListVocab(analyticListVocab);
-        appUsage.setAnalyticListRead(analyticListRead);
-        appUsage.setCompletedList(completedList);
-        LocalSave.saveObject("AppUsage_Listing", appUsage);
-        analytics.getEventClient().submitEvents();
-        analytics.getSessionClient().pauseSession();
     }
 
     @Override
