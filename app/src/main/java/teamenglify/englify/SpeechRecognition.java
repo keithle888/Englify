@@ -279,11 +279,15 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
             textToMatch = vocabPart.text;
         } else if (object instanceof Read) {
-            ReadPart readPart = ((Read)object).readParts.get(position);
-            textToMatch = readPart.reading;
+            if(((Read) object).readParts.size()!=0){
+                ReadPart readPart = ((Read)object).readParts.get(position);
+                textToMatch = readPart.reading;
+            }
         } else if (object instanceof ExerciseChapter) {
-            ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
-            textToMatch = exerciseChapterPart.text;
+            if(((ExerciseChapter) object).chapterParts.size()!=0){
+                ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
+                textToMatch = exerciseChapterPart.text;
+            }
         }
         if (textToMatch == null) {
             speechToMatchTextView.setText("Text is missing.");

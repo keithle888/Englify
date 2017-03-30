@@ -192,41 +192,44 @@ public class MainActivity extends AppCompatActivity {
             //analytics.getEventClient().submitEvents();
             Iterator itVocab = analyticListVocab.entrySet().iterator();
             while (itVocab.hasNext()) {
-                Map.Entry pair = (Map.Entry)itVocab.next();
+                Map.Entry pair = (Map.Entry) itVocab.next();
                 ArrayList<String> dataListVocab = (ArrayList<String>) pair.getValue();
                 //Log.d("main activity", ""+dataListVocab.toString());
                 String eventName = pair.getKey().toString();
-                String gradeName = pair.getKey().toString().substring(0,7);
-                String lessonName = pair.getKey().toString().substring(7,15);
+                String gradeName = pair.getKey().toString().substring(0, 7);
+                String lessonName = pair.getKey().toString().substring(7, 15);
                 RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                 Grade grade = root.findGrade(gradeName);
-                Lesson lesson = grade.findLesson(lessonName);
-                Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
-                int vocabLength = vocab.vocabParts.size();
-                int vocabRequiredLength = vocabLength*analyticsPercentage/100;
+                if (grade != null) {
+                    Lesson lesson = grade.findLesson(lessonName);
+                    Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
+                    int vocabLength = vocab.vocabParts.size();
+                    int vocabRequiredLength = vocabLength * analyticsPercentage / 100;
 
-                Conversation conversation = (Conversation) lesson.findModule((getString(R.string.Conversation_Folder_Name)));
-                int readLength = conversation.reads.size();
-                int readRequiredLength = readLength*analyticsPercentage/100;
+                    Conversation conversation = (Conversation) lesson.findModule((getString(R.string.Conversation_Folder_Name)));
+                    int readLength = conversation.reads.size();
+                    int readRequiredLength = readLength * analyticsPercentage / 100;
 
-                int vocabCompleted = dataListVocab.size();
-                ArrayList<String> dataListRead = analyticListRead.get(eventName);
-                int readCompleted = 0;
-                if(dataListRead!=null){
-                    readCompleted= dataListRead.size();
-                }
-
-                if(vocabCompleted > vocabRequiredLength && readCompleted > readRequiredLength){
-                    AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed").withAttribute("UserID", userID+"");;
-                    boolean eventRecorded = false;
-                    for(String eventNameTemp : completedList){
-                        if (eventNameTemp.equals(eventName)){
-                            eventRecorded = true;
-                        }
+                    int vocabCompleted = dataListVocab.size();
+                    ArrayList<String> dataListRead = analyticListRead.get(eventName);
+                    int readCompleted = 0;
+                    if (dataListRead != null) {
+                        readCompleted = dataListRead.size();
                     }
-                    if(!eventRecorded){
-                        analytics.getEventClient().recordEvent(event);
-                        completedList.add(eventName);
+
+                    if (vocabCompleted > vocabRequiredLength && readCompleted > readRequiredLength) {
+                        AnalyticsEvent event = analytics.getEventClient().createEvent((String) pair.getKey()).withAttribute("Completed", "Completed").withAttribute("UserID", userID + "");
+                        ;
+                        boolean eventRecorded = false;
+                        for (String eventNameTemp : completedList) {
+                            if (eventNameTemp.equals(eventName)) {
+                                eventRecorded = true;
+                            }
+                        }
+                        if (!eventRecorded) {
+                            analytics.getEventClient().recordEvent(event);
+                            completedList.add(eventName);
+                        }
                     }
                 }
             }
@@ -240,23 +243,26 @@ public class MainActivity extends AppCompatActivity {
                 String lessonName = pair.getKey().toString().substring(7,15);
                 RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                 Grade grade = root.findGrade(gradeName);
-                Lesson lesson = grade.findLesson(lessonName);
-                Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
-                Conversation conversation = (Conversation) lesson.findModule(getString(R.string.Conversation_Folder_Name));
-                if(vocab.vocabParts.size()==0){
-                    int readLength = conversation.reads.size();
-                    int readRequiredLength = readLength*analyticsPercentage/100;
-                    if(dataListRead.size() > readRequiredLength){
-                        AnalyticsEvent event = analytics.getEventClient().createEvent((String)pair.getKey()).withAttribute("Completed","Completed").withAttribute("UserID", userID+"");;
-                        boolean eventRecorded = false;
-                        for(String eventNameTemp : completedList){
-                            if (eventNameTemp.equals(eventName)){
-                                eventRecorded = true;
+                if (grade!=null) {
+                    Lesson lesson = grade.findLesson(lessonName);
+                    Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
+                    Conversation conversation = (Conversation) lesson.findModule(getString(R.string.Conversation_Folder_Name));
+                    if (vocab.vocabParts.size() == 0) {
+                        int readLength = conversation.reads.size();
+                        int readRequiredLength = readLength * analyticsPercentage / 100;
+                        if (dataListRead.size() > readRequiredLength) {
+                            AnalyticsEvent event = analytics.getEventClient().createEvent((String) pair.getKey()).withAttribute("Completed", "Completed").withAttribute("UserID", userID + "");
+                            ;
+                            boolean eventRecorded = false;
+                            for (String eventNameTemp : completedList) {
+                                if (eventNameTemp.equals(eventName)) {
+                                    eventRecorded = true;
+                                }
                             }
-                        }
-                        if(!eventRecorded){
-                            analytics.getEventClient().recordEvent(event);
-                            completedList.add(eventName);
+                            if (!eventRecorded) {
+                                analytics.getEventClient().recordEvent(event);
+                                completedList.add(eventName);
+                            }
                         }
                     }
                 }
@@ -268,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
             analytics.getEventClient().submitEvents();
             analytics.getSessionClient().pauseSession();
         }
+
 
         //recording of event if 3 lessons are completed
         if(completedList.contains("Grade04Lesson01") && completedList.contains("Grade04Lesson02") && completedList.contains("Grade04Lesson03") && !appUsage.isFirstThreeLessonSubmitted()){
@@ -327,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadLoginFragment() {
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
         //Initialize English-Myanmar Dictionary
-        initializeDictionary();
+        //initializeDictionary();
     }
 
     public void loadNextListing(int listingType, Object objectToLoad) {
