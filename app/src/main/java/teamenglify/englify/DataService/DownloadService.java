@@ -130,9 +130,9 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             }
             mainActivity.onBackPressed();
             if (mainActivity.hasInternetConnection == false) {
-                Toast.makeText(mainActivity, "Download failed due to no internet connection.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mainActivity, "Download failed due to no internet connection. Please ensure that you have internet access", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mainActivity, R.string.Download_Failed, Toast.LENGTH_LONG).show();
+                Toast.makeText(mainActivity, "Download failed due to no internet connection. Please ensure that you have internet access", Toast.LENGTH_LONG).show();
             }
         }
     }

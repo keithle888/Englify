@@ -78,6 +78,7 @@ public class LoginFragment extends Fragment {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 MainActivity mainActivity = MainActivity.getMainActivity();
                 mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing)));
+                mainActivity.getSupportActionBar().setTitle("Grade Selection");
             }
         });
         return view;

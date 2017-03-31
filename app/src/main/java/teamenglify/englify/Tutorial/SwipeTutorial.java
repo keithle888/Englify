@@ -14,7 +14,7 @@ import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 public class SwipeTutorial extends PagerAdapter{
-    private int [] imageResource = {R.drawable.tutorial1, R.drawable.tutorial2, R.drawable.tutorial3};
+    private int [] imageResource = {R.drawable.tutorial1, R.drawable.tutorial2, R.drawable.tutorial3, R.drawable.tutorial4, R.drawable.tutorial5, R.drawable.tutorial6,R.drawable.tutorial7, R.drawable.tutorial8, R.drawable.tutorial9, R.drawable.tutorial10, R.drawable.tutorial11, R.drawable.tutorial12, R.drawable.tutorial13};
 
     //private Context context;
     private LayoutInflater layoutInflater;
