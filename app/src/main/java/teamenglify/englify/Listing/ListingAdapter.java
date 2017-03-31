@@ -122,6 +122,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 if(listingType == ListingFragment.GRADE_LISTING) {
                     MainActivity.strGrade = selected;
                     mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
+                    mainActivity.getSupportActionBar().setTitle("Lesson Selection");
                     Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Asked mainActivity to loadNextListing()");
                 } else if (listingType == ListingFragment.LESSON_LISTING) {
                     MainActivity.lesson = selected;
@@ -131,6 +132,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     ReadImage.recordDataRead(position);
                     mainActivity.position = 0;
                     mainActivity.loadReadingModule(((Conversation)object).reads.get(position));
+                    mainActivity.getSupportActionBar().setTitle("Study Read");
                 } else if (listingType == ListingFragment.VOCAB_LISTING) {
                     mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                     MainActivity.position = position;
