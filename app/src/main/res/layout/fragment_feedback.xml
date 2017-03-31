@@ -30,7 +30,7 @@
         android:textColor="#000000"
         android:textStyle="bold"
         android:textSize="19sp"
-        android:text="Enter Email or Phone*"/>
+        android:text="Enter Phone Number*"/>
 
     <EditText
         android:layout_width="match_parent"

@@ -59,7 +59,7 @@ public class Feedback extends Fragment {
                 if(name.getText().toString().length()==0){
                     Toast.makeText(getContext(), "Please Enter Your Name", Toast.LENGTH_SHORT).show();
                 } else if(phoneNumber.getText().toString().length()==0){
-                    Toast.makeText(getContext(), "Please Enter Your Email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Please Enter Your Phone Number", Toast.LENGTH_SHORT).show();
                 } else if(feedback.getText().toString().length()==0){
                     Toast.makeText(getContext(), "Please Enter Your Feedback", Toast.LENGTH_SHORT).show();
                 } else if (name.getText().toString().matches(".*\\d+.*")){
