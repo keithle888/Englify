@@ -57,12 +57,11 @@ public class ModuleSelection extends Fragment {
         ImageButton vocabBtn = (ImageButton) view.findViewById(R.id.VocabBtn);
         ImageButton execiseBtn = (ImageButton) view.findViewById(R.id.ExerciseBtn);
         mainActivity = MainActivity.getMainActivity();
-        mainActivity.getSupportActionBar().setTitle("Module Selection");
+
 
         readingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.getSupportActionBar().setTitle("Read Selection");
                 mainActivity.loadNextListing(ListingFragment.READ_LISTING, lesson.findModule(getString(R.string.Conversation_Folder_Name)));
 
             }
@@ -71,7 +70,6 @@ public class ModuleSelection extends Fragment {
         vocabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                 mainActivity.loadNextListing(ListingFragment.VOCAB_LISTING, lesson.findModule(getString(R.string.Vocab_Folder_Name)));
             }
         });
@@ -80,10 +78,15 @@ public class ModuleSelection extends Fragment {
             @Override
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
-                mainActivity.getSupportActionBar().setTitle("Exercise Selection");
                 mainActivity.loadNextListing(ListingFragment.EXERCISE_LISTING, lesson.findModule(getString(R.string.Exercise_Folder_Name)));
             }
         });
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mainActivity.getSupportActionBar().setTitle("Module Selection");
     }
 }

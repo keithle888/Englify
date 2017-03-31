@@ -24,8 +24,11 @@ import android.widget.ImageView;
 
 
 import teamenglify.englify.DataService.DataManager;
+import teamenglify.englify.Model.Conversation;
+import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
+import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -94,7 +97,6 @@ public class ListingFragment extends Fragment {
         //objectToLoad not present, download
         if (listingType == GRADE_LISTING && ((RootListing)objectToLoad).grades == null) {
             //set the correct Title in action bar
-            mainActivity.getSupportActionBar().setTitle("Grade Listing");
             new DataManager().getListing();
             Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
             mHandler.post(mBackgroundThread);
@@ -104,13 +106,14 @@ public class ListingFragment extends Fragment {
             Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
             mHandler.post(mBackgroundThread);
         } else {
-            mUpdateUIAfterDataLoaded(objectToLoad);
+            mUpdateUIAfterDataLoaded();
         }
         return view;
     }
 
-    public void mUpdateUIAfterDataLoaded(Object object) {
+    public void mUpdateUIAfterDataLoaded() {
         Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
+        Object object = objectToLoad;
         //get the listings based on which listingType
         if (listingType == GRADE_LISTING) {
             RootListing grades = (RootListing) object;
@@ -120,6 +123,7 @@ public class ListingFragment extends Fragment {
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         } else if (listingType == LESSON_LISTING) {
+            mainActivity.getSupportActionBar().setTitle("Lesson Listing");
             listingAdapterLesson = new ListingAdapterLesson(object, listingType);
             recyclerView.setAdapter(listingAdapterLesson);
             //load additional settings
@@ -138,7 +142,7 @@ public class ListingFragment extends Fragment {
         public void run() {
             if (mainActivity.downloadedObject != null) {
                 objectToLoad = mainActivity.downloadedObject;
-                mUpdateUIAfterDataLoaded(objectToLoad);
+                mUpdateUIAfterDataLoaded();
                 mainActivity.downloadedObject = null;
                 Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject.");
             } else {
@@ -146,6 +150,32 @@ public class ListingFragment extends Fragment {
             }
         }
     };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateActionBarTitle();
+    }
+
+    public void updateActionBarTitle() {
+        String title = null;
+        if (objectToLoad != null) {
+            if (objectToLoad instanceof RootListing) {
+                title = "Grade Listing";
+            } else if (objectToLoad instanceof Grade) {
+                title = "Lesson Listing";
+            } else if (objectToLoad instanceof Vocab) {
+                title = "Vocab Listing";
+            } else if (objectToLoad instanceof Conversation) {
+                title = "Read Listing";
+            } else if (objectToLoad instanceof Exercise) {
+                title = "Exercise Listing";
+            }
+        }
+        if (title != null) {
+            mainActivity.getSupportActionBar().setTitle(title);
+        }
+    }
 
     @Override
     public void onPause() {

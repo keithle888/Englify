@@ -132,7 +132,6 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     mainActivity.position = 0;
                     mainActivity.loadReadingModule(((Conversation)object).reads.get(position));
                 } else if (listingType == ListingFragment.VOCAB_LISTING) {
-                    mainActivity.getSupportActionBar().setTitle("Vocab Selection");
                     MainActivity.position = position;
                     MainActivity.vocab = selected;
                     VocabImage.recordDataVocab(position);
