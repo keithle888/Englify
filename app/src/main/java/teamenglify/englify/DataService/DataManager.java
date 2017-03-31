@@ -52,7 +52,7 @@ public class DataManager {
                 Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " downloaded to internal memory. Moving to download listing from AWS S3");
                 promptForDownload(grade);
             } else {
-                mainActivity.onBackPressed();
+                /*mainActivity.onBackPressed();*/
                 Toast.makeText(mainActivity,"No internet connection detected.", Toast.LENGTH_SHORT).show();
             }
         }
