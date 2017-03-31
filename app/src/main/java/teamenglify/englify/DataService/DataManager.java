@@ -26,9 +26,13 @@ public class DataManager {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
             MainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         } else {
-            Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
-            DownloadService download = new DownloadService(teamenglify.englify.DataService.DownloadService.DOWNLOAD_LISTING);
-            download.execute();
+            if (mainActivity.hasInternetConnection == true) {
+                Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
+                DownloadService download = new DownloadService(teamenglify.englify.DataService.DownloadService.DOWNLOAD_LISTING);
+                download.execute();
+            } else {
+                Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -43,9 +47,14 @@ public class DataManager {
             Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " was found in internal memory.");
             mainActivity.downloadedObject = grade;
         } else {
-            //grade has not been downloaded.
-            Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " downloaded to internal memory. Moving to download listing from AWS S3");
-            promptForDownload(grade);
+            if (mainActivity.hasInternetConnection == true) {
+                //grade has not been downloaded.
+                Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " downloaded to internal memory. Moving to download listing from AWS S3");
+                promptForDownload(grade);
+            } else {
+                mainActivity.onBackPressed();
+                Toast.makeText(mainActivity,"No internet connection detected.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -110,7 +119,11 @@ public class DataManager {
                 if (gradesToBeChecked.size() == 0) { //no grades have been downloaded, only RootListing was downloaded.
                     Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
                 } else {
-                    new UpdateService(gradesToBeChecked).execute();
+                    if (mainActivity.hasInternetConnection == true) {
+                        new UpdateService(gradesToBeChecked).execute();
+                    } else {
+                        Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
                 Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
