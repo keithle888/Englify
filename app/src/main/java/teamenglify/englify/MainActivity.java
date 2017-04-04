@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (vocabCompleted > vocabRequiredLength && readCompleted > readRequiredLength) {
                         AnalyticsEvent event = analytics.getEventClient().createEvent((String) pair.getKey()).withAttribute("Completed", "Completed").withAttribute("UserID", userID + "");
-                        ;
+
                         boolean eventRecorded = false;
                         for (String eventNameTemp : completedList) {
                             if (eventNameTemp.equals(eventName)) {
@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if (!eventRecorded) {
                             analytics.getEventClient().recordEvent(event);
+                            Log.d("event recorded", event.toString());
                             completedList.add(eventName);
                         }
                     }
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                         int readRequiredLength = readLength * analyticsPercentage / 100;
                         if (dataListRead.size() > readRequiredLength) {
                             AnalyticsEvent event = analytics.getEventClient().createEvent((String) pair.getKey()).withAttribute("Completed", "Completed").withAttribute("UserID", userID + "");
-                            ;
+
                             boolean eventRecorded = false;
                             for (String eventNameTemp : completedList) {
                                 if (eventNameTemp.equals(eventName)) {
@@ -283,9 +284,14 @@ public class MainActivity extends AppCompatActivity {
             analytics.getEventClient().recordEvent(event);
             appUsage.setFirstThreeLessonSubmitted(true);
             Log.d("completed event", "submit 3 lessons completed");
-        } else {
+        }
+
+
+        if(!appUsage.isFirstThreeLessonSubmitted()){
             Log.d("completed event", "submit 3 lessons before");
         }
+
+        Log.d("user id", userID+"");
 
     }
 
@@ -316,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("on paused", "paused");
         submitMobileAnalytics();
         mHandler.removeCallbacks(mBackgroundThread);
     }
@@ -395,11 +402,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeMobileAnalytics() {
+        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                MainActivity.getMainActivity().getApplicationContext(),
+                S3Properties.IDENTITYPOOLID, // Identity Pool ID
+                Regions.AP_NORTHEAST_1); // Region
+
         try {
             analytics = MobileAnalyticsManager.getOrCreateInstance(
                     this.getApplicationContext(),
                     S3Properties.ANALYTICSID, //Amazon Mobile Analytics App ID
-                    S3Properties.IDENTITYPOOLID//Amazon Cognito Identity Pool ID
+                    Regions.US_EAST_1,
+                    credentialsProvider//S3Properties.IDENTITYPOOLID//Amazon Cognito Identity Pool ID
+
             );
         } catch(InitializationException ex) {
             Log.e(this.getClass().getName(), "Failed to initialize Amazon Mobile Analytics", ex);
