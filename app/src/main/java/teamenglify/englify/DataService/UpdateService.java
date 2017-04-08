@@ -104,8 +104,7 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
     public void promptForUpdate() {
         //create a dialog to ask whether they want to update
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        builder.setTitle(mainActivity.getString(R.string.Deletion_Prompt_Title))
-                .setMessage(R.string.Update_Prompt_Message)
+        builder.setMessage(R.string.Update_Prompt_Message)
                 .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {

@@ -148,35 +148,18 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             HashMap<String, String> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();
-                publishProgress(key);
-                String[] keyParts = key.split("/");
-                if (keyParts.length == 2) { //the listing for grades will always only have 2 parts ("res/grade01/")
-                    //identify if its a grade or a grade picture
-                    if (isFolder(keyParts[1])) {
-                        //it is a Grade
-                        identifiedGrades.put(keyParts[1], "");
-                    } else {
-                        //it is a grade picture
-                        //locate the grade (key) it belongs to
-                        Set<String> keySet = identifiedGrades.keySet();
-                        String foundKey = "";
-                        for (String gradeKey : keySet) {
-                            if (keyParts[1].contains(gradeKey)) {
-                                foundKey = gradeKey;
-                            }
-                        }
-                        //if key is found, add img URL as the value of the key (grade) , else discard the image, the folder does not exist.
-                        if (!foundKey.isEmpty()) {
-                            identifiedGrades.put(foundKey, keyParts[1]);
-                        }
-                    }
+                if (isFolder(key) && key.contains("Grade")) { //Ensure that we are looking at a folder and that the folder name has "grade"
+                    String[] dKeys = key.split("/");            //Split key to extract specifically the grade name
+                    identifiedGrades.put(dKeys[1], null);
                 }
+                //Update progress in progress dialog
+                pd.setProgress(pd.getProgress() + 1);
             }
             //Generate grades based on identified grades
             Set<String> listOfGrades = identifiedGrades.keySet();
+            Log.d("Englify", "Class DownloadService: Method downloadListing(): Identified grades: " + listOfGrades.toString());
             List<String> sortedListOfGrades = new ArrayList(listOfGrades);
             Collections.sort(sortedListOfGrades);
-            Log.d("Englify", "Class DownloadService: Method downloadListing(): Identified grades: " + listOfGrades.toString());
             ArrayList<Grade> grades = new ArrayList<Grade>();
             for (String gradeName : sortedListOfGrades) {
                 //save each grade into internal storage
@@ -467,14 +450,18 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
     }
 
     public static List<S3ObjectSummary> getSummaries(String prefix) {
-        ObjectListing listing = s3Client.listObjects(mainActivity.getString(R.string.Bucket_Name), prefix);
-        return listing.getObjectSummaries();
+        ObjectListing objectListing = s3Client.listObjects(bucketName, prefix);
+        List<S3ObjectSummary> originalSummaries = objectListing.getObjectSummaries();
+        while (objectListing.isTruncated()) {
+            objectListing = s3Client.listNextBatchOfObjects(objectListing);
+            originalSummaries.addAll(objectListing.getObjectSummaries());
+        }
+        return originalSummaries;
     }
 
     public static List<S3ObjectSummary> getSummaries(String...params) {
         String prefix = generatePrefix(params);
-        ObjectListing listing = s3Client.listObjects(mainActivity.getString(R.string.Bucket_Name), prefix);
-        return listing.getObjectSummaries();
+        return getSummaries(prefix);
     }
 
     public static String generatePrefix(String...params) {

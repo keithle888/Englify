@@ -73,10 +73,21 @@ public class Read implements Serializable{
 
     public void overwriteTexts(LinkedList<String> texts) {
         if (texts != null && readParts.size() != 0) {
+            Log.d(bucketName, "Class Read, Method overwriteTexts(): Number of readParts => " + readParts.size() + ", Number of texts => " + texts.size());
             Log.d(bucketName, "Class Read, Method overwriteTexts(): Overwriting read texts with contents -> " + texts.toString());
-            for (ReadPart readPart : readParts) {
-                String text = texts.pop();
-                readPart.reading = text;
+            //There may be more pictures than texts (DB Error). Run only up to which ever list size is the smallest.
+            if (readParts.size() <= texts.size()) {
+                for (ReadPart readPart : readParts) {
+                    String text = texts.pop();
+                    Log.d(bucketName, "Class Read, Method overwriteTexts(): Overwriting -> " + readPart.reading + " with -> " + text);
+                    readPart.reading = text;
+                }
+            } else {
+                for (int i = 0; i < texts.size() ; i++) {
+                    String text = texts.pop();
+                    Log.d(bucketName, "Class Read, Method overwriteTexts(): Overwriting -> " + readParts.get(i).reading + " with -> " + text);
+                    readParts.get(i).reading = text;
+                }
             }
         }
     }
