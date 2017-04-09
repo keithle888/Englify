@@ -453,9 +453,9 @@ public class MainActivity extends AppCompatActivity {
                     case 5:
                         newFragment = new Tutorial();
                         break;
-                    /*case 6:
+                    case 6:
                         new DataManager().checkForUpdates();
-                        break;*/
+                        break;
                 }
                 if (newFragment != null) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, newFragment).addToBackStack(null).commit();

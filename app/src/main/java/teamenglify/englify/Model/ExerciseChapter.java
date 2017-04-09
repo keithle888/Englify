@@ -61,12 +61,13 @@ public class ExerciseChapter implements Serializable {
 
     public void overwriteExerciseChapterPartsText(LinkedList<String> texts) {
         if (texts != null & texts.size() != 0 && texts.size() >= chapterParts.size() && chapterParts.size() != 0) {
-            for (ExerciseChapterPart execiseChapterPart : chapterParts) {
-                execiseChapterPart.text = texts.pop();
+            for (ExerciseChapterPart exerciseChapterPart : chapterParts) {
+                exerciseChapterPart.text = texts.pop();
             }
-
         } else {
-            Log.d("Englify", "Class ExerciseChapter: Method overwriteExerciseChapterPartsText(): Error with overwriting texts.....");
+            for (int i = 0; i < texts.size(); i++) {
+                chapterParts.get(i).text = texts.pop();
+            }
         }
     }
 }

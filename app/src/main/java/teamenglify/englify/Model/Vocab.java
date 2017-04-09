@@ -60,12 +60,18 @@ public class Vocab extends Module{
     }
 
     public void overwriteTexts(LinkedList<String> texts) {
-        Log.d("Englify", "Class Vocab: Method overwriteTexts(): Texts received for overwriting VocabParts, contents are -> " + texts.toString());
-        Log.d("Englify", "Class Vocab: Method overwriteTexts(): Number of VocabParts -> " + vocabParts.size() + " and number of Overwrite texts -> " + texts.size());
         if (texts != null) {
-            for (VocabPart vocabPart : vocabParts) {
-                String text = texts.pop();
-                vocabPart.text = text;
+            Log.d("Englify", "Class Vocab: Method overwriteTexts(): Texts received for overwriting VocabParts, contents are -> " + texts.toString());
+            Log.d("Englify", "Class Vocab: Method overwriteTexts(): Number of VocabParts -> " + vocabParts.size() + " and number of Overwrite texts -> " + texts.size());
+            //Check which list is bigger (texts or vocabPart) , there may be errors in DB.
+            if (vocabParts.size() <= texts.size()) {
+                for (VocabPart vocabPart : vocabParts) {
+                    vocabPart.text = texts.pop();
+                }
+            } else {
+                for (int i = 0; i < texts.size(); i++) {
+                    vocabParts.get(i).text = texts.pop();
+                }
             }
         }
     }
