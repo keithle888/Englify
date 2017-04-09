@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="menu_items" >
-        <item>Main Menu</item>
+        <item>Main Menuအိမ်</item>
         <item>Grade တန်း</item>
-        <item>Pronounce ကွညောခ</item>
+        <item>Pronounce ပွောကွား </item>
         <item>Feedback တုံ့ပြန်ချက်</item>
-        <item>Delete Grade</item>
-        <item>In-App Tutorial</item>
-        <item>Check for update</item>
+        <item>Delete Grade ဖျက်ပစ်ပါ</item>
+        <item>In-App Tutorial ဖုန်းရဲ့ သင်ခန်းစာ</item>
+        <item>Check for update| update ကိုစစ်ဆေးသည်</item>
         <!--<item>Check For Updates</item>-->
     </string-array>
 
