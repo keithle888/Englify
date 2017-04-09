@@ -218,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (vocabCompleted > vocabRequiredLength && readCompleted > readRequiredLength) {
-                        AnalyticsEvent event = analytics.getEventClient().createEvent((String) pair.getKey()).withAttribute("Completed", "Completed").withAttribute("UserID", userID + "");
+                        AnalyticsEvent event = analytics.getEventClient().createEvent((String) pair.getKey()).
+                                withAttribute("Completed", "Completed").withAttribute("UserID", userID + "");
 
                         boolean eventRecorded = false;
                         for (String eventNameTemp : completedList) {
@@ -285,14 +286,6 @@ public class MainActivity extends AppCompatActivity {
             appUsage.setFirstThreeLessonSubmitted(true);
             Log.d("completed event", "submit 3 lessons completed");
         }
-
-
-        if(!appUsage.isFirstThreeLessonSubmitted()){
-            Log.d("completed event", "submit 3 lessons before");
-        }
-
-        Log.d("user id", userID+"");
-
     }
 
     @Override
