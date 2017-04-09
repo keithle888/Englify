@@ -551,6 +551,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             externalApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            externalApp.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             startActivity(externalApp);
             Toast.makeText(this, R.string.Dictionary_Load_Success, Toast.LENGTH_LONG).show();
             Intent mApp = getPackageManager().getLaunchIntentForPackage("teamenglify.englify");
