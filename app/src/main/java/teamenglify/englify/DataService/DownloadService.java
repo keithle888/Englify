@@ -506,7 +506,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         }
     }
 
-    public LinkedList<String> readTextFile(S3Object s3Object) {
+    public static LinkedList<String> readTextFile(S3Object s3Object) {
         LinkedList<String> toReturn = new LinkedList<>();
         S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
         BufferedReader in = new BufferedReader(new InputStreamReader(s3ObjectInputStream));

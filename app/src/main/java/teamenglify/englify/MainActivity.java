@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void submitMobileAnalytics (){
         int analyticsPercentage = S3Properties.analyticsPercentage;
+
         if(analytics != null) {
             //Log.d("MainActivity", "event not recorded");
             //analytics.getEventClient().submitEvents();
@@ -368,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
             s3Client = new AmazonS3Client(credentialsProvider);
         }
     };
+
 
     private void checkAndRequestPermissions() {
         //Record Audio Permission
