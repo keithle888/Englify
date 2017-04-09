@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import teamenglify.englify.LocalSave;
-import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.ExerciseChapter;
@@ -36,9 +35,7 @@ import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.bucketName;
-import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
-import static teamenglify.englify.MainActivity.read;
 import static teamenglify.englify.MainActivity.rootDirectory;
 import static teamenglify.englify.MainActivity.s3Client;
 
@@ -130,9 +127,9 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             }
             mainActivity.onBackPressed();
             if (mainActivity.hasInternetConnection == false) {
-                Toast.makeText(mainActivity, "Download failed due to no internet connection. Please ensure that you have internet access", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mainActivity, R.string.Download_Failed_No_Internet, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mainActivity, "Download failed due to no internet connection. Please ensure that you have internet access", Toast.LENGTH_LONG).show();
+                Toast.makeText(mainActivity, R.string.Download_Failed, Toast.LENGTH_LONG).show();
             }
         }
     }

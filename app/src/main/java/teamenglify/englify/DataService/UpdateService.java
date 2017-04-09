@@ -41,8 +41,8 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
     public void onPreExecute() {
         pd = new ProgressDialog(mainActivity);
         pd.setMessage(baseMessage);
-        pd.setIndeterminate(true);
-
+        pd.setTitle(R.string.Update_Progress_Dialog_Title);
+        pd.setCancelable(false);
     }
 
     @Override
@@ -52,11 +52,6 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
         } else {
             return false;
         }
-    }
-
-    @Override
-    protected void onProgressUpdate(String...progress) {
-        pd.setMessage(baseMessage + "\n"  + progress[0]);
     }
 
     @Override
@@ -73,7 +68,9 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
     public boolean checkForGradeUpdates() {
         gradesToBeUpdated = new ArrayList<>();
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory);
+        pd.setMax(summaries.size() * summaries.size());
         for (Grade grade : gradesToBeChecked) {                                                     //Iterate through all grades.
+            pd.setMessage(baseMessage + grade.name);
             Log.d(bucketName, "Class UpdateService: Method checkForGradeUpdates(): Last modified date of grade being checked -> " + grade.lastModified.toString());
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();

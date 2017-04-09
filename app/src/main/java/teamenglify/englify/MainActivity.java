@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadLoginFragment() {
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
         //Initialize English-Myanmar Dictionary
-        //initializeDictionary();
+        initializeDictionary();
     }
 
     public void loadNextListing(int listingType, Object objectToLoad) {
@@ -552,7 +552,8 @@ public class MainActivity extends AppCompatActivity {
                 ap.show();
             }
         } else {
-            externalApp.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            externalApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            externalApp.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             startActivity(externalApp);
             Toast.makeText(this, R.string.Dictionary_Load_Success, Toast.LENGTH_LONG).show();
             Intent mApp = getPackageManager().getLaunchIntentForPackage("teamenglify.englify");

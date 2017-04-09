@@ -41,6 +41,7 @@
     <string name="Speech_Recognition_Timeout_b">အခ်ိန္ကုန္ပါၿပီ။ ထပ္၍ႀကီးစားပါ။</string>
     <string name="Download_Failed">Download failed.</string>
     <string name="Download_Failed_b">ထုတ္ယူ (download) ၍မရပါ။</string>
+    <string name="Download_Failed_No_Internet">Download failed due to lack of internet connection.</string>
     <string name="Deletion_Check">Are you sure you want to delete</string>
     <string name="Deletion_Check_b">အမွန္တကယ္ဖ်က္းလိုပါသလား။</string>
     <string name="Update_Reject">No grade(s) have been downloaded.</string>
@@ -56,4 +57,5 @@
     <string name="Dictionary_Download_Unavailable">Please download the English-Myanmar Dictionary when internet is available to enable in-app translations.</string>
     <string name="Dictionary_Download_Prompt">Would you like to download the English-Myanmar Dictionary to enable in-app translations?</string>
     <string name="Dictionary_Download_Reject">Please download the English-Myanmar Dictionary to enable in-app translations at your own convenience.</string>
+    <string name="Update_Progress_Dialog_Title">Checking For Updates</string>
 </resources>
