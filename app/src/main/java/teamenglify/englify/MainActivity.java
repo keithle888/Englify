@@ -552,15 +552,13 @@ public class MainActivity extends AppCompatActivity {
                 ap.show();
             }
         } else {
-            startService(externalApp);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (externalApp != null) {
-            stopService(externalApp);
+            externalApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(externalApp);
+            //Toast.makeText(this, R.string.Dictionary_Load_Success, Toast.LENGTH_LONG).show();
+            //Reorder our main activity to the top.
+            Intent mApp = getPackageManager().getLaunchIntentForPackage("teamenglify.englify");
+            mApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(mApp);
         }
     }
 }
