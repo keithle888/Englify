@@ -112,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-
     private File root;
     private ArrayList<File> fileList = new ArrayList<File>();
-
     //variable for SpeechRecognition
     public boolean readyForSpeechRecognitionToLoad = false;
+    //external app variable
+    public Intent externalApp;
 
 
     @Override
@@ -526,7 +526,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void initializeDictionary() {
         //Initialize Myanmar-Dictionary App
-        Intent externalApp = getPackageManager().getLaunchIntentForPackage("com.naing.englishmyanmardictionary");
+        externalApp = getPackageManager().getLaunchIntentForPackage("com.naing.englishmyanmardictionary");
         if (externalApp == null) {
             //Ask them whether they want to download another app?
             if (hasInternetConnection == false) {
@@ -552,13 +552,15 @@ public class MainActivity extends AppCompatActivity {
                 ap.show();
             }
         } else {
-            externalApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            externalApp.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-            startActivity(externalApp);
-            Toast.makeText(this, R.string.Dictionary_Load_Success, Toast.LENGTH_LONG).show();
-            Intent mApp = getPackageManager().getLaunchIntentForPackage("teamenglify.englify");
-            mApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(mApp);
+            startService(externalApp);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (externalApp != null) {
+            stopService(externalApp);
         }
     }
 }

@@ -43,6 +43,7 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
         pd.setMessage(baseMessage);
         pd.setTitle(R.string.Update_Progress_Dialog_Title);
         pd.setCancelable(false);
+        pd.show();
     }
 
     @Override
@@ -52,6 +53,12 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onProgressUpdate(String...progress) {
+        pd.setMessage(progress[0]);
+        pd.setProgress(Integer.parseInt(progress[1]));
     }
 
     @Override
@@ -70,15 +77,16 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory);
         pd.setMax(summaries.size() * summaries.size());
         for (Grade grade : gradesToBeChecked) {                                                     //Iterate through all grades.
-            pd.setMessage(baseMessage + grade.name);
             Log.d(bucketName, "Class UpdateService: Method checkForGradeUpdates(): Last modified date of grade being checked -> " + grade.lastModified.toString());
             for (S3ObjectSummary summary : summaries) {
+                publishProgress(baseMessage + grade.name, String.valueOf(pd.getProgress() + 1));
                 String key = summary.getKey();
                 Date lastModified = summary.getLastModified();
                 String[] dKey = key.split("/");
                 if (dKey.length >= 2 && key.contains(grade.name)) {                     //Summary is part of the grade being checked.
                     if (grade.lastModified.before(lastModified)) {                                  //If true, grade has have a modification inside.
                         gradesToBeUpdated.add(grade);
+                        break;
                     }
                 }
             }
