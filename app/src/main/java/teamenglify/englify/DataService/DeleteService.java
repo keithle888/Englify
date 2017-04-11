@@ -19,15 +19,26 @@ import teamenglify.englify.R;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
- * Created by keith on 18-Mar-17.
+ * DeleteService is used to delete the grade passed to it. It extends AsyncTask to utilise ProgressDialog. To utilise the class, create an instance of it using the constructor with the grade to be delete as the parameter, then call the execute() method to start the AsyncTask.
+ * @author Keith Leow
+ * @since 18-Mar-17
  */
 
 public class DeleteService extends AsyncTask<Void, Void, Void>{
     private ProgressDialog pd;
     private Grade grade;
 
-    public DeleteService() {}
+    /**
+     * Default empty constructor. Should not be used.
+     */
+    public DeleteService() {
 
+    }
+
+    /**
+     * Constructor for DeleteService when deleting a grade.
+     * @param grade The grade to be deleted.
+     */
     public DeleteService(Grade grade) {
         this.grade = grade;
     }
@@ -65,6 +76,12 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         super.onPostExecute(result);
     }
 
+
+    /**
+     * Called by doInBackground from the AsyncTask.
+     * Iterates through all the media files the grade has in the local content and deletes it.
+     * Creates a new grade instance with the same name and saves it into the same index in RootListing.grades
+     */
     public void deleteGrade() {
         //delete media resources seperately stored on grade.
         for (String fileName : mainActivity.fileList()) {
@@ -81,6 +98,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         rootListing.overrideGrade(newGrade);
         LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
     }
+
 
     public void deleteRootListing() {
         mainActivity.deleteFile(mainActivity.getString(R.string.S3_Object_Listing));

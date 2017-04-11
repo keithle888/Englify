@@ -1,5 +1,9 @@
 package teamenglify.englify.DataService;
 
+/**
+ * The DataManager class is used to request for data. Its methods will check whether the requested resource is available locally, if not, it will start a DownloadService to download, save the resource locally. To retrieve the resource, the variable in MainActivity downloadedObject will be set as the downloaded resource, once the download is finished.
+ * @author Keith Leow
+ */
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -19,7 +23,10 @@ import static teamenglify.englify.MainActivity.mainActivity;
 
 //Used to decide whether to download grades from the internet or from internal storage
 public class DataManager {
-
+    /**
+     * getListing() is to get a listing of all the Grades (a RootListing)
+     * Once it has been loaded, the MainActivity variable downloadedObject will be set as the RootListing object.
+     */
     public void getListing() {
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
         if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null) {
@@ -35,6 +42,11 @@ public class DataManager {
             }
         }
     }
+
+    /**
+     * Used to get a downloaded grade resource. The method will check whether the grade variable isDownloaded to see if a DownloadService needs to be called. If not, it will set the MainActivity variable downloadedObject to the grade.
+     * @param grade The grade object can be retrieved from the RootListing object, in the variable grades.
+     */
 
     public void getGrade(Grade grade) {
         //get grade from local memory
@@ -58,9 +70,18 @@ public class DataManager {
         }
     }
 
+    /**
+     * Used to delete the grade from local memory and reset the Grade variable isDownloaded to false.
+     * @param grade
+     */
     public void deleteGrade(Grade grade) {
         promptForDeletion(grade);
     }
+
+    /**
+     * The AlertDialog prompt when a getGrade() is requested but the grade has yet to be downloaded. Is called by getGrade() method.
+     * @param grade
+     */
 
     public void promptForDownload(final Grade grade) {
         //create a dialog to ask whether they want to download the grade
@@ -83,6 +104,10 @@ public class DataManager {
                 .show();
     }
 
+    /**
+     * The AlertDialog prompt to get confirmation that the user wants to delete the grade. Is called by getDelete() method.
+     * @param grade
+     */
     public void promptForDeletion(final Grade grade) {
         //create a dialog to ask whether they want to download the grade
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
@@ -103,6 +128,9 @@ public class DataManager {
                 .show();
     }
 
+    /**
+     * The method checks what grades have been downloaded and calls UpdateService to check whether updates are available for the grades that have been downloaded. Grades that need updating will be deleted and re-downloaded.
+     */
     public void checkForUpdates() {
         ArrayList<Grade> gradesToBeChecked = new ArrayList<>();
         //check whether anything has been downloaded. If not, throw a toast.
