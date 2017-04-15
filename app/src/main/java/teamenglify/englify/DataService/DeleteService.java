@@ -99,7 +99,9 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
     }
 
-
+    /**
+     * Method to delete RootListing from local memory.
+     */
     public void deleteRootListing() {
         mainActivity.deleteFile(mainActivity.getString(R.string.S3_Object_Listing));
     }

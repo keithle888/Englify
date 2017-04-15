@@ -39,7 +39,10 @@ import static teamenglify.englify.MainActivity.mainActivity;
 import static teamenglify.englify.MainActivity.rootDirectory;
 import static teamenglify.englify.MainActivity.s3Client;
 
-
+/**
+ * DownloadService class is used to download objects from the AWS S3 server and save them to local memory as the appropriate Java objects.
+ * DownloadService extends AsyncTask in order to run networking calls on a separate thread while keeping the UI up-to-date with its status.
+ */
 public class DownloadService extends AsyncTask<Void, String, Boolean>{
     public final static int DOWNLOAD_LISTING = 0;
     public final static int DOWNLOAD_GRADE = 1;
@@ -49,10 +52,19 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
     public LinkedList<String> texts;
     private String baseMessage = "Downloading:";
 
+    /**
+     * Constructor used to download the list of grades available. Parameter should be DownloadService.DOWNLOAD_LISTING.
+     * @param i Should be DOWNLOAD_LISTING
+     */
     public DownloadService(int i) {
         this.downloadType = i;
     }
 
+    /**
+     * Constructor used to download a grade
+     * @param i Should be DOWNLOAD_GRADE
+     * @param grade Grade object to be downloaded. Can found from RootListing object in local memory.
+     */
     public DownloadService (int i, Grade grade) {
         this.downloadType = i;
         this.grade = grade;
@@ -134,6 +146,12 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         }
     }
 
+    /**
+     * Method to download listing for grades available.
+     * Is called by AsyncTask implementation in DownloadService.
+     * Creates the RootListing object and empty Grade objects (with only names) and saves it to local memory)
+     * @return True; if method executes correctly. False; if an exception is caught.
+     */
     public boolean downloadListing() {
         //download all objects
         try {
@@ -173,6 +191,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         return true;
     }
 
+    /**
+     * Method for downloading content for a specific grade
+     * Called by the AsyncTask implementation in DownloadService.
+     * Creates Lesson objects (Lesson and its description) inside each grade and the different Modules (Vocab, Conversation, Exercise) in each lesson.
+     */
     public void downloadGrade() {
         try {
             //download grade tree from S3.
@@ -238,6 +261,13 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
             throw e;
         }
     }
+
+    /**
+     * Called by downloadGrade()
+     * Iterates through all the lessons and its modules.
+     * Creates the VocabPart objects, ExerciseChapter objects and Read objects.
+     * @param grade Grade to be downloaded.
+     */
 
     public void downloadGradeModules(Grade grade) {
         try {
@@ -325,6 +355,12 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         }
     }
 
+    /**
+     * Called by downloadGradeModules().
+     * Iterates through all the Reads in the Grade to be downloaded.
+     * Creates all the ReadPart (Audio, Images and Text) objects and saves it to local memory.
+     * @param grade Grade to be downloaded.
+     */
     public void downloadReadParts(Grade grade) {
         try {
             for (Lesson lesson : grade.lessons) {
@@ -372,6 +408,12 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         }
     }
 
+    /**
+     * Called by downloadeGradeModules().
+     * Iterates through all the ExerciseChapters for the Grade object.
+     * Creates the ExerciseChapterPart (Audio, Image and Text) objects and saves to local memory.
+     * @param grade Grade to be downloaded.
+     */
     public void downloadExerciseChapterParts(Grade grade) {
         for (Lesson lesson : grade.lessons) {
             for (Module module : lesson.modules) {
@@ -417,6 +459,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         }
     }
 
+    /**
+     * Method called by downloadeGrade().
+     * Used to insert the lastModified date for the Grade being downloaded as well as all the lessons the grade has.
+     * The lastModified date is to be used when checking for updates in the S3 Server.
+     */
     public void updateGradeModificationDate() {
         List<S3ObjectSummary> summaries = getSummaries(generatePrefix(rootDirectory, grade.name));
         for (S3ObjectSummary summary : summaries) {     //Iterate through all the summaries for that grade, to find out what was the latest modification for the grade, and its lessons.
@@ -446,6 +493,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean>{
         }
     }
 
+    /**
+     * Helper method for getting the list of objects from S3 Server
+     * @param prefix Folder path to be "listed".
+     * @return List of objects in the specified folder.
+     */
     public static List<S3ObjectSummary> getSummaries(String prefix) {
         ObjectListing objectListing = s3Client.listObjects(bucketName, prefix);
         List<S3ObjectSummary> originalSummaries = objectListing.getObjectSummaries();
