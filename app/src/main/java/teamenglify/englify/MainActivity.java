@@ -334,18 +334,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadLoginFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment(), "LOGIN_FRAGMENT").addToBackStack(null).commit();
         //Initialize English-Myanmar Dictionary
         //initializeDictionary();
-    }
-
-    public void loadNextListing(int listingType, Object objectToLoad) {
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(listingType, objectToLoad)).addToBackStack(null).commit();
-    }
-
-    public void loadModuleListing(int i,Lesson lesson) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ModuleSelection.newInstance(i, lesson)).addToBackStack(null).commit();
     }
 
     public void loadReadingModule(Read read) {
@@ -434,8 +425,10 @@ public class MainActivity extends AppCompatActivity {
                         newFragment = new LoginFragment();
                         break;
                     case 1:
+                        //Clear backstack
+                        clearBackStack();
                         //Goes to Grade
-                        newFragment = ListingFragment.newInstance(ListingFragment.GRADE_LISTING, LocalSave.loadObject(getString(R.string.S3_Object_Listing)));
+                        newFragment = ListingFragment.newInstance(ListingFragment.LIST_GRADES);
                         break;
                     case 2:
                         newFragment = new TextToSpeech();

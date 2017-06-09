@@ -34,6 +34,7 @@ import teamenglify.englify.R;
 import teamenglify.englify.ReadingModule.ReadImage;
 import teamenglify.englify.VocabModule.VocabImage;
 
+import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
@@ -51,28 +52,28 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
         //Generate listings on constructor
         listings = new ArrayList<>();
         listingLessonDesc = new ArrayList<>();
-        if (listingType == ListingFragment.GRADE_LISTING) {
+        if (listingType == ListingFragment.LIST_GRADES) {
             RootListing root = (RootListing) object;
             for (Grade grade : root.grades) {
                 listings.add(grade.name);
             }
-        } else if (listingType == ListingFragment.LESSON_LISTING) {
+        } else if (listingType == ListingFragment.LIST_LESSONS) {
             Grade grade = (Grade) object;
             for (Lesson lesson : grade.lessons) {
                 listings.add(lesson.name);
                 listingLessonDesc.add(lesson.description);
             }
-        } else if (listingType == ListingFragment.READ_LISTING) {
+        } else if (listingType == ListingFragment.LIST_CONVERSATIONS) {
             Conversation conversation = (Conversation) object;
             for (Read read : conversation.reads) {
                 listings.add(read.name);
             }
-        } else if (listingType == ListingFragment.VOCAB_LISTING) {
+        } else if (listingType == ListingFragment.LIST_VOCABS) {
             Vocab vocab = (Vocab) object;
             for (VocabPart vocabPart : vocab.vocabParts) {
                 listings.add(vocabPart.text);
             }
-        } else if (listingType == ListingFragment.EXERCISE_LISTING) {
+        } else if (listingType == ListingFragment.LIST_EXERCISES) {
             Exercise exercise = (Exercise) object;
             for (ExerciseChapter exerciseChapter : exercise.chapters) {
                 listings.add(exerciseChapter.name);
@@ -83,21 +84,21 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     @Override
     public ListingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        if (listingType == ListingFragment.VOCAB_LISTING){ //When the listing is VOCAB_LISTING
+        if (listingType == ListingFragment.LIST_VOCABS){ //When the listing is VOCAB_LISTING
             View choice = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.selection_box_list, parent, false);
 
             return new ListingViewHolder(choice);
         }
 
-        if (listingType == ListingFragment.LESSON_LISTING){ //When the listing is VOCAB_LISTING
+        if (listingType == ListingFragment.LIST_LESSONS){ //When the listing is VOCAB_LISTING
             View choice = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.selection_box_lesson, parent, false);
 
             return new ListingViewHolder(choice);
         }
 
-        if (listingType == ListingFragment.READ_LISTING){ //When the listing is VOCAB_LISTING
+        if (listingType == ListingFragment.LIST_CONVERSATIONS){ //When the listing is VOCAB_LISTING
             View choice = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.selection_box_read, parent, false);
 
@@ -119,26 +120,28 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
             public void onClick(View view) {
                 view.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 //load lesson list if the current listing is grade
-                if(listingType == ListingFragment.GRADE_LISTING) {
+                if(listingType == ListingFragment.LIST_GRADES) {
                     MainActivity.strGrade = selected;
-                    mainActivity.loadNextListing(ListingFragment.LESSON_LISTING, ((RootListing)object).grades.get(position));
-                    mainActivity.getSupportActionBar().setTitle("Lesson Selection");
-                    Log.d("Englify", "Class ListingAdapter: Method onBindViewHolder(): Asked mainActivity to loadNextListing()");
-                } else if (listingType == ListingFragment.LESSON_LISTING) {
+                    mainActivity.getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_LESSONS, ((RootListing)object).findGrade(selected)),"LESSON_LISTING")
+                            .addToBackStack(null).commit();
+                    Log.d(bucketName, "Class ListingAdapter: Method onBindViewHolder(): " + selected + " was selected.");
+                } else if (listingType == ListingFragment.LIST_LESSONS) {
                     MainActivity.lesson = selected;
-                    mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
-                } else if (listingType == ListingFragment.READ_LISTING) {
+                    //mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
+                } else if (listingType == ListingFragment.LIST_CONVERSATIONS) {
                     MainActivity.read = selected;
                     ReadImage.recordDataRead(position);
                     mainActivity.position = 0;
                     mainActivity.loadReadingModule(((Conversation)object).reads.get(position));
                     mainActivity.getSupportActionBar().setTitle("Study Read");
-                } else if (listingType == ListingFragment.VOCAB_LISTING) {
+                } else if (listingType == ListingFragment.LIST_VOCABS) {
                     MainActivity.position = position;
                     MainActivity.vocab = selected;
                     VocabImage.recordDataVocab(position);
                     mainActivity.loadVocabModule((Vocab)object);
-                } else if (listingType == ListingFragment.EXERCISE_LISTING) {
+                } else if (listingType == ListingFragment.LIST_EXERCISES) {
                     mainActivity.position = 0;
                     mainActivity.loadExerciseModule((ExerciseChapter)((Exercise) object).chapters.get(position));
                 }

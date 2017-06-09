@@ -20,8 +20,7 @@ import android.widget.ImageButton;
  * create an instance of this fragment.
  */
 public class ModuleSelection extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private int mParam1;
     private Lesson lesson;
     MainActivity mainActivity;
@@ -31,21 +30,12 @@ public class ModuleSelection extends Fragment {
         // Required empty public constructor
     }
 
-    public static ModuleSelection newInstance(int param1, Lesson lesson) {
+    public static ModuleSelection newInstance(Lesson lesson) {
         ModuleSelection fragment = new ModuleSelection();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, param1);
         fragment.lesson = lesson;
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getInt(ARG_PARAM1);
-        }
     }
 
     @Override
@@ -58,7 +48,7 @@ public class ModuleSelection extends Fragment {
         ImageButton execiseBtn = (ImageButton) view.findViewById(R.id.ExerciseBtn);
         mainActivity = MainActivity.getMainActivity();
 
-
+        /*
         readingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +70,7 @@ public class ModuleSelection extends Fragment {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 mainActivity.loadNextListing(ListingFragment.EXERCISE_LISTING, lesson.findModule(getString(R.string.Exercise_Folder_Name)));
             }
-        });
+        }); */
         return view;
     }
 

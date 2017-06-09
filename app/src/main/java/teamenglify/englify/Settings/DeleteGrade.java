@@ -73,7 +73,7 @@ public class DeleteGrade extends Fragment {
             for (int i = 0; i < rootListing.grades.size(); i++) {
                 Grade grade = rootListing.grades.get(i);
                 Log.d("Englify", "Class DeleteGrade: Method Constructor DeleteGradeAdapter: Looking at -> " + grade.toString());
-                if (grade.isDownloaded == true) {
+                if (grade.lessons.size() != 0) {
                     Log.d("Englify", "Class DeleteGrade: Method Constructor DeleteGradeAdapter: " + grade.name + " has been downloaded.");
                     newListing.grades.add(grade);
                 }

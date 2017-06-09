@@ -6,9 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import android.content.Context;
+
+import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.R;
 import android.util.Log;
 
@@ -20,20 +23,17 @@ import static teamenglify.englify.MainActivity.mainActivity;
 public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolderLesson> {
 
     private Context mContext;
-    private int listingType;
-    private Object object;
+    private Grade grade;
     private ArrayList<String> listings;
     private ArrayList<String> listingLessonDesc;
 
-    public ListingAdapterLesson(Object object, int listingType) {
-        this.object = object;
-        this.listingType = listingType;
+    public ListingAdapterLesson(Grade grade) {
+        this.grade = grade;
         this.mContext = mainActivity.getApplicationContext();
         //Generate listings on constructor
         listings = new ArrayList<>();
         listingLessonDesc = new ArrayList<>();
 
-        Grade grade = (Grade) object;
         for (Lesson lesson : grade.lessons) {
             if(!lesson.name.endsWith(".txt")){
                 listings.add(lesson.name);
@@ -61,7 +61,16 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
             public void onClick(View view) {
                 view.setBackgroundColor(Color.parseColor("#ffffbb33"));
                 MainActivity.lesson = selected;
-                mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
+                Lesson lesson = grade.findLesson(selected);
+                if (lesson.modules.size() == 0) { //Lesson has not been downloaded.
+                    new DataManager().download_lesson(grade, lesson);
+                } else {
+                    mainActivity.getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.activity_main_container, ModuleSelection.newInstance(lesson), "Module Selection")
+                            .addToBackStack(null)
+                            .commit();
+                }
             }
         });
 

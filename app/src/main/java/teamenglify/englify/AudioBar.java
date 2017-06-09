@@ -36,7 +36,6 @@ public class AudioBar extends Fragment {
     private Handler mHandler = new Handler();
     private String audioBarMessageDisplay;
     private MediaPlayer mediaPlayer;
-    private ArrayList<String> audioURLList;
     private boolean readyToPlay = false;
     private String audioURL;
     private Object object;

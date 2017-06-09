@@ -1,6 +1,7 @@
 package teamenglify.englify.DataService;
 
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -16,7 +17,6 @@ import java.util.List;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.R;
 
-import static teamenglify.englify.DataService.DownloadService.DOWNLOAD_GRADE;
 import static teamenglify.englify.DataService.DownloadService.getSummaries;
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -119,10 +119,7 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        for (Grade grade : gradesToBeUpdated) {
-                            new DeleteService(grade).execute();
-                            new DownloadService(DOWNLOAD_GRADE, grade).execute();
-                        }
+
                     }
                 })
                 .show();

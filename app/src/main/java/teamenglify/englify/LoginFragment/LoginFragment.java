@@ -14,6 +14,8 @@ import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
+import static teamenglify.englify.MainActivity.mainActivity;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LoginFragment#newInstance} factory method to
@@ -66,19 +68,16 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        //initialize variables
-        MainActivity mainActivity = MainActivity.getMainActivity();
         //set title
         mainActivity.getSupportActionBar().setTitle("Englify Home");
         //set button listener
-        Button loginBtn = (Button) view.findViewById(R.id.loginBtn);
-        loginBtn.setOnClickListener(new View.OnClickListener() {
+        Button getStartedButton = (Button) view.findViewById(R.id.get_started_button);
+        getStartedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
-                MainActivity mainActivity = MainActivity.getMainActivity();
-                mainActivity.loadNextListing(ListingFragment.GRADE_LISTING, LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing)));
-                mainActivity.getSupportActionBar().setTitle("Grade Selection");
+                //Get Main Activity to Open ListingFragment with GRADE_LISTING TAG
+                mainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_GRADES), "GRADE_LISTING").addToBackStack(null).commit();
             }
         });
         return view;

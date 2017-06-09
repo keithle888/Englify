@@ -13,26 +13,24 @@ public class Grade implements Serializable{
     public String name;
     public ArrayList<Lesson> lessons;
     public String imgURL;
-    public boolean isDownloaded;
     public Date lastModified;
 
-    public Grade(String name, ArrayList<Lesson> lessons, String imgURL, boolean isDownloaded) {
+    public Grade(String name, ArrayList<Lesson> lessons, String imgURL) {
         this.name = name;
         this.lessons = lessons;
         this.imgURL = imgURL;
-        this.isDownloaded = isDownloaded;
     }
 
-    public Grade(String name, ArrayList<Lesson> lessons, String imgURL, boolean isDownloaded, Date lastModified) {
+    public Grade(String name, ArrayList<Lesson> lessons, String imgURL, Date lastModified) {
         this.name = name;
         this.lessons = lessons;
         this.imgURL = imgURL;
-        this.isDownloaded = isDownloaded;
         this.lastModified = lastModified;
     }
 
     public Grade(String name) {
         this.name = name;
+        this.lessons = new ArrayList<Lesson>();
     }
 
     public void addLesson(Lesson lesson) {
@@ -54,7 +52,7 @@ public class Grade implements Serializable{
 
     @Override
     public String toString() {
-        return "Grade[name:\"" + name + "\", lessons:\"" + lessons.toString() + "\",imgURL:\"" + imgURL + "\",isDownloaded:\"" + isDownloaded + "\"]";
+        return "Grade[name:\"" + name + "\", lessons:\"" + lessons.toString() + "\",imgURL:\"" + imgURL + "\",isDownloaded:\"" + "]";
     }
 
     public void overwriteLessonDescriptions(LinkedList<String> texts) {

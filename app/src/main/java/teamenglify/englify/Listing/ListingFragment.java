@@ -24,6 +24,7 @@ import android.widget.ImageView;
 
 
 import teamenglify.englify.DataService.DataManager;
+import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.Grade;
@@ -31,9 +32,12 @@ import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 
+import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 import android.support.v7.widget.GridLayoutManager;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,34 +46,40 @@ import android.support.v7.widget.GridLayoutManager;
  */
 public class ListingFragment extends Fragment {
     //Fixed variables to be used to determine listing type
-    public static ListingFragment listingFragment;
-    public static final int GRADE_LISTING = 0;
-    public static final int LESSON_LISTING = 1;
-    public static final int MODULE_LISTING = 2;
-    public static final int READ_LISTING = 3;
-    public static final int VOCAB_LISTING = 4;
-    public static final int EXERCISE_LISTING = 5;
+    public static final int LIST_GRADES = 0;
+    public static final int LIST_LESSONS = 1;
+    public static final int LIST_MODULES = 2;
+    public static final int LIST_CONVERSATIONS = 3;
+    public static final int LIST_VOCABS = 4;
+    public static final int LIST_EXERCISES = 5;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static String ARG_PARAM1 = "ARG_PARAM1";
     private RecyclerView recyclerView;
     private ListingAdapter listingAdapter;
     private ListingAdapterLesson listingAdapterLesson;
     private ImageView noContentImage;
     private int listingType;
-    private Handler mHandler;
-    private Object objectToLoad;
+    private Object object_to_load; //When we are dealing with lessons or anything below
 
 
     public ListingFragment() {
         // Required empty public constructor
     }
 
-    public static ListingFragment newInstance(int listingType, Object objectToLoad) {
+    public static ListingFragment newInstance(int listingType) {
         ListingFragment fragment = new ListingFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, listingType);
-        fragment.objectToLoad = objectToLoad;
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ListingFragment newInstance(int listingType, Object object_to_load) {
+        ListingFragment fragment = new ListingFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_PARAM1, listingType);
+        fragment.object_to_load = object_to_load;
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,85 +102,73 @@ public class ListingFragment extends Fragment {
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
-        Log.d("Englify", "Class ListingFragment: Method onCreateView(): Loading listing " + listingType);
-        mHandler = new Handler();
+        return view;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateActionBarTitle();
         //objectToLoad not present, download
-        if (listingType == GRADE_LISTING && ((RootListing)objectToLoad).grades == null) {
-            //set the correct Title in action bar
+        if (listingType == LIST_GRADES) {
             new DataManager().getListing();
-            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
-            mHandler.post(mBackgroundThread);
-        } else if (objectToLoad instanceof Grade && !((Grade) objectToLoad).isDownloaded) {
-            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Asking DataManager to get " + ((Grade)objectToLoad).name);
-            new DataManager().getGrade((Grade) objectToLoad);
-            Log.d("Englify", "Class ListingFragment: Method onCreateView(): Starting mBackgroundThread.");
-            mHandler.post(mBackgroundThread);
+        } else if (listingType == LIST_LESSONS) {
+            //check if the list of lessons for the grade has been downloaded (using size)
+            Grade selected_grade = (Grade) object_to_load;
+            if (selected_grade.lessons.size() == 0) {
+                new DataManager().download_list_of_lessons(selected_grade);
+            } else {
+                mUpdateUIAfterDataLoaded(selected_grade);
+            }
         } else {
             mUpdateUIAfterDataLoaded();
         }
-        return view;
     }
 
     public void mUpdateUIAfterDataLoaded() {
         Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
-        Object object = objectToLoad;
         //get the listings based on which listingType
-        if (listingType == GRADE_LISTING) {
+        if (listingType == LIST_GRADES) {
+            Object object = LocalSave.loadObject(getString(R.string.S3_Object_Listing));
             RootListing grades = (RootListing) object;
             listingAdapter = new ListingAdapter(object, listingType);
             recyclerView.setAdapter(listingAdapter);
             //load additional settings
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
-        } else if (listingType == LESSON_LISTING) {
-            mainActivity.getSupportActionBar().setTitle("Lesson Listing");
-            listingAdapterLesson = new ListingAdapterLesson(object, listingType);
-            recyclerView.setAdapter(listingAdapterLesson);
-            //load additional settings
-            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
-            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+        } /*
         }else{
             listingAdapter = new ListingAdapter(object, listingType);
             recyclerView.setAdapter(listingAdapter);
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
-        }
+        } */
     }
 
-    private Runnable mBackgroundThread = new Runnable() {
-        @Override
-        public void run() {
-            if (mainActivity.downloadedObject != null) {
-                objectToLoad = mainActivity.downloadedObject;
-                mUpdateUIAfterDataLoaded();
-                mainActivity.downloadedObject = null;
-                Log.d("Englify", "Class ListingFragment: Method mBackgroundThread: Found downloadedObject.");
-            } else {
-                mHandler.postDelayed(mBackgroundThread, 500);
-            }
+    public void mUpdateUIAfterDataLoaded(Grade grade) {
+        Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating ListingFragment UI with the listing of lessons for " + grade.name + " with " + grade.lessons.size() + " lessons.");
+        if (listingType == LIST_LESSONS) {
+            mainActivity.getSupportActionBar().setTitle(grade.name);
+            listingAdapterLesson = new ListingAdapterLesson(grade);
+            recyclerView.setAdapter(listingAdapterLesson);
+            //load additional settings
+            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
+            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         }
-    };
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateActionBarTitle();
     }
-
     public void updateActionBarTitle() {
         String title = null;
-        if (objectToLoad != null) {
-            if (objectToLoad instanceof RootListing) {
-                title = "Grade Listing";
-            } else if (objectToLoad instanceof Grade) {
-                title = "Lesson Listing";
-            } else if (objectToLoad instanceof Vocab) {
-                title = "Vocab Listing";
-            } else if (objectToLoad instanceof Conversation) {
-                title = "Read Listing";
-            } else if (objectToLoad instanceof Exercise) {
-                title = "Exercise Listing";
-            }
+        if (listingType == LIST_GRADES) {
+            title = "Grade Listing";
+        } else if (listingType == LIST_LESSONS) {
+            title = "Lesson Listing";
+        } else if (listingType == LIST_VOCABS) {
+            title = "Vocab Listing";
+        } else if (listingType == LIST_CONVERSATIONS) {
+            title = "Read Listing";
+        } else if (listingType == LIST_EXERCISES) {
+            title = "Exercise Listing";
         }
         if (title != null) {
             mainActivity.getSupportActionBar().setTitle(title);
@@ -180,7 +178,6 @@ public class ListingFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mHandler.removeCallbacks(mBackgroundThread);
     }
 
     /**

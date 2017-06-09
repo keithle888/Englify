@@ -12,9 +12,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
@@ -31,42 +33,31 @@ public class DataManager {
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
         if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null) {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
-            MainActivity.downloadedObject = LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
+            //Call Update UI method in "GRADE_LISTING" ListingFragment to update grade
+            ((ListingFragment) mainActivity.getSupportFragmentManager().findFragmentByTag("GRADE_LISTING")).mUpdateUIAfterDataLoaded();
         } else {
-            if (mainActivity.hasInternetConnection == true) {
+            if (mainActivity.hasInternetConnection) {
                 Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
-                DownloadService download = new DownloadService(teamenglify.englify.DataService.DownloadService.DOWNLOAD_LISTING);
-                download.execute();
+                new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_GRADES).execute();
             } else {
                 Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    /**
-     * Used to get a downloaded grade resource. The method will check whether the grade variable isDownloaded to see if a DownloadService needs to be called. If not, it will set the MainActivity variable downloadedObject to the grade.
-     * @param grade The grade object can be retrieved from the RootListing object, in the variable grades.
-     */
-
-    public void getGrade(Grade grade) {
-        //get grade from local memory
-        Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for " + grade.name + " availability.");
-        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing))) {
-            RootListing rootListing = (RootListing) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
-            grade = rootListing.findGrade(grade.name);
-        }
-        if (grade != null && grade.isDownloaded) {
-            Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " was found in internal memory.");
-            mainActivity.downloadedObject = grade;
+    public void download_list_of_lessons(Grade grade) {
+        if (mainActivity.hasInternetConnection) {
+            new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_LESSONS, grade).execute();
         } else {
-            if (mainActivity.hasInternetConnection == true) {
-                //grade has not been downloaded.
-                Log.d("Englify", "Class DataManager: Method getListing(): " + grade.name + " downloaded to internal memory. Moving to download listing from AWS S3");
-                promptForDownload(grade);
-            } else {
-                /*mainActivity.onBackPressed();*/
-                Toast.makeText(mainActivity,"No internet connection detected.", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void download_lesson(Grade grade, Lesson lesson) {
+        if (mainActivity.hasInternetConnection) {
+            ask_to_download_lesson(grade, lesson);
+        } else {
+            Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -76,32 +67,6 @@ public class DataManager {
      */
     public void deleteGrade(Grade grade) {
         promptForDeletion(grade);
-    }
-
-    /**
-     * The AlertDialog prompt when a getGrade() is requested but the grade has yet to be downloaded. Is called by getGrade() method.
-     * @param grade
-     */
-
-    public void promptForDownload(final Grade grade) {
-        //create a dialog to ask whether they want to download the grade
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        builder.setTitle(mainActivity.getString(R.string.Download_Prompt_Title))
-                .setMessage(mainActivity.getString(R.string.Download_Prompt_Message) + " " + grade.name + " ?")
-                .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        mainActivity.onBackPressed();
-                        Toast.makeText(mainActivity,R.string.Reject_Download_Message,Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        new DownloadService(DownloadService.DOWNLOAD_GRADE, grade).execute();
-                    }
-                })
-                .show();
     }
 
     /**
@@ -128,6 +93,25 @@ public class DataManager {
                 .show();
     }
 
+    public void ask_to_download_lesson(final Grade grade,final Lesson lesson) {
+        new AlertDialog.Builder(mainActivity)
+                .setTitle(R.string.Download_Prompt_Title)
+                .setMessage(mainActivity.getString(R.string.Download_Prompt_Message) + " " + lesson.name + "?")
+                .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new DownloadService(DownloadService.DOWNLOAD_LESSON, grade, lesson).execute();
+                    }
+                })
+                .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Nothing happens
+                    }
+                })
+                .show();
+    }
+
     /**
      * The method checks what grades have been downloaded and calls UpdateService to check whether updates are available for the grades that have been downloaded. Grades that need updating will be deleted and re-downloaded.
      */
@@ -140,7 +124,7 @@ public class DataManager {
             RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
             if (rootListing.grades != null && rootListing.grades.size() != 0) {
                 for (Grade grade : rootListing.grades) {
-                    if (grade.isDownloaded) {
+                    if (grade.lessons.size() != 0) {
                         gradesToBeChecked.add(grade);
                     }
                 }
