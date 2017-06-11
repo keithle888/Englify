@@ -257,15 +257,43 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     }
 
     public void download_lesson_vocab() {
-        //Create Vocabulary instance
-        //
+        //Create variables
+        LinkedList<String> vocabDescriptions = null;
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, "Vocabulary");
-        for (S3ObjectSummary summary : summaries) {
-            String path = summary.getKey();
-            String[] delimited_path = path.split("/");
-            if (delimited_path.length >= 4) {
-
+        if (summaries != null) {
+            Vocab vocab = new Vocab("Vocabulary");
+            if (lesson.findModule("Vocabulary") == null) {
+                lesson.addModule(vocab);
+            } else {
+                vocab = (Vocab) lesson.findModule("Vocabulary");
             }
+            for (S3ObjectSummary summary : summaries) {
+                String path = summary.getKey();
+                String[] delimited_path = path.split("/");
+                if (delimited_path.length >= 4) {
+                    if (isAudioFile(path)) {
+                        String vocabPartName = delimited_path[4];
+                        String vocabPartMediaFileName = createMediaFileName(grade.name, lesson.name, vocab.name, vocabPartName);
+                        LocalSave.saveMedia(vocabPartMediaFileName, s3Client.getObject(bucketName, path));
+                        vocab.addVocabPartAudio(vocabPartName, vocabPartMediaFileName);
+                    } else if (isImg(path)) {
+                        String vocabPartName = delimited_path[4];
+                        String vocabPartMediaFileName = createMediaFileName(grade.name, lesson.name, vocab.name, vocabPartName);
+                        LocalSave.saveMedia(vocabPartMediaFileName, s3Client.getObject(bucketName, path));
+                        vocab.addVocabPartImg(vocabPartName, vocabPartMediaFileName);
+                    } else if (isTextFile(path)) {
+                        vocabDescriptions = readTextFile(s3Client.getObject(bucketName, path));
+                    } else {
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_vocab(): Unknown file -> " + path);
+                    }
+                }
+            }
+            //Deal with the vocab part descriptions
+            if (vocabDescriptions != null) {
+                vocab.overwriteTexts(vocabDescriptions);
+            }
+        } else {
+            Log.d(bucketName, "Class DownloadService: Method download_lesson_vocab(): Vocabulary folder for " + lesson.name + " not found.");
         }
     }
 
