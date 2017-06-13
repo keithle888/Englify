@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadReadingModule(Read read) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ReadingModule.newInstance(read)).addToBackStack(null).commit();
+
     }
 
     public void loadVocabModule(Vocab vocab) {

@@ -33,6 +33,12 @@ public class Lesson implements Serializable{
         this.modules = new ArrayList<>();
     }
 
+    public Lesson (String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.modules = new ArrayList<>();
+    }
+
     public void addModule(Module module) {
         if (modules == null) {
             modules = new ArrayList<>();

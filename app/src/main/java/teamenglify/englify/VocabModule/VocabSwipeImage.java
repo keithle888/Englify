@@ -54,7 +54,7 @@ public class VocabSwipeImage extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_vocab_swipe_image, container, false);
         Bundle bundle = getArguments();
-        imageUrl = bundle.getString("imageUrl").trim();
+        imageUrl = bundle.getString("imageUrl");
         imageView = (ImageView) v.findViewById(R.id.vocabImageView);
         Glide.with(this)
                 .load(LocalSave.loadImage(imageUrl))
@@ -62,7 +62,6 @@ public class VocabSwipeImage extends Fragment {
                 .placeholder(R.drawable.loadinglogo)
                 .crossFade()
                 .into(imageView);
-
         return v;
     }
 

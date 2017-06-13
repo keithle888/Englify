@@ -32,6 +32,7 @@ import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.Model.VocabPart;
 import teamenglify.englify.R;
 import teamenglify.englify.ReadingModule.ReadImage;
+import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.VocabModule.VocabImage;
 
 import static teamenglify.englify.MainActivity.bucketName;
@@ -63,7 +64,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 listings.add(lesson.name);
                 listingLessonDesc.add(lesson.description);
             }
-        } else if (listingType == ListingFragment.LIST_CONVERSATIONS) {
+        } else if (listingType == ListingFragment.LIST_READS) {
             Conversation conversation = (Conversation) object;
             for (Read read : conversation.reads) {
                 listings.add(read.name);
@@ -98,7 +99,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
             return new ListingViewHolder(choice);
         }
 
-        if (listingType == ListingFragment.LIST_CONVERSATIONS){ //When the listing is VOCAB_LISTING
+        if (listingType == ListingFragment.LIST_READS){ //When the listing is VOCAB_LISTING
             View choice = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.selection_box_read, parent, false);
 
@@ -130,12 +131,15 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                 } else if (listingType == ListingFragment.LIST_LESSONS) {
                     MainActivity.lesson = selected;
                     //mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
-                } else if (listingType == ListingFragment.LIST_CONVERSATIONS) {
+                } else if (listingType == ListingFragment.LIST_READS) {
                     MainActivity.read = selected;
                     ReadImage.recordDataRead(position);
                     mainActivity.position = 0;
-                    mainActivity.loadReadingModule(((Conversation)object).reads.get(position));
-                    mainActivity.getSupportActionBar().setTitle("Study Read");
+                    mainActivity.getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.activity_main_container, ReadingModule.newInstance(((Conversation) object).findRead(selected)))
+                            .addToBackStack(null)
+                            .commit();
                 } else if (listingType == ListingFragment.LIST_VOCABS) {
                     MainActivity.position = position;
                     MainActivity.vocab = selected;

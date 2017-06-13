@@ -49,7 +49,7 @@ public class ListingFragment extends Fragment {
     public static final int LIST_GRADES = 0;
     public static final int LIST_LESSONS = 1;
     public static final int LIST_MODULES = 2;
-    public static final int LIST_CONVERSATIONS = 3;
+    public static final int LIST_READS = 3;
     public static final int LIST_VOCABS = 4;
     public static final int LIST_EXERCISES = 5;
 
@@ -137,13 +137,12 @@ public class ListingFragment extends Fragment {
             //load additional settings
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
-        } /*
-        }else{
-            listingAdapter = new ListingAdapter(object, listingType);
+        } else{
+            listingAdapter = new ListingAdapter(object_to_load, listingType);
             recyclerView.setAdapter(listingAdapter);
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
-        } */
+        }
     }
 
     public void mUpdateUIAfterDataLoaded(Grade grade) {
@@ -165,7 +164,7 @@ public class ListingFragment extends Fragment {
             title = "Lesson Listing";
         } else if (listingType == LIST_VOCABS) {
             title = "Vocab Listing";
-        } else if (listingType == LIST_CONVERSATIONS) {
+        } else if (listingType == LIST_READS) {
             title = "Read Listing";
         } else if (listingType == LIST_EXERCISES) {
             title = "Exercise Listing";

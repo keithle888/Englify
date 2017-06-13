@@ -71,4 +71,16 @@ public class Grade implements Serializable{
             }
         }
     }
+
+    public void overrideLesson(Lesson new_lesson) {
+        if (new_lesson != null && lessons.size() != 0) {
+            for (int i = 0; i < lessons.size(); i++) {
+                Lesson lesson = lessons.get(i);
+                if (lesson.name.equalsIgnoreCase(new_lesson.name)) {
+                    lessons.set(i, new_lesson);
+                    break;
+                }
+            }
+        }
+    }
 }

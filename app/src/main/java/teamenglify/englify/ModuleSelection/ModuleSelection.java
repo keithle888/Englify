@@ -13,6 +13,7 @@ import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.R;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,19 +49,26 @@ public class ModuleSelection extends Fragment {
         ImageButton execiseBtn = (ImageButton) view.findViewById(R.id.ExerciseBtn);
         mainActivity = MainActivity.getMainActivity();
 
-        /*
+
         readingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.loadNextListing(ListingFragment.READ_LISTING, lesson.findModule(getString(R.string.Conversation_Folder_Name)));
-
+                mainActivity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_READS, lesson.findModule(getString(R.string.Conversation_Folder_Name))),"READ_LISTING")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
         vocabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.loadNextListing(ListingFragment.VOCAB_LISTING, lesson.findModule(getString(R.string.Vocab_Folder_Name)));
+                mainActivity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_VOCABS, lesson.findModule(getString(R.string.Vocab_Folder_Name))), "VOCAB_LISTING")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -68,9 +76,9 @@ public class ModuleSelection extends Fragment {
             @Override
             public void onClick(View v) {
                 v.setBackgroundColor(Color.parseColor("#ffffbb33"));
-                mainActivity.loadNextListing(ListingFragment.EXERCISE_LISTING, lesson.findModule(getString(R.string.Exercise_Folder_Name)));
+                Toast.makeText(mainActivity, "Exercise modules not yet implemented.", Toast.LENGTH_LONG).show();
             }
-        }); */
+        });
         return view;
     }
 

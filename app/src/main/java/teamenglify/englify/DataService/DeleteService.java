@@ -16,6 +16,7 @@ import teamenglify.englify.Model.RootListing;
 
 import teamenglify.englify.R;
 
+import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
@@ -27,6 +28,10 @@ import static teamenglify.englify.MainActivity.mainActivity;
 public class DeleteService extends AsyncTask<Void, Void, Void>{
     private ProgressDialog pd;
     private Grade grade;
+    private Lesson lesson;
+    public static int DELETE_GRADE = 0;
+    public static int DELETE_LESSON = 1;
+    private int DELETE_TYPE;
 
     /**
      * Default empty constructor. Should not be used.
@@ -41,6 +46,13 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
      */
     public DeleteService(Grade grade) {
         this.grade = grade;
+        DELETE_TYPE = DELETE_GRADE;
+    }
+
+    public DeleteService(Grade grade, Lesson lesson) {
+        this.grade = grade;
+        this.lesson = lesson;
+        DELETE_TYPE = DELETE_LESSON;
     }
 
     @Override
@@ -50,19 +62,17 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         pd.setTitle("Download");
         pd.setCancelable(false);
         //set the count to the total number of items that need to be deleted
-        int count = 0;
-        for (String fileName : mainActivity.fileList()) {
-            if (fileName.contains(grade.name)) {
-                count++;
-            }
-        }
-        pd.setMax(count);
+        pd.setIndeterminate(true);
         pd.show();
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        deleteGrade();
+        if (DELETE_TYPE == DELETE_GRADE) {
+            deleteGrade();
+        } else if (DELETE_TYPE == DELETE_LESSON){
+            deleteLesson();
+        }
         return null;
     }
 
@@ -104,5 +114,19 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
      */
     public void deleteRootListing() {
         mainActivity.deleteFile(mainActivity.getString(R.string.S3_Object_Listing));
+    }
+
+    public void deleteLesson() {
+        for (String file_name : mainActivity.fileList()) {
+            if (file_name.contains(lesson.name)) {
+                Log.d("Englify", "Class DeleteService: Method deleteLesson(): Deleting -> " + file_name);
+                mainActivity.deleteFile(file_name);
+            }
+        }
+        //Replace lesson with new lesson in RootListing
+        Lesson new_lesson = new Lesson(lesson.name, lesson.description);
+        RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+        rootListing.findGrade(grade.name).overrideLesson(new_lesson);
+        LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
     }
 }
