@@ -26,4 +26,15 @@ public class Module implements Serializable{
     public Module (String name) {
         this.name = name;
     }
+
+    public boolean updateLastModifiedDate(Date lastModified) {
+        if (this.lastModified == null) {
+            this.lastModified = lastModified;
+            return true;
+        } else if (this.lastModified.before(lastModified)) {
+            this.lastModified = lastModified;
+            return true;
+        }
+        return false;
+    }
 }

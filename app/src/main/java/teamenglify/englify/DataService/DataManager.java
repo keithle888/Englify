@@ -20,6 +20,7 @@ import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
+import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 
@@ -116,30 +117,34 @@ public class DataManager {
      * The method checks what grades have been downloaded and calls UpdateService to check whether updates are available for the grades that have been downloaded. Grades that need updating will be deleted and re-downloaded.
      */
     public void checkForUpdates() {
+        //create variables
         ArrayList<Grade> gradesToBeChecked = new ArrayList<>();
         //check whether anything has been downloaded. If not, throw a toast.
-        if (LocalSave.loadObject(R.string.S3_Object_Listing) == null ) {
-            Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
-        } else {
-            RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
-            if (rootListing.grades != null && rootListing.grades.size() != 0) {
-                for (Grade grade : rootListing.grades) {
-                    if (grade.lessons.size() != 0) {
-                        gradesToBeChecked.add(grade);
+        RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+        if (rootListing != null && rootListing.grades.size() != 0) {
+            //Check if each grade has lessons.
+            for (Grade grade : rootListing.grades) {
+                if (grade.lessons != null && grade.lessons.size() != 0) {
+                    for (Lesson lesson : grade.lessons) {
+                        if (lesson.modules != null && lesson.modules.size() != 0) {
+                            gradesToBeChecked.add(grade);
+                            break;
+                        }
                     }
                 }
-                if (gradesToBeChecked.size() == 0) { //no grades have been downloaded, only RootListing was downloaded.
-                    Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
-                } else {
-                    if (mainActivity.hasInternetConnection == true) {
-                        new UpdateService(gradesToBeChecked).execute();
-                    } else {
-                        Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } else {
-                Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
             }
+            //If there are no lessons downloaded
+            if (gradesToBeChecked.size() == 0) {
+                showToastNoLessonsDownloaded();
+            } else { // There are lessons that can be checked for updates
+                new UpdateService(gradesToBeChecked).execute();
+            }
+        } else {
+            showToastNoLessonsDownloaded();
         }
+    }
+
+    public void showToastNoLessonsDownloaded() {
+        Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
     }
 }

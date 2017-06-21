@@ -33,6 +33,12 @@ public class Lesson implements Serializable{
         this.modules = new ArrayList<>();
     }
 
+    public Lesson (String name, Date lastModified) {
+        this.name = name;
+        this.modules = new ArrayList<>();
+        this.lastModified = lastModified;
+    }
+
     public Lesson (String name, String description) {
         this.name = name;
         this.description = description;
@@ -58,5 +64,16 @@ public class Lesson implements Serializable{
             }
         }
         return toReturn;
+    }
+
+    public boolean updateLastModifiedDate(Date lastModified) {
+        if (this.lastModified == null) {
+            this.lastModified = lastModified;
+            return true;
+        } else if (this.lastModified.before(lastModified)) {
+            this.lastModified = lastModified;
+            return true;
+        }
+        return false;
     }
 }

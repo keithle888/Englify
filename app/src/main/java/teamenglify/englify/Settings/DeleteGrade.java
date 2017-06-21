@@ -35,8 +35,6 @@ public class DeleteGrade extends Fragment {
 
     public static DeleteGrade newInstance() {
         DeleteGrade fragment = new DeleteGrade();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 

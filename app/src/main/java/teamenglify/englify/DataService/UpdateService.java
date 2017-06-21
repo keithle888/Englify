@@ -12,22 +12,31 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
+import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Grade;
+import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.Module;
+import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.DataService.DownloadService.getSummaries;
+import static teamenglify.englify.DataService.DownloadService.isFolder;
+import static teamenglify.englify.DataService.DownloadService.readTextFile;
 import static teamenglify.englify.MainActivity.bucketName;
+import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 import static teamenglify.englify.MainActivity.rootDirectory;
+import static teamenglify.englify.MainActivity.s3Client;
 
 /**
  * Created by keith on 20-Mar-17.
  */
 
 public class UpdateService extends AsyncTask<Void, String, Boolean> {
-    private String baseMessage = "Checking:";
+    private String baseMessage = mainActivity.getString(R.string.Update_Service_Base_Message);
     private ProgressDialog pd;
     private ArrayList<Grade> gradesToBeChecked;
     private ArrayList<Grade> gradesToBeUpdated;
@@ -44,66 +53,70 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
         pd.setTitle(R.string.Update_Progress_Dialog_Title);
         pd.setCancelable(false);
         pd.show();
+        pd.setMax(2); // 1 for checking for checking for new lessons, 2 for checking existing lessons
     }
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-        if (checkForGradeUpdates() == true) {
-            return true;
-        } else {
-            return false;
-        }
+        return checkIfUpdateAvailable();
     }
 
     @Override
     public void onProgressUpdate(String...progress) {
         pd.setMessage(progress[0]);
-        pd.setProgress(Integer.parseInt(progress[1]));
+        if (progress.length > 1) {
+            pd.setProgress(Integer.parseInt(progress[1]));
+        }
     }
 
     @Override
     public void onPostExecute(Boolean result) {
         pd.dismiss();
-        if (result.booleanValue()) {
-            promptForUpdate();
-            Toast.makeText(mainActivity, R.string.Update_Complete, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(mainActivity, R.string.Update_Not_Available , Toast.LENGTH_LONG).show();
-        }
     }
 
-    public boolean checkForGradeUpdates() {
-        gradesToBeUpdated = new ArrayList<>();
-        List<S3ObjectSummary> summaries = getSummaries(rootDirectory);
-        pd.setMax(summaries.size() * summaries.size());
-        for (Grade grade : gradesToBeChecked) {                                                     //Iterate through all grades.
-            Log.d(bucketName, "Class UpdateService: Method checkForGradeUpdates(): Last modified date of grade being checked -> " + grade.lastModified.toString());
-            for (S3ObjectSummary summary : summaries) {
-                publishProgress(baseMessage + grade.name, String.valueOf(pd.getProgress() + 1));
-                String key = summary.getKey();
-                Date lastModified = summary.getLastModified();
-                String[] dKey = key.split("/");
-                if (dKey.length >= 2 && key.contains(grade.name)) {                     //Summary is part of the grade being checked.
-                    if (grade.lastModified.before(lastModified)) {                                  //If true, grade has have a modification inside.
-                        gradesToBeUpdated.add(grade);
-                        break;
+    public boolean checkIfUpdateAvailable() {
+        //Create variables needed
+        RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
+        LinkedList<String> lesson_descriptions = null;
+        if (rootListing.grades.size() != 0) {
+            for (Grade grade : rootListing.grades) {
+                publishProgress("Checking: " + grade.name + " for new lessons...");
+                if (grade.lessons.size() != 0) {
+                    //Check if there are new lessons.
+                    List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name);
+                    for (S3ObjectSummary summary : summaries) {
+                        String[] delimited_path = summary.getKey().split("/");
+                        if (delimited_path.length == 3) {       //looks only at lesson folders
+                           if (DownloadService.isFolder(delimited_path[2]) && grade.findLesson(delimited_path[2]) == null) {
+                               publishProgress("Creating new " + delimited_path[2]);
+                               grade.lessons.add(new Lesson(delimited_path[2],summary.getLastModified()));
+                           } else if (DownloadService.isTextFile(delimited_path[2])) {
+                               lesson_descriptions = readTextFile(s3Client.getObject(bucketName, summary.getKey()));
+                           }
+                        }
                     }
+                    //override the existing lesson descriptions
+                    if (lesson_descriptions != null) {
+                        grade.overwriteLessonDescriptions(lesson_descriptions);
+                        LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
+                    }
+                    //Check whether existing lessons need updating
+                    for (Lesson lesson : grade.lessons) {
+                        summaries = getSummaries(rootDirectory, grade.name, lesson.name);
+                        for (S3ObjectSummary summary : summaries) {
+                            if (summary.getLastModified().after(lesson.lastModified)) {
+                                new DownloadService(DownloadService.DOWNLOAD_LESSON, grade, lesson).execute();
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    return false;   // No lesson listings (means grade was not accessed before by user)
                 }
             }
         }
-        if (gradesToBeUpdated.size() != 0) {
-            return true;
-        }
+        //No grade listings downloaded.
         return false;
-    }
-
-    public Grade containsGrade(ArrayList<Grade> grades, String gradeName) {
-        for (Grade grade : grades) {
-            if (grade.name.equalsIgnoreCase(gradeName)) {
-                return grade;
-            }
-        }
-        return null;
     }
 
     public void promptForUpdate() {

@@ -58,4 +58,6 @@
     <string name="Dictionary_Download_Prompt">Would you like to download the English-Myanmar Dictionary to enable in-app translations?</string>
     <string name="Dictionary_Download_Reject">Please download the English-Myanmar Dictionary to enable in-app translations at your own convenience.</string>
     <string name="Update_Progress_Dialog_Title">Checking For Updates</string>
+    <string name="Update_Available_Prompt_Title">Update Available</string>
+    <string name="Update_Service_Base_Message">Checking: </string>
 </resources>

@@ -100,7 +100,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         if (downloadType == DOWNLOAD_LISTING_OF_GRADES) {
             Log.d("Englify", "Class DownloadService: Method doInBackground(): Downloading listing of grades.");
             publishProgress("Downloading listings.");
-            return download_list_of_grades();
+            try {
+                return download_list_of_grades();
+            } catch (Exception e) {
+                return false;
+            }
         } else if (downloadType == DOWNLOAD_LISTING_OF_LESSONS && grade != null) {
             Log.d("Englify", "Class DownloadService: Method doInBackground(): Downloading " + grade.name + " list of lessons.");
             publishProgress(grade.name);
@@ -175,7 +179,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      *
      * @return True; if method executes correctly. False; if an exception is caught.
      */
-    public boolean download_list_of_grades() {
+    public boolean download_list_of_grades() throws Exception{
         //download all objects
         try {
             List<S3ObjectSummary> summaries = getSummaries(mainActivity.rootDirectory);
@@ -183,12 +187,12 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             pd.setProgress(0);
             Log.d("Englify", "Class DownloadService: Method downloadListing(): Downloaded object listing from AWS S3.");
             //identify grades
-            HashMap<String, String> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
+            HashMap<String, Date> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();
                 if (isFolder(key) && key.contains("Grade")) { //Ensure that we are looking at a folder and that the folder name has "grade"
                     String[] dKeys = key.split("/");            //Split key to extract specifically the grade name
-                    identifiedGrades.put(dKeys[1], null);
+                    identifiedGrades.put(dKeys[1], summary.getLastModified());
                 }
                 //Update progress in progress dialog
                 pd.setProgress(pd.getProgress() + 1);
@@ -201,7 +205,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             ArrayList<Grade> grades = new ArrayList<Grade>();
             for (String gradeName : sortedListOfGrades) {
                 //save each grade into internal storage
-                Grade newGrade = new Grade(gradeName, new ArrayList<Lesson>(), null);
+                Grade newGrade = new Grade(gradeName, new ArrayList<Lesson>(), identifiedGrades.get(gradeName));
                 Log.d("Englify", "Class DownloadService: Method downloadListing(): Created grade -> " + newGrade.toString());
                 grades.add(newGrade);
             }
@@ -223,17 +227,26 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name);
         for (S3ObjectSummary summary : summaries) {
             String path = summary.getKey();
+            Date lastModified = summary.getLastModified();
             String[] delimited_path = path.split("/");
-            if (isFolder(path) && delimited_path.length > 2) {       //only lessons should be a folder at this directory depth
+            if (isFolder(path) && delimited_path.length == 3) {       //only lessons should be a folder at this directory depth
                 String lessonName = delimited_path[2];
                 if (grade.findLesson(lessonName) == null) {
                     publishProgress(lessonName);
                     Log.d(bucketName, "Class DownloadService: Method download_list_of_lessons(): Creating " + lessonName + ".");
-                    grade.lessons.add(new Lesson(lessonName));
+                    grade.lessons.add(new Lesson(lessonName, lastModified));
+                    //Update lastModified Date of grade if the lesson is newer.
+                    if (grade.lastModified.before(lastModified)) {
+                        grade.lastModified = lastModified;
+                    }
                 }
             } else if (isTextFile(path, "LessonDescription")) {              //find the lesson descriptions and handle after all lessons have been created
                 lessonDescriptions = readTextFile(s3Client.getObject(bucketName, path));
                 Log.d(bucketName, "Class DownloadService: Method download_list_of_lessons(): Description for " + grade.name + " lessons. -> " + lessonDescriptions.toString());
+                //Update lastModified date of Grade if the description is the latest thing to be updated in S3.
+                if (grade.lastModified.before(lastModified)) {
+                    grade.lastModified = lastModified;
+                }
             }
         }
         //Assign lesson descriptions
@@ -292,6 +305,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                         LocalSave.saveMedia(vocabPartMediaFileName, s3Client.getObject(bucketName, path));
                         vocab.addVocabPartAudio(vocabPartName, vocabPartMediaFileName);
                         Log.d(bucketName, "Class DownloadService: Method download_lesson_vocab(): Audio file for " + path + " saved to " + vocabPartMediaFileName);
+                        this.lesson.updateLastModifiedDate(summary.getLastModified());
                     } else if (isImg(path)) {
                         String vocabPartName = removeExtension(delimited_path[4]);
                         String vocabPartMediaFileName = createMediaFileName(grade.name, lesson.name, vocab.name, delimited_path[4]);
@@ -299,9 +313,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                         LocalSave.saveMedia(vocabPartMediaFileName, s3Client.getObject(bucketName, path));
                         vocab.addVocabPartImg(vocabPartName, vocabPartMediaFileName);
                         Log.d(bucketName, "Class DownloadService: Method download_lesson_vocab(): Img file for " + path + " saved to " + vocabPartMediaFileName);
+                        this.lesson.updateLastModifiedDate(summary.getLastModified());
                     } else if (isTextFile(path)) {
                         vocabDescriptions = readTextFile(s3Client.getObject(bucketName, path));
                         publishProgress(path);
+                        this.lesson.updateLastModifiedDate(summary.getLastModified());
                     } else {
                         Log.d(bucketName, "Class DownloadService: Method download_lesson_vocab(): Unknown file -> " + path);
                     }
@@ -367,18 +383,21 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                                     texts = readTextFile(s3Client.getObject(bucketName, key));
                                     publishProgress(key);
                                     Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Text file found for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name));
+                                    this.lesson.updateLastModifiedDate(summary.getLastModified());
                                 } else if (isAudioFile(key)) {
                                     S3Object s3Object = s3Client.getObject(bucketName, key);
                                     LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
                                     publishProgress(key);
                                     read.addReadPartAudio(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                     Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Audio file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
+                                    this.lesson.updateLastModifiedDate(summary.getLastModified());
                                 } else if (isImg(key)) {
                                     S3Object s3Object = s3Client.getObject(bucketName, key);
                                     LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
                                     publishProgress(key);
                                     read.addReadPartImg(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                     Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Image file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
+                                    this.lesson.updateLastModifiedDate(summary.getLastModified());
                                 }
                             }
                         }
@@ -392,39 +411,6 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         } catch (Exception e) {
             Log.d(bucketName, "Class DownloadService: Method downloadReadParts(): Exception caught -> " + e.toString());
             throw e;
-        }
-    }
-
-    /**
-     * Used to insert the lastModified date for the Grade being downloaded as well as all the lessons the grade has.
-     * The lastModified date is to be used when checking for updates in the S3 Server.
-     */
-    public void updateGradeModificationDate() {
-        List<S3ObjectSummary> summaries = getSummaries(generatePrefix(rootDirectory, grade.name));
-        for (S3ObjectSummary summary : summaries) {     //Iterate through all the summaries for that grade, to find out what was the latest modification for the grade, and its lessons.
-            String key = summary.getKey();
-            String[] sKey = key.split("/");
-            Date date = summary.getLastModified();
-            if (sKey.length >= 2 && sKey[1].equalsIgnoreCase(grade.name)) { //It is part of the grade, we want to capture the latest date of all components under that grade
-                if (grade.lastModified == null) {
-                    grade.lastModified = date;
-                } else if (grade.lastModified.before(date)) {
-                    grade.lastModified = date;
-                }
-                if (sKey.length >= 3) {     //It is a lesson, or a component of a lesson, we want to capture the latest date of all components under that lesson.
-                    Lesson lesson = grade.findLesson(sKey[2]);
-                    if (lesson.lastModified == null) {
-                        lesson.lastModified = date;
-                    } else if (lesson.lastModified.before(date)) {
-                        lesson.lastModified = date;
-                    }
-                }
-            }
-        }
-        //Print the latest modified dates for grade and its lessons.
-        Log.d(bucketName, "Class DownloadService: Method updateGradeModificationDatE(): Latest modifications date for " + grade.name + " -> " + grade.lastModified.toString());
-        for (Lesson lesson : grade.lessons) {
-            Log.d(bucketName, "Class DownloadService: Method updateGradeModificationDatE(): Latest modifications date for " + lesson.name + " -> " + lesson.lastModified.toString());
         }
     }
 
@@ -477,7 +463,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @param folderName path/key of S3ObjectSummary
      * @return true: if it is a folder
      */
-    public boolean isFolder(String folderName) {
+    public static boolean isFolder(String folderName) {
         if (folderName.contains(".txt") || folderName.contains(".png") || folderName.contains(".jpg") || folderName.contains(".mp3")) {
             return false;
         } else {
@@ -491,7 +477,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @param path
      * @return true; if it is a text file
      */
-    public boolean isTextFile(String path) {
+    public static boolean isTextFile(String path) {
         if (path.contains(".txt")) {
             return true;
         } else {
@@ -506,7 +492,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @param fileName File name you are looking for (eg. Exercise). It is NOT case-sensitive
      * @return true; if there is a match.
      */
-    public boolean isTextFile(String path, String fileName) {
+    public static boolean isTextFile(String path, String fileName) {
         if (path.contains(".txt") && path.toLowerCase().contains(fileName.toLowerCase())) {
             return true;
         } else {
@@ -514,7 +500,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    public boolean isAudioFile(String fileName) {
+    public static boolean isAudioFile(String fileName) {
         if (fileName.contains(".mp3")) {
             return true;
         } else {
@@ -522,7 +508,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    public boolean isImg(String fileName) {
+    public static boolean isImg(String fileName) {
         if (fileName.contains(".png") || fileName.contains(".jpg")) {
             return true;
         } else {
@@ -578,7 +564,6 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
 /********************************************************************************************
  DEPRECATED CODE SECTION
  *********************************************************************************************/
-
 
     /**
      * (Deprecated in favor of downloading lesson by lesson) Method for downloading content for a specific grade
@@ -636,7 +621,6 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             }
             //download all the data in each module (it is seperated from the iterator above due to key naming overlaps.
             downloadGradeModules(grade);
-            updateGradeModificationDate();
             RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
             rootListing.overrideGrade(grade);
             LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
