@@ -37,11 +37,17 @@ public class ExerciseChapter implements Serializable {
         }
     }
 
+    public void addExerciseChapterPartDetails(String exerciseChapterPartName, LinkedList<String> details) {
+        if (!doesExerciseChapterPartExist(exerciseChapterPartName)) {
+            chapterParts.add(new ExerciseChapterPart(exerciseChapterPartName, details));
+        }
+    }
+
 
     public boolean doesExerciseChapterPartExist(String exerciseChapterPartName) {
         if (chapterParts != null && chapterParts.size() != 0) {
             for (ExerciseChapterPart exerciseChapterPart : chapterParts) {
-                if (exerciseChapterPart.text.equalsIgnoreCase(exerciseChapterPartName)) {
+                if (exerciseChapterPart.name.equalsIgnoreCase(exerciseChapterPartName)) {
                     return true;
                 }
             }
@@ -52,22 +58,12 @@ public class ExerciseChapter implements Serializable {
     public ExerciseChapterPart findExerciseChapterPart(String exerciseChapterPartName) {
         ExerciseChapterPart toReturn = null;
         for (ExerciseChapterPart exerciseChapterPart : chapterParts) {
-            if (exerciseChapterPart.text.equalsIgnoreCase(exerciseChapterPartName)) {
+            if (exerciseChapterPart.name.equalsIgnoreCase(exerciseChapterPartName)) {
                 toReturn = exerciseChapterPart;
             }
         }
         return toReturn;
     }
 
-    public void overwriteExerciseChapterPartsText(LinkedList<String> texts) {
-        if (texts != null & texts.size() != 0 && texts.size() >= chapterParts.size() && chapterParts.size() != 0) {
-            for (ExerciseChapterPart exerciseChapterPart : chapterParts) {
-                exerciseChapterPart.text = texts.pop();
-            }
-        } else {
-            for (int i = 0; i < texts.size(); i++) {
-                chapterParts.get(i).text = texts.pop();
-            }
-        }
-    }
+
 }

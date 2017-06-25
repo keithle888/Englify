@@ -75,8 +75,11 @@ public class ModuleSelection extends Fragment {
         execiseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setBackgroundColor(Color.parseColor("#ffffbb33"));
-                Toast.makeText(mainActivity, "Exercise modules not yet implemented.", Toast.LENGTH_LONG).show();
+                mainActivity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_EXERCISES, lesson.findModule("Exercise")), "EXERCISE_LISTING")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
         return view;

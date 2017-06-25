@@ -100,9 +100,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
                 mainActivity.deleteFile(fileName);
             }
         }
-        Grade newGrade = new Grade(grade.name, new ArrayList<Lesson>(), null);
-        //null all grade's variables to delete references
-        grade.lessons = null;
+        Grade newGrade = new Grade(grade.name);
         //reset grade stored in Root Listing
         RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
         rootListing.overrideGrade(newGrade);

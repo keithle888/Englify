@@ -26,6 +26,7 @@ import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.ExerciseChapter;
+import teamenglify.englify.Model.ExerciseChapterPart;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.Module;
@@ -275,7 +276,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         //Download components in lesson
         download_lesson_vocab();
         download_lesson_conversation();
-        //download_lesson_exercise();
+        download_lesson_exercise();
         //Save to local memory
         RootListing rootListing = (RootListing) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         rootListing.overrideGrade(grade);
@@ -411,6 +412,53 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         } catch (Exception e) {
             Log.d(bucketName, "Class DownloadService: Method downloadReadParts(): Exception caught -> " + e.toString());
             throw e;
+        }
+    }
+
+    public void download_lesson_exercise() {
+        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, "Exercise");
+        //Download exercise chapter
+        if (summaries != null && summaries.size() != 0) {
+            Exercise exercise = new Exercise("Exercise");
+            if (lesson.findModule("Exercise") == null) {
+                lesson.addModule(exercise);
+            } else {
+                lesson.findModule("Exercise");
+            }
+            for (S3ObjectSummary summary : summaries) {
+                String path = summary.getKey();
+                Date lastModified = summary.getLastModified();
+                String[] delimited_path = path.split("/");
+                if (delimited_path.length == 6) {
+                    ExerciseChapter exerciseChapter = new ExerciseChapter(delimited_path[4]);
+                    if (exercise.findExerciseChapter(delimited_path[4]) == null) { //Exercise Chapter not yet created
+                        exercise.addChapter(exerciseChapter);
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): Created new exercise chapter -> " + exerciseChapter.name);
+                    } else {
+                        exerciseChapter = exercise.findExerciseChapter(delimited_path[4]);
+                    }
+                    if (isTextFile(path)) {
+                        exerciseChapter.addExerciseChapterPartDetails(removeExtension(delimited_path[5]), readTextFile(s3Client.getObject(bucketName, path)));
+                        publishProgress(path);
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart details -> " + path);
+                        lesson.updateLastModifiedDate(lastModified);
+                    } else if (isAudioFile(path)) {
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4]);
+                        LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
+                        exerciseChapter.addExerciseChapterPartAudio(removeExtension(delimited_path[5]), mediaFilePath);
+                        publishProgress(path);
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + path);
+                        lesson.updateLastModifiedDate(lastModified);
+                    } else if (isImg(path)) {
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4]);
+                        LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
+                        exerciseChapter.addExerciseChapterPartImg(removeExtension(delimited_path[5]), mediaFilePath);
+                        publishProgress(path);
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart image -> " + path);
+                        lesson.updateLastModifiedDate(lastModified);
+                    }
+                }
+            }
         }
     }
 
@@ -770,7 +818,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                         }
                         //Overwrite ExerciseChapterPartNames
                         if (texts != null && texts.size() != 0) {
-                            exerciseChapter.overwriteExerciseChapterPartsText(texts);
+                            //exerciseChapter.overwriteExerciseChapterPartsText(texts);
                             texts = null;
                         }
                     }

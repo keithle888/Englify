@@ -28,4 +28,11 @@ public class Exercise extends Module {
         }
         return toReturn;
     }
+
+    public void addChapter(ExerciseChapter exerciseChapter) {
+        if (chapters == null) {
+            chapters = new ArrayList<>();
+        }
+        chapters.add(exerciseChapter);
+    }
 }
