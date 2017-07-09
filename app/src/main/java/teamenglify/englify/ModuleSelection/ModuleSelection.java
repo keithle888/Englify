@@ -1,19 +1,16 @@
 package teamenglify.englify.ModuleSelection;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.R;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,16 +22,18 @@ public class ModuleSelection extends Fragment {
     private int mParam1;
     private Lesson lesson;
     MainActivity mainActivity;
+    private String previous_fragment_action_bar_title;
 
 
     public ModuleSelection() {
         // Required empty public constructor
     }
 
-    public static ModuleSelection newInstance(Lesson lesson) {
+    public static ModuleSelection newInstance(Lesson lesson, String previous_action_bar_title) {
         ModuleSelection fragment = new ModuleSelection();
         Bundle args = new Bundle();
         fragment.lesson = lesson;
+        fragment.previous_fragment_action_bar_title = previous_action_bar_title;
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,7 +54,11 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 mainActivity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_READS, lesson.findModule(getString(R.string.Conversation_Folder_Name))),"READ_LISTING")
+                        .replace(R.id.activity_main_container,
+                                ListingFragment.newInstance(ListingFragment.LIST_READS,
+                                    lesson.findModule(getString(R.string.Conversation_Folder_Name)),
+                                    mainActivity.getSupportActionBar().getTitle().toString()),
+                                "READ_LISTING")
                         .addToBackStack(null)
                         .commit();
             }
@@ -66,7 +69,11 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 mainActivity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_VOCABS, lesson.findModule(getString(R.string.Vocab_Folder_Name))), "VOCAB_LISTING")
+                        .replace(R.id.activity_main_container,
+                                ListingFragment.newInstance(ListingFragment.LIST_VOCABS,
+                                    lesson.findModule(getString(R.string.Vocab_Folder_Name)),
+                                    mainActivity.getSupportActionBar().getTitle().toString()),
+                                "VOCAB_LISTING")
                         .addToBackStack(null)
                         .commit();
             }
@@ -77,7 +84,11 @@ public class ModuleSelection extends Fragment {
             public void onClick(View v) {
                 mainActivity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_EXERCISES, lesson.findModule("Exercise")), "EXERCISE_LISTING")
+                        .replace(R.id.activity_main_container,
+                                ListingFragment.newInstance(ListingFragment.LIST_EXERCISES,
+                                        lesson.findModule("Exercise"),
+                                        mainActivity.getSupportActionBar().getTitle().toString()),
+                                "EXERCISE_LISTING")
                         .addToBackStack(null)
                         .commit();
             }
@@ -88,6 +99,8 @@ public class ModuleSelection extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mainActivity.getSupportActionBar().setTitle("Module Selection");
+        if (lesson != null) {
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + lesson.name);
+        }
     }
 }

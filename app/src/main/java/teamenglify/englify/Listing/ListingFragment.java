@@ -1,19 +1,9 @@
 package teamenglify.englify.Listing;
 
-import android.app.AlertDialog;
-import android.app.Application;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.provider.DocumentsContract;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -23,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
 
+import teamenglify.englify.ContentNotAvailable;
 import teamenglify.englify.DataService.DataManager;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Conversation;
@@ -32,12 +23,9 @@ import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 
-import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 import android.support.v7.widget.GridLayoutManager;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +49,7 @@ public class ListingFragment extends Fragment {
     private ImageView noContentImage;
     private int listingType;
     private Object object_to_load; //When we are dealing with lessons or anything below
+    private String previous_fragment_action_bar_title;
 
 
     public ListingFragment() {
@@ -75,11 +64,12 @@ public class ListingFragment extends Fragment {
         return fragment;
     }
 
-    public static ListingFragment newInstance(int listingType, Object object_to_load) {
+    public static ListingFragment newInstance(int listingType, Object object_to_load, String previous_fragment_action_bar_title) {
         ListingFragment fragment = new ListingFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, listingType);
         fragment.object_to_load = object_to_load;
+        fragment.previous_fragment_action_bar_title = previous_fragment_action_bar_title;
         fragment.setArguments(args);
         return fragment;
     }
@@ -95,6 +85,7 @@ public class ListingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        updateActionBarTitle();
         //inflate view
         View view = inflater.inflate(R.layout.fragment_listing, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
@@ -109,7 +100,6 @@ public class ListingFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateActionBarTitle();
         //objectToLoad not present, download
         if (listingType == LIST_GRADES) {
             new DataManager().getListing();
@@ -138,10 +128,18 @@ public class ListingFragment extends Fragment {
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 2);
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         } else{
-            listingAdapter = new ListingAdapter(object_to_load, listingType);
-            recyclerView.setAdapter(listingAdapter);
-            mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
-            recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+            //Replace with no content available fragment.
+            if (isContentAvailable()) {
+                listingAdapter = new ListingAdapter(object_to_load, listingType);
+                recyclerView.setAdapter(listingAdapter);
+                mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
+                recyclerView.setLayoutManager(mainActivity.mLayoutManager);
+            } else {
+                mainActivity.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.activity_main_container, new ContentNotAvailable(), "CONTENT_NOT_AVAILABLE")
+                        .commit();
+            }
         }
     }
 
@@ -157,26 +155,44 @@ public class ListingFragment extends Fragment {
         }
     }
     public void updateActionBarTitle() {
-        String title = null;
         if (listingType == LIST_GRADES) {
-            title = "Grade Listing";
-        } else if (listingType == LIST_LESSONS) {
-            title = "Lesson Listing";
+            previous_fragment_action_bar_title = "Grade Listing";
+        } else if (listingType == LIST_LESSONS && previous_fragment_action_bar_title != null) {
+            mainActivity.getSupportActionBar().setTitle(((Grade) object_to_load).name);
         } else if (listingType == LIST_VOCABS) {
-            title = "Vocab Listing";
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + getString(R.string.vocabulary));
         } else if (listingType == LIST_READS) {
-            title = "Read Listing";
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + getString(R.string.conversation));
         } else if (listingType == LIST_EXERCISES) {
-            title = "Exercise Listing";
-        }
-        if (title != null) {
-            mainActivity.getSupportActionBar().setTitle(title);
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + getString(R.string.exercise));
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    public boolean isContentAvailable() {
+        if (object_to_load != null) {
+            if (listingType == LIST_READS) {
+                Conversation conversation = (Conversation) object_to_load;
+                if (conversation.reads != null && conversation.reads.size() != 0) {
+                    return true;
+                }
+            } else if (listingType == LIST_EXERCISES) {
+                Exercise exercise = (Exercise) object_to_load;
+                if (exercise.chapters != null && exercise.chapters.size() != 0) {
+                    return true;
+                }
+            } else if (listingType == LIST_VOCABS) {
+                Vocab vocab = (Vocab) object_to_load;
+                if (vocab.vocabParts != null && vocab.vocabParts.size() != 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

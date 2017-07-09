@@ -24,22 +24,10 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
 
     private Context mContext;
     private Grade grade;
-    private ArrayList<String> listings;
-    private ArrayList<String> listingLessonDesc;
 
     public ListingAdapterLesson(Grade grade) {
         this.grade = grade;
         this.mContext = mainActivity.getApplicationContext();
-        //Generate listings on constructor
-        listings = new ArrayList<>();
-        listingLessonDesc = new ArrayList<>();
-
-        for (Lesson lesson : grade.lessons) {
-            if(!lesson.name.endsWith(".txt")){
-                listings.add(lesson.name);
-                listingLessonDesc.add(lesson.description);
-            }
-        }
     }
 
     @Override
@@ -53,9 +41,16 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
 
     @Override
     public void onBindViewHolder(final ListingViewHolderLesson holder, final int position) {
-        final String selected = listings.get(position);
-        final String selectedDesc = listingLessonDesc.get(position);
-        holder.updateUI(selected, selectedDesc);
+        final String selected = grade.lessons.get(position).name;
+        final String selectedDesc = grade.lessons.get(position).description;
+        //set download status
+        String download_status_text = "";
+        if (grade.lessons.get(position).modules != null && grade.lessons.get(position).modules.size() != 0) {
+            download_status_text = mainActivity.getString(R.string.lesson_has_been_downloaded_cardview_text);
+        } else {
+            download_status_text = mainActivity.getString(R.string.lesson_not_downloaded_cardview_text);
+        }
+        holder.updateUI(selected, selectedDesc, download_status_text);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,7 +62,10 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
                 } else {
                     mainActivity.getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.activity_main_container, ModuleSelection.newInstance(lesson), "Module Selection")
+                            .replace(R.id.activity_main_container,
+                                    ModuleSelection.newInstance(lesson,
+                                            mainActivity.getSupportActionBar().getTitle().toString()),
+                                    "Module Selection")
                             .addToBackStack(null)
                             .commit();
                 }
@@ -78,6 +76,6 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
 
     @Override
     public int getItemCount() {
-        return listings.size();
+        return grade.lessons.size();
     }
 }

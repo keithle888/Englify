@@ -13,40 +13,6 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/replay"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:id="@+id/audioReplayButton"
-            android:layout_weight="2"
-            android:layout_gravity="center_vertical"/>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="8">
-
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/audioSeekBar" />
-
-            <TextView
-                android:text="TextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/audioTextView"
-                style="@android:style/TextAppearance.Small"
-                android:layout_weight="1"
-                android:gravity="center_horizontal|bottom"/>
-
-        </LinearLayout>
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:srcCompat="@drawable/play"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"

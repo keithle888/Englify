@@ -5,13 +5,19 @@
     android:orientation="vertical"
     tools:context="teamenglify.englify.ExerciseModule.ExerciseModule">
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
-        android:id="@+id/exerciseImage"
-        android:orientation="vertical">
-    </FrameLayout>
+        android:layout_weight="3"
+        android:id="@+id/exercise_question"/>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:numColumns="5"
+        android:id="@+id/exercise_choices">
+    </GridView>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -26,7 +32,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:id="@+id/exerciseSpeechBar"
         android:orientation="vertical">
     </FrameLayout>

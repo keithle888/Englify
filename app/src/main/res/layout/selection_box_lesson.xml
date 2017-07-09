@@ -34,6 +34,13 @@
                 android:paddingTop="60dp"
                 android:textColor="#832232"
                 android:textSize="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:id="@+id/lesson_download_status"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

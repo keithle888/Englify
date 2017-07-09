@@ -14,6 +14,8 @@ import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 import teamenglify.englify.SpeechRecognition;
 
+import static teamenglify.englify.MainActivity.mainActivity;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link VocabModule#newInstance} factory method to
@@ -48,13 +50,14 @@ public class VocabModule extends Fragment {
         View v = inflater.inflate(R.layout.fragment_vocab_module, container, false);
         //Log.d("vocab", MainActivity.getMainActivity().getCurrentListingURL());
         MainActivity.getMainActivity().getSupportActionBar().setTitle("Study Vocab");
-        FragmentManager fm = getChildFragmentManager();
+        FragmentManager fm = mainActivity.getSupportFragmentManager();
         VocabImage vocabImage = VocabImage.newInstance(vocab);
         SpeechRecognition speechRecognition = SpeechRecognition.newInstance(vocab);
         AudioBar audioBar = AudioBar.newInstance(vocab);
+        fm.beginTransaction().add(R.id.vocabAudioBar, audioBar, "AUDIO_BAR").commit();
+        fm.beginTransaction().add(R.id.vocabSpeechBar, speechRecognition, "SPEECH_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.vocabImage,vocabImage).commit();
-        fm.beginTransaction().add(R.id.vocabAudioBar, audioBar).commit();
-        fm.beginTransaction().add(R.id.vocabSpeechBar, speechRecognition).commit();
+
         return v;
     }
 

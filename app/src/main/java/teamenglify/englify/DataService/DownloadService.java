@@ -151,7 +151,10 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                 Toast.makeText(mainActivity, "Download Successful.", Toast.LENGTH_LONG).show();
                 mainActivity.getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.activity_main_container, ModuleSelection.newInstance(lesson),"MODULE_LISTING")
+                        .replace(R.id.activity_main_container,
+                                ModuleSelection.newInstance(lesson,
+                                        mainActivity.getSupportActionBar().getTitle().toString()),
+                                "MODULE_LISTING")
                         .addToBackStack(null)
                         .commit();
             }

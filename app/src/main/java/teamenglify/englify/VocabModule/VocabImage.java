@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 
+import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
@@ -67,12 +69,12 @@ public class VocabImage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v= inflater.inflate(R.layout.fragment_vocab_image, container, false);
-        viewPager = (ViewPager) v.findViewById(R.id.vocabViewPager);
+        View view= inflater.inflate(R.layout.fragment_vocab_image, container, false);
+        viewPager = (ViewPager) view.findViewById(R.id.vocabViewPager);
         vocabFragmentStateAdapter = new VocabFragmentStateAdapter(MainActivity.getMainActivity().getSupportFragmentManager(), vocab);
         viewPager.setAdapter(vocabFragmentStateAdapter);
         viewPager.setCurrentItem(MainActivity.position);
-        Log.d("VocabImage", MainActivity.position+"");
+        final Fragment fragment_audio_bar = mainActivity.getSupportFragmentManager().findFragmentByTag("AUDIO_BAR");
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -81,11 +83,16 @@ public class VocabImage extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d("VocabImage", "viewPager:onPageSelected: " + Integer.toString(position));
+                Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Page changed to =>" + Integer.toString(position));
                 if (mainActivity.position != position) {
                     mainActivity.position = position;
                 }
                 recordDataVocab(position);
+                //Trigger for Audio Bar and speech recognition to change track/answer
+                if (fragment_audio_bar != null) {
+                    Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
+                    ((AudioBar)fragment_audio_bar).setAudioTrack(position);
+                }
             }
 
             @Override
@@ -94,6 +101,6 @@ public class VocabImage extends Fragment {
             }
         });
 
-        return v;
+        return view;
     }
 }

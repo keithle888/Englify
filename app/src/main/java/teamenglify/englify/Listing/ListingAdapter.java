@@ -125,7 +125,11 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     MainActivity.strGrade = selected;
                     mainActivity.getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.activity_main_container, ListingFragment.newInstance(ListingFragment.LIST_LESSONS, ((RootListing)object).findGrade(selected)),"LESSON_LISTING")
+                            .replace(R.id.activity_main_container,
+                                    ListingFragment.newInstance(ListingFragment.LIST_LESSONS,
+                                            ((RootListing)object).findGrade(selected),
+                                            mainActivity.getSupportActionBar().getTitle().toString()),
+                                    "LESSON_LISTING")
                             .addToBackStack(null).commit();
                     Log.d(bucketName, "Class ListingAdapter: Method onBindViewHolder(): " + selected + " was selected.");
                 } else if (listingType == ListingFragment.LIST_LESSONS) {

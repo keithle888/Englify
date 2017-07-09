@@ -14,6 +14,8 @@ import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;
 import teamenglify.englify.SpeechRecognition;
 
+import static teamenglify.englify.MainActivity.mainActivity;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ReadingModule#newInstance} factory method to
@@ -39,13 +41,14 @@ public class ReadingModule extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_reading_module, container, false);
-        FragmentManager fm = getChildFragmentManager();
+        FragmentManager fm = mainActivity.getSupportFragmentManager();
         ReadImage readImage = ReadImage.newInstance(read);
         SpeechRecognition speechRecognition = SpeechRecognition.newInstance(read);
         AudioBar audioBar = AudioBar.newInstance(read);
+        fm.beginTransaction().add(R.id.readAudioBar, audioBar, "AUDIO_BAR").commit();
+        fm.beginTransaction().add(R.id.readSpeechBar, speechRecognition, "SPEED_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.readImage,readImage).commit();
-        fm.beginTransaction().add(R.id.readAudioBar, audioBar).commit();
-        fm.beginTransaction().add(R.id.readSpeechBar, speechRecognition).commit();
+
         return v;
     }
 }

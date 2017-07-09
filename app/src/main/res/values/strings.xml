@@ -29,6 +29,7 @@
     <string name="Ready">Ready</string>
     <string name="Audio_File_Not_Found">Audio file not found.</string>
     <string name="Audio_File_Not_Found_b">အသံဖိုင္ မေတြ.ရပါ။</string>
+    <string name="Audio_Player_Loading_Error">Audio player error.</string>
     <string name="Reject_Download_Message">Sorry the app only supports locally saved formats. We are working on it.</string>
     <string name="Speech_Recognition_Requires_Internet">Speech Recognition requires internet access.</string>
     <string name="Speech_Recognition_Requires_Internet_b">Speech Recognition requires internet access.</string>
@@ -60,4 +61,10 @@
     <string name="Update_Progress_Dialog_Title">Checking For Updates</string>
     <string name="Update_Available_Prompt_Title">Update Available</string>
     <string name="Update_Service_Base_Message">Checking: </string>
+    <string name="content_not_available">Coming Soon...</string>
+    <string name="lesson_has_been_downloaded_cardview_text">Downloaded</string>
+    <string name="lesson_not_downloaded_cardview_text">Click to download</string>
+    <string name="vocabulary">Vocab</string>
+    <string name="conversation">Convo</string>
+    <string name="exercise">Exercise</string>
 </resources>
