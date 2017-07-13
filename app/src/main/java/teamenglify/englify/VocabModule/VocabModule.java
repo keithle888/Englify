@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
@@ -52,10 +53,12 @@ public class VocabModule extends Fragment {
         MainActivity.getMainActivity().getSupportActionBar().setTitle("Study Vocab");
         FragmentManager fm = mainActivity.getSupportFragmentManager();
         VocabImage vocabImage = VocabImage.newInstance(vocab);
-        SpeechRecognition speechRecognition = SpeechRecognition.newInstance(vocab);
+        SpeechRecognition speechRecognition = SpeechRecognition.newInstance(vocab,
+                (TextView) v.findViewById(R.id.speechRecognitionTextViewVocab_TextToMatch),
+                (TextView) v.findViewById(R.id.speechRecognitionTextViewVocab_Return));
         AudioBar audioBar = AudioBar.newInstance(vocab);
-        fm.beginTransaction().add(R.id.vocabAudioBar, audioBar, "AUDIO_BAR").commit();
-        fm.beginTransaction().add(R.id.vocabSpeechBar, speechRecognition, "SPEECH_RECOGNITION").commit();
+        fm.beginTransaction().add(R.id.audioBarFrameLayoutVocab, audioBar, "AUDIO_BAR").commit();
+        fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutVocab, speechRecognition, "SPEECH_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.vocabImage,vocabImage).commit();
 
         return v;

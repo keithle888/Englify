@@ -13,20 +13,46 @@
         android:orientation="vertical">
     </FrameLayout>
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/vocabAudioBar"
+        android:textAlignment="center"
+        android:id="@+id/speechRecognitionTextViewVocab_TextToMatch"
         android:orientation="vertical">
-    </FrameLayout>
+    </TextView>
 
-    <FrameLayout
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        android:id="@+id/speechRecognitionTextViewVocab_Return"
+        android:orientation="vertical">
+    </TextView>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:id="@+id/vocabSpeechBar"
-        android:orientation="vertical">
-    </FrameLayout>
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/audioBarFrameLayoutVocab"
+            android:orientation="vertical">
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/speechRecognitionButtonFrameLayoutVocab"
+            android:orientation="vertical">
+        </FrameLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -45,21 +45,24 @@ public class ExerciseModule extends Fragment {
         View view = inflater.inflate(R.layout.fragment_exercise_module, container, false);
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
         questionView = (TextView) view.findViewById(R.id.exercise_question);
-        choices_recycler = (RecyclerView) view.findViewById(R.id.exercise_choices);
 
         //Pull in audio player and speech recognition
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.exerciseAudioBar, AudioBar.newInstance(exerciseChapter), "AUDIO_BAR")
+                .add(R.id.audioBarFrameLayoutExercise, AudioBar.newInstance(exerciseChapter), "AUDIO_BAR")
                 .commit();
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.exerciseSpeechBar, SpeechRecognition.newInstance(exerciseChapter), "SPEECH_RECOGNITION")
+                .add(R.id.audioBarFrameLayoutExercise,
+                        SpeechRecognition.newInstance(exerciseChapter,
+                                (TextView) view.findViewById(R.id.speechRecognitionTextViewExercise_TextToMatch),
+                                (TextView) view.findViewById(R.id.speechRecognitionTextViewExercise_Return)),
+                        "SPEECH_RECOGNITION")
                 .commit();
 
         //Populate question and choices
         questionView.setText(exerciseChapter.chapterParts.get(partNumber).question);
-        choices_recycler.setAdapter(new ExerciseChoicesAdapter());
+        //choices_recycler.setAdapter(new ExerciseChoicesAdapter());
         return view;
     }
 

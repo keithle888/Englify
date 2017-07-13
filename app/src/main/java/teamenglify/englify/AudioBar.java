@@ -77,7 +77,7 @@ public class AudioBar extends Fragment {
         } else {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
-                audioPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                audioPlayPauseButton.setImageResource(R.drawable.play_button_transparent_background);
             }
         }
         mediaPlayer.reset();
@@ -89,7 +89,7 @@ public class AudioBar extends Fragment {
     public void setAudioTrack(int pageNumber) {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
-            audioPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+            audioPlayPauseButton.setImageResource(R.drawable.play_button_transparent_background);
         }
         mediaPlayer.reset();
         setListeners();
@@ -129,7 +129,7 @@ public class AudioBar extends Fragment {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 mediaPlayer.seekTo(0);
-                audioPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                audioPlayPauseButton.setImageResource(R.drawable.play_button_transparent_background);
             }
         });
 
@@ -158,10 +158,10 @@ public class AudioBar extends Fragment {
             public void onClick(View view) {
                 if ((!mediaPlayer.isPlaying()) && readyToPlay) {
                     mediaPlayer.start();
-                    audioPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+                    audioPlayPauseButton.setImageResource(R.drawable.pause_button_transparent_background);
                 } else {
                     mediaPlayer.pause();
-                    audioPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                    audioPlayPauseButton.setImageResource(R.drawable.play_button_transparent_background);
                 }
             }
         });

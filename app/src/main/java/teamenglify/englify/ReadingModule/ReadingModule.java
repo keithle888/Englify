@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
@@ -40,15 +41,17 @@ public class ReadingModule extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_reading_module, container, false);
+        View view = inflater.inflate(R.layout.fragment_reading_module, container, false);
         FragmentManager fm = mainActivity.getSupportFragmentManager();
         ReadImage readImage = ReadImage.newInstance(read);
-        SpeechRecognition speechRecognition = SpeechRecognition.newInstance(read);
+        SpeechRecognition speechRecognition = SpeechRecognition.newInstance(read,
+                (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_TextToMatch),
+                (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_Return));
         AudioBar audioBar = AudioBar.newInstance(read);
-        fm.beginTransaction().add(R.id.readAudioBar, audioBar, "AUDIO_BAR").commit();
-        fm.beginTransaction().add(R.id.readSpeechBar, speechRecognition, "SPEED_RECOGNITION").commit();
+        fm.beginTransaction().add(R.id.audioBarFrameLayoutRead, audioBar, "AUDIO_BAR").commit();
+        fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutRead, speechRecognition, "SPEED_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.readImage,readImage).commit();
 
-        return v;
+        return view;
     }
 }

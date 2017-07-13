@@ -1,6 +1,7 @@
 package teamenglify.englify;
 
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,7 +39,7 @@ import static teamenglify.englify.MainActivity.read;
  * create an instance of this fragment.
  * */
 public class SpeechRecognition extends Fragment implements RecognitionListener {
-    private TextView speechDisplayTextView;
+    private static final String TAG = SpeechRecognition.class.getSimpleName();
     private TextView speechToMatchTextView;
     private TextView speechReturnTextView;
     private ProgressBar speechProgressBar;
@@ -51,15 +52,18 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     private Object object;
     private long replyTimeOut = 3000;
     private StopWatch stopWatch;
+    private int moduleType;
 
     public SpeechRecognition() {
         // Required empty public constructor
     }
 
-    public static SpeechRecognition newInstance(Object object) {
+    public static SpeechRecognition newInstance(Object object, TextView speechToMatchTextView, TextView speechReturnTextView) {
         SpeechRecognition fragment = new SpeechRecognition();
         Bundle args = new Bundle();
         fragment.object = object;
+        fragment.speechToMatchTextView = speechToMatchTextView;
+        fragment.speechReturnTextView = speechReturnTextView;
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,12 +78,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_speech_recognition, container, false);
-        speechDisplayTextView = (TextView) view.findViewById(R.id.speechDisplayTextView);
-        speechToMatchTextView = (TextView) view.findViewById(R.id.speechToMatchTextView);
-        speechReturnTextView = (TextView) view.findViewById(R.id.speechReturnTextView);
-        speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
-        speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
-        speechProgressBar.setVisibility(View.INVISIBLE);
+        bindViews(view);
         return view;
     }
 
@@ -89,7 +88,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         if (mainActivity.hasInternetConnection == true) {
             initializeSpeechRecognition();
         } else {
-            speechDisplayTextView.setText(R.string.Speech_Recognition_Requires_Internet);
+            speechReturnTextView.setText(R.string.Speech_Recognition_Requires_Internet);
         }
     }
 
@@ -111,12 +110,11 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getActivity().getPackageName());
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         if (SpeechRecognizer.isRecognitionAvailable(getContext())) {
-            speechDisplayTextView.setText(R.string.press_hold_b);
             setButtonListener();
             mHandler.post(mBackgroundThread);
             updateUI();
         } else {
-            speechDisplayTextView.setText(R.string.Speech_Recognition_Unavailable);
+            speechReturnTextView.setText(R.string.Speech_Recognition_Unavailable);
             speechToMatchTextView.setText("");
             speechReturnTextView.setText("");
             speechButton.setClickable(false);
@@ -193,14 +191,8 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     @Override
     public void onResults(Bundle results) {
         Log.d("SpeechRecognition", "onResults");
-        ArrayList<String> matches = results
-                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        int score = calculateScore(results);
-        if (score == 999) {
-            speechReturnTextView.setText(matches.get(0));
-        } else {
-            speechReturnTextView.setText(matches.get(0) + ". Score: " + score + "%");
-        }
+        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        speechReturnTextView.setText(matches.get(0));
         //Call off the timeout timer.
         if (stopWatch != null && stopWatch.isRunning()) {
             resetTimeoutTimer();
@@ -362,8 +354,13 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         if (stopWatch != null && stopWatch.isRunning()) {
             resetTimeoutTimer();
         }
-        speechDisplayTextView.setText(R.string.Speech_Recognition_Requires_Internet);
-        speechReturnTextView.setText("");
-        speechToMatchTextView.setText("");
+        speechReturnTextView.setText(R.string.Speech_Recognition_Requires_Internet);
+    }
+
+    public void bindViews(View view) {
+        //Bind common modules
+        speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
+        speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
+        Log.i(TAG, "Binding common view modules.");
     }
 }

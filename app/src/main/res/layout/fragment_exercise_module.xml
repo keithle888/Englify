@@ -19,22 +19,48 @@
         android:id="@+id/exercise_choices">
     </GridView>
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/exerciseAudioBar"
+        android:textAlignment="center"
+        android:id="@+id/speechRecognitionTextViewExercise_TextToMatch"
         android:orientation="vertical">
 
 
-    </FrameLayout>
+    </TextView>
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/exerciseSpeechBar"
+        android:textAlignment="center"
+        android:id="@+id/speechRecognitionTextViewExercise_Return"
         android:orientation="vertical">
-    </FrameLayout>
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/audioBarFrameLayoutExercise"
+            android:orientation="vertical">
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/speechRecognitionButtonFrameLayoutExercise"
+            android:orientation="vertical">
+        </FrameLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
