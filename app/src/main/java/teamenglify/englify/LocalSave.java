@@ -140,7 +140,7 @@ public class LocalSave {
         try {
             fis = mainActivity.openFileInput(fileName);
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
+            Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried loading " + fileName + " but caught Exception: " + e);
         }
         return fis;
     }

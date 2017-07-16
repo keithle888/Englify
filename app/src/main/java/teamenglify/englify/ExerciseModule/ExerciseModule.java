@@ -20,7 +20,6 @@ import static teamenglify.englify.MainActivity.mainActivity;
 public class ExerciseModule extends Fragment {
     private ExerciseChapter exerciseChapter;
     public int partNumber;
-    public TextView questionView;
     public RecyclerView choices_recycler;
 
 
@@ -44,7 +43,6 @@ public class ExerciseModule extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_exercise_module, container, false);
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
-        questionView = (TextView) view.findViewById(R.id.exercise_question);
 
         //Pull in audio player and speech recognition
         mainActivity.getSupportFragmentManager()
@@ -60,8 +58,6 @@ public class ExerciseModule extends Fragment {
                         "SPEECH_RECOGNITION")
                 .commit();
 
-        //Populate question and choices
-        questionView.setText(exerciseChapter.chapterParts.get(partNumber).question);
         //choices_recycler.setAdapter(new ExerciseChoicesAdapter());
         return view;
     }

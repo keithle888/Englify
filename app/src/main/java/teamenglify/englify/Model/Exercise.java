@@ -1,5 +1,7 @@
 package teamenglify.englify.Model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -7,6 +9,7 @@ import java.util.ArrayList;
  */
 
 public class Exercise extends Module {
+    private static final String TAG = Exercise.class.getSimpleName();
     public ArrayList<ExerciseChapter> chapters;
 
     public Exercise(String name, String imgURL, ArrayList<ExerciseChapter> chapters) {
@@ -34,5 +37,17 @@ public class Exercise extends Module {
             chapters = new ArrayList<>();
         }
         chapters.add(exerciseChapter);
+    }
+
+    public void printAllChapters() {
+        if (chapters != null && chapters.size() != 0) {
+            Log.d(TAG, "Printing all Exercise Chapters.");
+            for (ExerciseChapter exerciseChapter : chapters) {
+                Log.d(TAG, "Printing chapter: " + exerciseChapter.name);
+                exerciseChapter.printAllChapterParts();
+            }
+        } else {
+            Log.d(TAG, "chapters are null or 0");
+        }
     }
 }

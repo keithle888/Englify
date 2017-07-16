@@ -18,6 +18,20 @@ public class ExerciseChapterPart implements Serializable{
     public String imageURL;
     public String audioURL;
 
+    public ExerciseChapterPart(String name, String question, String answer, String[] choices) {
+        this.name = name;
+        this.question = question;
+        this.answer = answer;
+        this.choices = choices;
+    }
+
+    public ExerciseChapterPart(String name, String audioURL, String imgURL) {
+        this.name = name;
+        this.imageURL = imageURL;
+        this.audioURL = audioURL;
+    }
+
+    @Deprecated
     public ExerciseChapterPart(String name, LinkedList<String> details) {
         this.name = name;
         for (String detail : details) {
@@ -32,9 +46,14 @@ public class ExerciseChapterPart implements Serializable{
         }
     }
 
-    public ExerciseChapterPart(String name, String audioURL, String imgURL) {
-        this.name = name;
-        this.imageURL = imageURL;
-        this.audioURL = audioURL;
+    @Override
+    public String toString() {
+        return "ExerciseChapterPart[name:" +
+                name + ", " +
+                "question:" + question + ", " +
+                "answer:" + answer + ", " +
+                "choices:" + choices + ", " +
+                "audioURL:" + audioURL + ", " +
+                "imgURL:" + imageURL + "]";
     }
 }

@@ -281,7 +281,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         } else if (object instanceof ExerciseChapter) {
             if(((ExerciseChapter) object).chapterParts.size()!=0){
                 ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
-                textToMatch = exerciseChapterPart.name;
+                textToMatch = exerciseChapterPart.question;
             }
         }
         if (textToMatch == null) {

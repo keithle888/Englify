@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
     public static String lesson;
     public static String vocab;
     public static String read;
-    public static String bucketName;
-    public static String rootDirectory;
+    public static final String bucketName = "englify-development";
+    public static final String rootDirectory = "res";
     public static String currentDirectory;
     public static int position;
     public static AmazonS3Client s3Client;
@@ -95,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler;
     public boolean hasInternetConnection;
     public boolean isWiFiConnection;
-    //variables from DataManager
-    public static Object downloadedObject;
-    //variables from ListingFragment
     //analytics variable
     public static MobileAnalyticsManager analytics;
     private int userID;
@@ -112,10 +109,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private File root;
-    private ArrayList<File> fileList = new ArrayList<File>();
-    //variable for SpeechRecognition
-    public boolean readyForSpeechRecognitionToLoad = false;
     //external app variable
     public Intent externalApp;
 
@@ -131,15 +124,12 @@ public class MainActivity extends AppCompatActivity {
         mHandler = new Handler(mHandlerThread.getLooper());
         mHandler.post(mBackgroundThread);
         //initialize variables
-        bucketName = getString(R.string.Bucket_Name);
-        currentDirectory = rootDirectory = getString(R.string.Root_Directory);
         transferUtility = new TransferUtility(s3Client, getApplicationContext());
         //check permissions, else request for them
         checkAndRequestPermissions();
         mainActivity = this;
         //initialize mobile analytics
         initializeMobileAnalytics();
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this,2 );
         //initialize s3Client variable on another thread.
         mHandler.post(startS3Client);
         //initialize navigation drawer

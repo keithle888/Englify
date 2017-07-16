@@ -194,7 +194,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             HashMap<String, Date> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();
-                if (isFolder(key) && key.contains("Grade")) { //Ensure that we are looking at a folder and that the folder name has "grade"
+                if (key.split("/").length == 2 && isFolder(key)) { //Ensure that we are looking at a folder and that the folder name has "grade"
                     String[] dKeys = key.split("/");            //Split key to extract specifically the grade name
                     identifiedGrades.put(dKeys[1], summary.getLastModified());
                 }
@@ -426,7 +426,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             if (lesson.findModule("Exercise") == null) {
                 lesson.addModule(exercise);
             } else {
-                lesson.findModule("Exercise");
+                exercise = (Exercise) lesson.findModule("Exercise");
             }
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
@@ -441,27 +441,28 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                         exerciseChapter = exercise.findExerciseChapter(delimited_path[4]);
                     }
                     if (isTextFile(path)) {
-                        exerciseChapter.addExerciseChapterPartDetails(removeExtension(delimited_path[5]), readTextFile(s3Client.getObject(bucketName, path)));
+                        exerciseChapter.addExerciseChapterPartDetails(readTextFile(s3Client.getObject(bucketName, path)));
                         publishProgress(path);
                         Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart details -> " + path);
                         lesson.updateLastModifiedDate(lastModified);
                     } else if (isAudioFile(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4]);
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4], delimited_path[5]);
                         LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
                         exerciseChapter.addExerciseChapterPartAudio(removeExtension(delimited_path[5]), mediaFilePath);
                         publishProgress(path);
-                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + path);
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + mediaFilePath);
                         lesson.updateLastModifiedDate(lastModified);
                     } else if (isImg(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4]);
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4], delimited_path[5]);
                         LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
                         exerciseChapter.addExerciseChapterPartImg(removeExtension(delimited_path[5]), mediaFilePath);
                         publishProgress(path);
-                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart image -> " + path);
+                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart image -> " + mediaFilePath);
                         lesson.updateLastModifiedDate(lastModified);
                     }
                 }
             }
+            exercise.printAllChapters();
         }
     }
 
@@ -609,224 +610,6 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             return name.substring(0, name.lastIndexOf('.'));
         } else {
             return name;
-        }
-    }
-
-/********************************************************************************************
- DEPRECATED CODE SECTION
- *********************************************************************************************/
-
-    /**
-     * (Deprecated in favor of downloading lesson by lesson) Method for downloading content for a specific grade
-     * Called by the AsyncTask implementation in DownloadService.
-     * Creates Lesson objects (Lesson and its description) inside each grade and the different Modules (Vocab, Conversation, Exercise) in each lesson.
-     */
-    public void downloadGrade() {
-        try {
-            //download grade tree from S3.
-            List<S3ObjectSummary> summaries = getSummaries(mainActivity.getString(R.string.Root_Directory) + "/" + grade.name);
-            pd.setMax(summaries.size());
-            pd.setProgress(0);
-            //Iterate through all summaries and use each entry to generate the correct Model.
-            for (S3ObjectSummary summary : summaries) {
-                String key = summary.getKey();
-                String[] delimitedKey = key.split("/");
-                int delimitedKeyLength = delimitedKey.length;
-                if (delimitedKeyLength == 3) { //it is a Lesson!
-                    Lesson lesson = new Lesson(delimitedKey[2]);
-                    Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.name + " <- " + lesson.name + " added.");
-                    publishProgress(key);
-                    grade.addLesson(lesson);
-                    if (isTextFile(delimitedKey[2])) {
-                        texts = readTextFile(s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, delimitedKey[2])));
-
-
-                    }
-                } else if (delimitedKeyLength == 4) { //It is a module
-                    //Need to identify which module it is
-                    if (delimitedKey[3].equalsIgnoreCase("Conversation")) { // It is a conversation
-                        Conversation conversation = new Conversation(delimitedKey[3]);
-                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + conversation.name + " added.");
-                        publishProgress(key);
-                        grade.findLesson(delimitedKey[2]).addModule(conversation);
-                    } else if (delimitedKey[3].equalsIgnoreCase("Vocabulary")) {//It is a vocabulary
-                        Vocab vocab = new Vocab(delimitedKey[3]);
-                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + vocab.name + " added.");
-                        publishProgress(key);
-                        grade.findLesson(delimitedKey[2]).addModule(vocab);
-                    } else if (delimitedKey[3].equalsIgnoreCase("Exercise")) {//It is an exercise
-                        Exercise exercise = new Exercise(delimitedKey[3]);
-                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): " + grade.findLesson(delimitedKey[2]).name + " <- " + exercise.name + " added.");
-                        publishProgress(key);
-                        grade.findLesson(delimitedKey[2]).addModule(exercise);
-                    } else { //unidentified module
-                        publishProgress(key);
-                        Log.d("Englify", "Class DownloadService: Method downloadGrade(): Unknown module found -> " + key);
-                    }
-                }
-            }
-            //Insert lesson descriptions
-            if (texts != null & texts.size() != 0) {
-                grade.overwriteLessonDescriptions(texts);
-                texts = null;
-            }
-            //download all the data in each module (it is seperated from the iterator above due to key naming overlaps.
-            downloadGradeModules(grade);
-            RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
-            rootListing.overrideGrade(grade);
-            LocalSave.saveObject(R.string.S3_Object_Listing, rootListing);
-            Log.d("Englify", "Class DownloadService: Method downloadGrade(): Finished downloading " + grade.name + " and saved to internal memory.");
-
-        } catch (Exception e) {
-            //data downloading failed. Delete all downloaded Data.
-            Log.d("Englify", "Class DownloadService: Method downloadGrade(): Caught Exception -> " + e.toString());
-            throw e;
-        }
-    }
-
-    /**
-     * (Deprecated along with downloadGrade) Called by downloadGrade()
-     * Iterates through all the lessons and its modules.
-     * Creates the VocabPart objects, ExerciseChapter objects and Read objects.
-     *
-     * @param grade Grade to be downloaded.
-     */
-
-    public void downloadGradeModules(Grade grade) {
-        try {
-            for (Lesson lesson : grade.lessons) {
-                for (Module module : lesson.modules) {
-                    if (module instanceof Conversation) {
-                        Conversation conversation = (Conversation) module;
-                        //get the reads
-                        Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): " + rootDirectory + grade.name + lesson.name + conversation.name);
-                        String prefix = generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name);
-                        List<S3ObjectSummary> summaries = getSummaries(prefix);
-                        for (S3ObjectSummary summary : summaries) {
-                            String key = summary.getKey();
-                            if (!key.isEmpty()) {
-                                String[] delimitedKey = key.split("/");
-                                if (delimitedKey.length == 5 && key.contains("Conversation")) { // Its a read!
-                                    Read read = new Read(delimitedKey[4], new ArrayList<ReadPart>());
-                                    publishProgress(key);
-                                    Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): " + conversation.name + " <- " + read.name + " added.");
-                                    conversation.addRead(read);
-                                }
-                            }
-                        }
-                    } else if (module instanceof Vocab) {
-                        Vocab vocab = (Vocab) module;
-                        Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Going through Vocab -> " + vocab.name);
-                        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, vocab.name);
-                        if (summaries != null && summaries.size() != 0) {
-                            for (S3ObjectSummary summary : summaries) {
-                                String key = summary.getKey();
-                                Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Running key for Conversation -> " + key);
-                                if (key.contains(vocab.name)) {
-                                    String[] delimitedKey = key.split("/");
-                                    if (delimitedKey.length == 5) { // Its a vocab part
-                                        if (isTextFile(delimitedKey[4])) { //Text for all vocab parts
-                                            String prefix = generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]);
-                                            publishProgress(key);
-                                            texts = readTextFile(s3Client.getObject(bucketName, prefix));
-                                            Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Text file found for " + prefix);
-                                        } else if (isAudioFile(delimitedKey[4])) { //Audio for vocabPart
-                                            S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                            LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]), s3Object);
-                                            publishProgress(key);
-                                            vocab.addVocabPartAudio(removeExtension(delimitedKey[4]), createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                            Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Audio file for " + generatePrefix(grade.name, lesson.name, vocab.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                        } else if (isImg(delimitedKey[4])) {//Img for vocabPart
-                                            S3Object s3Object = s3Client.getObject(bucketName, generatePrefix(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                            LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]), s3Object);
-                                            publishProgress(key);
-                                            vocab.addVocabPartImg(removeExtension(delimitedKey[4]), createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                            Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): Image file for " + generatePrefix(grade.name, lesson.name, vocab.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, vocab.name, delimitedKey[4]));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        //overwrite the texts in VocabParts from the txt file
-                        if (texts != null && texts.size() != 0) {
-                            Log.d("Englify", "Class DownloadService: Method downloadGradeModules(): LinkedTextArray contents before overwriting Vocab -> " + texts.toString());
-                            vocab.overwriteTexts(texts);
-                        }
-                        texts = null;
-                    } else if (module instanceof Exercise) {
-                        Exercise exercise = (Exercise) module;
-                        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, exercise.name);
-                        for (S3ObjectSummary summary : summaries) {
-                            String key = summary.getKey();
-                            if (key.contains(grade.name) && key.contains(lesson.name) && key.contains(exercise.name)) { //ensures the correct keys for the correct exercises are used. If not the app may save the wrong exercises.
-                                String[] dKey = key.split("/");
-                                if (dKey.length == 5) { //It is a Exercise Chapter
-                                    exercise.chapters.add(new ExerciseChapter(dKey[4]));
-                                    publishProgress(key);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            downloadReadParts();
-            downloadExerciseChapterParts(grade);
-        } catch (Exception e) {
-            Log.d(bucketName, "Class DownloadService: Method downloadGradeModules(): Exception caught -> " + e.toString());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    /**
-     * Called by downloadeGradeModules().
-     * Iterates through all the ExerciseChapters for the Grade object.
-     * Creates the ExerciseChapterPart (Audio, Image and Text) objects and saves to local memory.
-     *
-     * @param grade Grade to be downloaded.
-     */
-    public void downloadExerciseChapterParts(Grade grade) {
-        for (Lesson lesson : grade.lessons) {
-            for (Module module : lesson.modules) {
-                if (module instanceof Exercise) {
-                    Exercise exercise = (Exercise) module;
-                    for (ExerciseChapter exerciseChapter : exercise.chapters) {
-                        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name);
-                        for (S3ObjectSummary summary : summaries) {
-                            String key = summary.getKey();
-                            if (key.contains(grade.name) && key.contains(lesson.name) && key.contains(exercise.name) && key.contains(exerciseChapter.name)) {
-                                String[] dKey = key.split("/");
-                                if (dKey.length == 6) { //Length 6 is only for ExerciseChapterPart
-                                    if (isTextFile(key)) {
-                                        publishProgress(key);
-                                        texts = readTextFile(s3Client.getObject(bucketName, key));
-                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Found text file -> " + key);
-                                    } else if (isAudioFile(key)) {
-                                        publishProgress(key);
-                                        String localAbsolutePath = createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]);
-                                        LocalSave.saveMedia(localAbsolutePath, s3Client.getObject(bucketName, key));
-                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Audio file -> " + key + " saved to " + localAbsolutePath);
-                                        exerciseChapter.addExerciseChapterPartAudio(removeExtension(key), localAbsolutePath);
-                                    } else if (isImg(key)) {
-                                        publishProgress(key);
-                                        String localAbsolutePath = createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]);
-                                        LocalSave.saveMedia(localAbsolutePath, s3Client.getObject(bucketName, key));
-                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Audio file -> " + key + " saved to " + localAbsolutePath);
-                                        exerciseChapter.addExerciseChapterPartImg(removeExtension(key), localAbsolutePath);
-                                    } else {
-                                        Log.d(bucketName, "Class DownloadService: Method downloadExerciseChapterParts(): Unknown key -> " + key);
-                                    }
-                                }
-                            }
-                        }
-                        //Overwrite ExerciseChapterPartNames
-                        if (texts != null && texts.size() != 0) {
-                            //exerciseChapter.overwriteExerciseChapterPartsText(texts);
-                            texts = null;
-                        }
-                    }
-                }
-            }
         }
     }
 }
