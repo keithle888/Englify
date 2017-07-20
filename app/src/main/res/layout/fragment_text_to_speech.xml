@@ -19,9 +19,12 @@
 
         <ImageButton
             android:text="Speak"
-            android:layout_width="90sp"
-            android:layout_height="90sp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@null"
             android:src="@drawable/play_button_transparent_background"
             android:id="@+id/ttsButton" />
 
