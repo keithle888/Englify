@@ -6,7 +6,9 @@ package teamenglify.englify.DataService;
  */
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,6 +28,9 @@ import static teamenglify.englify.MainActivity.mainActivity;
 
 //Used to decide whether to download grades from the internet or from internal storage
 public class DataManager {
+    private static final String TAG = DataManager.class.getSimpleName();
+    private static final int LOCAL_STORAGE_VERSION = 1;
+    private static final String LOCAL_STORAGE_VERSION_FILE_NAME = "LOCAL_STORAGE_VERSION";
     /**
      * getListing() is to get a listing of all the Grades (a RootListing)
      * Once it has been loaded, the MainActivity variable downloadedObject will be set as the RootListing object.
@@ -146,5 +151,30 @@ public class DataManager {
 
     public void showToastNoLessonsDownloaded() {
         Toast.makeText(mainActivity, R.string.Update_Reject, Toast.LENGTH_LONG).show();
+    }
+
+    public boolean checkLocalStorageVersionIsLatest() {
+        Log.d(TAG, "Starting check on local storage version.");
+        if (LocalSave.doesFileExist(LOCAL_STORAGE_VERSION_FILE_NAME)) {
+            Log.d(TAG, "Local storage version present. Checking if version is different.");
+            try {
+                int localVersionNumber = Integer.parseInt(LocalSave.loadString(LOCAL_STORAGE_VERSION_FILE_NAME));
+                if (localVersionNumber == LOCAL_STORAGE_VERSION) {
+                    Log.d(TAG,"Local storage version is the latest. Version number: " + localVersionNumber);
+                    return true;
+                } else {
+                    Log.d(TAG, "Local version storage is out of date. Local version number: " + localVersionNumber + ", Latest version number: " + LOCAL_STORAGE_VERSION);
+                    return false;
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Locally stored version number of incorrectly saved.");
+                e.printStackTrace();
+            }
+        } else {
+            Log.d(TAG, "Local storage version has not been initialized. Saving latest storage version.");
+            LocalSave.saveString(LOCAL_STORAGE_VERSION_FILE_NAME, String.valueOf(LOCAL_STORAGE_VERSION));
+            return false;
+        }
+        return false;
     }
 }

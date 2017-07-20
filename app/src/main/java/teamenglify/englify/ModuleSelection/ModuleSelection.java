@@ -100,7 +100,7 @@ public class ModuleSelection extends Fragment {
     public void onStart() {
         super.onStart();
         if (lesson != null) {
-            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + lesson.name);
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ListingFragment.ACTION_BAR_DELIMITER + lesson.name);
         }
     }
 }

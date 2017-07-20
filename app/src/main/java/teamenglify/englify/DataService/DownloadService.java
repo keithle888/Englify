@@ -48,6 +48,7 @@ import static teamenglify.englify.MainActivity.s3Client;
  * DownloadService extends AsyncTask in order to run networking calls on a separate thread while keeping the UI up-to-date with its status.
  */
 public class DownloadService extends AsyncTask<Void, String, Boolean> {
+    private static final String TAG = DownloadService.class.getSimpleName();
     public final static int DOWNLOAD_LISTING_OF_GRADES = 0;
     public final static int DOWNLOAD_LISTING_OF_LESSONS = 1;
     public final static int DOWNLOAD_LESSON = 2;
@@ -277,8 +278,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         //Update Progress Dialog
         pd.setMax(getSummaries(rootDirectory, grade.name, lesson.name).size());
         //Download components in lesson
+        Log.d(TAG, "Starting download of vocabulary.");
         download_lesson_vocab();
+        Log.d(TAG, "Starting download of conversation.");
         download_lesson_conversation();
+        Log.d(TAG, "Starting download of exercise.");
         download_lesson_exercise();
         //Save to local memory
         RootListing rootListing = (RootListing) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
@@ -347,15 +351,15 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             //Get module if lesson contains it already contains it, if not add it in.
             if (lesson.findModule("Conversation") == null) {
                 lesson.addModule(conversation);
-                publishProgress(lesson.name + "/" + "Conversation");
             } else {
                 conversation = (Conversation) lesson.findModule("Conversation");
             }
+            publishProgress(lesson.name + "/" + "Conversation");
             //Run through summaries
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
                 String[] delimited_path = path.split("/");
-                if (delimited_path.length == 5 && path.contains("Read")) {
+                if (delimited_path.length == 5) {
                     conversation.addRead(new Read(delimited_path[4]));
                     publishProgress(path);
                 }

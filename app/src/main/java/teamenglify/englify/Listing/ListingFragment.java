@@ -33,6 +33,8 @@ import android.support.v7.widget.GridLayoutManager;
  * create an instance of this fragment.
  */
 public class ListingFragment extends Fragment {
+    private static final String TAG = ListingFragment.class.getSimpleName();
+    public static final String ACTION_BAR_DELIMITER = " > ";
     //Fixed variables to be used to determine listing type
     public static final int LIST_GRADES = 0;
     public static final int LIST_LESSONS = 1;
@@ -46,7 +48,6 @@ public class ListingFragment extends Fragment {
     private RecyclerView recyclerView;
     private ListingAdapter listingAdapter;
     private ListingAdapterLesson listingAdapterLesson;
-    private ImageView noContentImage;
     private int listingType;
     private Object object_to_load; //When we are dealing with lessons or anything below
     private String previous_fragment_action_bar_title;
@@ -92,7 +93,6 @@ public class ListingFragment extends Fragment {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
-        noContentImage = (ImageView) view.findViewById(R.id.noContentImage);
         return view;
     }
 
@@ -129,7 +129,9 @@ public class ListingFragment extends Fragment {
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         } else{
             //Replace with no content available fragment.
+            Log.d(TAG, "Checking if content is available to load UI with.");
             if (isContentAvailable()) {
+                Log.d(TAG, "Content is available. Loading listing based on content.");
                 listingAdapter = new ListingAdapter(object_to_load, listingType);
                 recyclerView.setAdapter(listingAdapter);
                 mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
@@ -154,17 +156,18 @@ public class ListingFragment extends Fragment {
             recyclerView.setLayoutManager(mainActivity.mLayoutManager);
         }
     }
+
     public void updateActionBarTitle() {
         if (listingType == LIST_GRADES) {
             previous_fragment_action_bar_title = "Grade Listing";
         } else if (listingType == LIST_LESSONS && previous_fragment_action_bar_title != null) {
             mainActivity.getSupportActionBar().setTitle(((Grade) object_to_load).name);
         } else if (listingType == LIST_VOCABS) {
-            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + getString(R.string.vocabulary));
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.vocabulary));
         } else if (listingType == LIST_READS) {
-            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + getString(R.string.conversation));
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.conversation));
         } else if (listingType == LIST_EXERCISES) {
-            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + "|" + getString(R.string.exercise));
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.exercise));
         }
     }
 
@@ -174,14 +177,17 @@ public class ListingFragment extends Fragment {
     }
 
     public boolean isContentAvailable() {
+        Log.d(TAG, "Checking object_to_load for content.");
         if (object_to_load != null) {
             if (listingType == LIST_READS) {
                 Conversation conversation = (Conversation) object_to_load;
+                Log.d(TAG, "Checking conversation reads: " + conversation.reads.toString());
                 if (conversation.reads != null && conversation.reads.size() != 0) {
                     return true;
                 }
             } else if (listingType == LIST_EXERCISES) {
                 Exercise exercise = (Exercise) object_to_load;
+                Log.d(TAG, "Checking exercise chapters: " + exercise.chapters.toString());
                 if (exercise.chapters != null && exercise.chapters.size() != 0) {
                     return true;
                 }

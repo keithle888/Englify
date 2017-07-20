@@ -5,12 +5,28 @@
     android:orientation="vertical"
     tools:context="teamenglify.englify.ExerciseModule.ExerciseModule">
 
-    <GridView
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
-        android:numColumns="5"
-        android:id="@+id/exercise_choices">
+        android:id="@+id/exerciseImageView"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        android:textSize="@dimen/speech_recognition_text_size"
+        android:id="@+id/speechRecognitionTextViewExercise_TextToMatch"
+        android:orientation="vertical">
+    </TextView>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:numColumns="2"
+        android:id="@+id/exercise_choices_grid_view">
     </GridView>
 
     <TextView
@@ -18,17 +34,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:textAlignment="center"
-        android:id="@+id/speechRecognitionTextViewExercise_TextToMatch"
-        android:orientation="vertical">
-
-
-    </TextView>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textAlignment="center"
+        android:textSize="@dimen/speech_recognition_text_size"
         android:id="@+id/speechRecognitionTextViewExercise_Return"
         android:orientation="vertical">
     </TextView>
@@ -43,6 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="right"
             android:id="@+id/audioBarFrameLayoutExercise"
             android:orientation="vertical">
         </FrameLayout>
@@ -51,6 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="left"
             android:id="@+id/speechRecognitionButtonFrameLayoutExercise"
             android:orientation="vertical">
         </FrameLayout>

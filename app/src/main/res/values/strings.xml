@@ -67,4 +67,5 @@
     <string name="vocabulary">Vocab</string>
     <string name="conversation">Convo</string>
     <string name="exercise">Exercise</string>
+    <string name="text_to_speech_hint">Enter text to pronounce...</string>
 </resources>

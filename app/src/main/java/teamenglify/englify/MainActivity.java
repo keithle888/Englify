@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d("on paused", "paused");
-        submitMobileAnalytics();
+        //submitMobileAnalytics();
         mHandler.removeCallbacks(mBackgroundThread);
     }
 
@@ -327,10 +327,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment(), "LOGIN_FRAGMENT").addToBackStack(null).commit();
         //Initialize English-Myanmar Dictionary
         //initializeDictionary();
-    }
-
-    public void loadReadingModule(Read read) {
-
     }
 
     public void loadVocabModule(Vocab vocab) {

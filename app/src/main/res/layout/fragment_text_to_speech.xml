@@ -11,17 +11,18 @@
 
 
         <EditText
-            android:hint="Text to translate..."
+            android:hint="@string/text_to_speech_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/ttsInputText"
             android:gravity="center_horizontal"/>
 
-        <Button
+        <ImageButton
             android:text="Speak"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="90sp"
+            android:layout_height="90sp"
             android:layout_gravity="center"
+            android:src="@drawable/play_button_transparent_background"
             android:id="@+id/ttsButton" />
 
 

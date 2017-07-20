@@ -2,6 +2,8 @@ package teamenglify.englify;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
@@ -27,6 +29,8 @@ import static teamenglify.englify.MainActivity.mainActivity;
  */
 
 public class LocalSave {
+    private static final String TAG = LocalSave.class.getSimpleName();
+
     public static boolean saveString(String fileName, String input) {
         try {
             FileOutputStream fos = mainActivity.openFileOutput(fileName, Context.MODE_PRIVATE);
@@ -154,5 +158,18 @@ public class LocalSave {
             Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
         }
         return array;
+    }
+
+    public static Bitmap getImageByBitmap(String fileName) {
+        try {
+            FileInputStream fis = mainActivity.openFileInput(fileName);
+            if (fis != null) {
+                return BitmapFactory.decodeFileDescriptor(fis.getFD());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Failed loading image with error.");
+            e.printStackTrace();
+        }
+        return null;
     }
 }
