@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
@@ -41,7 +43,7 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(int i, View view, final ViewGroup viewGroup) {
 
         final Button choice_button = (Button) new Button(viewGroup.getContext());
         choice_button.setPadding(5,5,5,5);
@@ -49,18 +51,22 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
         //Set text for button
         final String textForButton = choices[i];
         choice_button.setText(textForButton);
+        //setting so the text does not appear all caps.
+        choice_button.setTransformationMethod(null);
 
         //Set behaviour of button
         choice_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (textForButton.contentEquals(answer)) {
-                    choice_button.setVisibility(View.INVISIBLE);
                     choice_button.setClickable(false);
                     //Additional methods to set weight for view with choices to be 0, and the answer to appear on the question.
                 } else {
                     choice_button.setClickable(false);
                     choice_button.setBackgroundColor(mainActivity.getResources().getColor(android.R.color.holo_red_light));
+                    Animation fadeout = AnimationUtils.loadAnimation(viewGroup.getContext(), R.anim.exercise_choices_button_fadeout);
+                    choice_button.startAnimation(fadeout);
+                    choice_button.setVisibility(View.INVISIBLE);
                 }
             }
         });
