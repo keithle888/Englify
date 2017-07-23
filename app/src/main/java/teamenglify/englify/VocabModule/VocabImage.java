@@ -16,6 +16,7 @@ import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
+import teamenglify.englify.SpeechRecognition;
 
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -29,6 +30,7 @@ public class VocabImage extends Fragment {
     private ViewPager viewPager;
     private VocabFragmentStateAdapter vocabFragmentStateAdapter;
     private Vocab vocab;
+    private static final String TAG = VocabImage.class.getSimpleName();
 
     public VocabImage() {
         // Required empty public constructor
@@ -75,6 +77,7 @@ public class VocabImage extends Fragment {
         viewPager.setAdapter(vocabFragmentStateAdapter);
         viewPager.setCurrentItem(MainActivity.position);
         final Fragment fragment_audio_bar = mainActivity.getSupportFragmentManager().findFragmentByTag("AUDIO_BAR");
+        final Fragment fragmentSpeechRecognition = mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -92,6 +95,15 @@ public class VocabImage extends Fragment {
                 if (fragment_audio_bar != null) {
                     Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
                     ((AudioBar)fragment_audio_bar).setAudioTrack(position);
+                } else {
+                    Log.d(TAG, "Unable to find Audio Bar to trigger UI update.");
+                }
+
+                //Trigger for speech recognition
+                if (fragmentSpeechRecognition != null) {
+                    ((SpeechRecognition)fragmentSpeechRecognition).updateUI(position);
+                } else {
+                    Log.d(TAG, "Unable to find Speech Recognition to trigger UI update.");
                 }
             }
 

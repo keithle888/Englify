@@ -16,6 +16,7 @@ import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;
+import teamenglify.englify.SpeechRecognition;
 
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -24,6 +25,7 @@ public class ReadImage extends Fragment {
     private ViewPager viewPager;
     private ImageFragmentStateAdapter imageFragmentStateAdapter;
     private Read read;
+    private static final String TAG = ReadImage.class.getSimpleName();
 
     public ReadImage() {
         // Required empty public constructor
@@ -65,7 +67,8 @@ public class ReadImage extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.readViewPager);
         imageFragmentStateAdapter = new ImageFragmentStateAdapter(MainActivity.getMainActivity().getSupportFragmentManager(), read);
         viewPager.setAdapter(imageFragmentStateAdapter);
-        final Fragment fragment_audio_bar = mainActivity.getSupportFragmentManager().findFragmentByTag("AUDIO_BAR");
+        final Fragment fragment_audio_bar = mainActivity.getSupportFragmentManager().findFragmentByTag(AudioBar.FM_TAG_NAME);
+        final Fragment fragmentSpeechRecognition = mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -78,10 +81,18 @@ public class ReadImage extends Fragment {
                 if (mainActivity.position != position) {
                     mainActivity.position = position;
                 }
-                //Trigger for Audio Bar and speech recognition to change track/answer
+                //Trigger for Audio Bar to change track/answer
                 if (fragment_audio_bar != null) {
                     Log.d(bucketName, "Class ReadImageImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
                     ((AudioBar)fragment_audio_bar).setAudioTrack(position);
+                } else {
+                    Log.d(TAG, "Unable to find Audio Bar to trigger UI update.");
+                }
+                //Trigger for speech recognition
+                if (fragmentSpeechRecognition != null) {
+                    ((SpeechRecognition)fragmentSpeechRecognition).updateUI(position);
+                } else {
+                    Log.d(TAG, "Unable to find Speech Recognition to trigger UI update.");
                 }
             }
 

@@ -1,14 +1,18 @@
 package teamenglify.englify.ExerciseModule;
 
-import android.content.Context;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.support.v4.app.Fragment;
+import android.widget.GridView;
+import android.widget.LinearLayout;
 
+import teamenglify.englify.AudioBar;
+import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -18,12 +22,15 @@ import static teamenglify.englify.MainActivity.mainActivity;
  */
 
 public class ExerciseChoicesAdapter extends BaseAdapter {
+    private static final String TAG = ExerciseChoicesAdapter.class.getSimpleName();
     private String[] choices;
     private String answer;
+    private View exerciseChoicesView;
 
-    public ExerciseChoicesAdapter(String[] choices, String answer) {
+    public ExerciseChoicesAdapter(String[] choices, String answer, GridView exerciseChoicesView) {
         this.choices = choices;
         this.answer = answer;
+        this.exerciseChoicesView = exerciseChoicesView;
     }
 
 
@@ -60,7 +67,21 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
             public void onClick(View view) {
                 if (textForButton.contentEquals(answer)) {
                     choice_button.setClickable(false);
-                    //Additional methods to set weight for view with choices to be 0, and the answer to appear on the question.
+                    //Play audio after correct answer
+                    Fragment fragment = MainActivity.mainActivity.getSupportFragmentManager().findFragmentByTag(AudioBar.FM_TAG_NAME);
+                    if (fragment != null) {
+                        ((AudioBar) fragment).play();
+                    } else {
+                        Log.d(TAG, "Unable to find audio bar fragment to play track after correct choice selected.");
+                    }
+                    //Set exercise choices weight = 0
+                    exerciseChoicesView.setLayoutParams(new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                            0f
+                        )
+                    );
+                    //Get text_to_match to put the correct text into place.
                 } else {
                     choice_button.setClickable(false);
                     choice_button.setBackgroundColor(mainActivity.getResources().getColor(android.R.color.holo_red_light));

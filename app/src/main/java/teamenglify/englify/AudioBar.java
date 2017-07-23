@@ -25,6 +25,7 @@ import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.Vocab;
 
+import static android.content.Context.AUDIO_SERVICE;
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
 
@@ -42,6 +43,8 @@ public class AudioBar extends Fragment {
     private String audioURL;
     private Object object;
     private FileInputStream fis;
+    public static final String FM_TAG_NAME = "AUDIO_BAR";
+    private static final String TAG = AudioBar.class.getSimpleName();
 
     public AudioBar() {
         // Required empty public constructor
@@ -157,8 +160,7 @@ public class AudioBar extends Fragment {
             @Override
             public void onClick(View view) {
                 if ((!mediaPlayer.isPlaying()) && readyToPlay) {
-                    mediaPlayer.start();
-                    audioPlayPauseButton.setImageResource(R.drawable.pause_button_transparent_background);
+                    play();
                 } else {
                     mediaPlayer.pause();
                     audioPlayPauseButton.setImageResource(R.drawable.play_button_transparent_background);
@@ -186,5 +188,10 @@ public class AudioBar extends Fragment {
             }
         }
         return toReturn;
+    }
+
+    public void play() {
+        mediaPlayer.start();
+        audioPlayPauseButton.setImageResource(R.drawable.pause_button_transparent_background);
     }
 }

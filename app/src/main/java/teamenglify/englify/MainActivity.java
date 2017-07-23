@@ -175,6 +175,53 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("on paused", "paused");
+        //submitMobileAnalytics();
+        mHandler.removeCallbacks(mBackgroundThread);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(analytics != null) {
+            analytics.getSessionClient().resumeSession();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        // Handle your other action bar items...
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDestroy(){
+        //get rid of MainActivity so GC can collect?
+        mainActivity = null;
+        super.onDestroy();
+    }
+
     public void submitMobileAnalytics (){
         int analyticsPercentage = S3Properties.analyticsPercentage;
 
@@ -276,46 +323,6 @@ public class MainActivity extends AppCompatActivity {
             analytics.getEventClient().recordEvent(event);
             appUsage.setFirstThreeLessonSubmitted(true);
             Log.d("completed event", "submit 3 lessons completed");
-        }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle your other action bar items...
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("on paused", "paused");
-        //submitMobileAnalytics();
-        mHandler.removeCallbacks(mBackgroundThread);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(analytics != null) {
-            analytics.getSessionClient().resumeSession();
         }
     }
 

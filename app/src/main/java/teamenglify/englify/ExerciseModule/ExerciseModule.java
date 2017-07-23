@@ -61,7 +61,7 @@ public class ExerciseModule extends Fragment {
         //Pull in audio player and speech recognition
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.audioBarFrameLayoutExercise, AudioBar.newInstance(exerciseChapter), "AUDIO_BAR")
+                .add(R.id.audioBarFrameLayoutExercise, AudioBar.newInstance(exerciseChapter), AudioBar.FM_TAG_NAME)
                 .commit();
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
@@ -72,9 +72,13 @@ public class ExerciseModule extends Fragment {
                         "SPEECH_RECOGNITION")
                 .commit();
 
-        choices_grid_view.setAdapter(new ExerciseChoicesAdapter(
-                exerciseChapter.chapterParts.get(partNumber).choices,
-                exerciseChapter.chapterParts.get(partNumber).answer));
+        choices_grid_view.setAdapter(
+                new ExerciseChoicesAdapter(
+                    exerciseChapter.chapterParts.get(partNumber).choices,
+                    exerciseChapter.chapterParts.get(partNumber).answer,
+                    choices_grid_view
+                )
+        );
 
         updateExerciseImageView(partNumber);
         return view;

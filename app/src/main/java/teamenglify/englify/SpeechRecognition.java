@@ -39,6 +39,7 @@ import static teamenglify.englify.MainActivity.read;
  * create an instance of this fragment.
  * */
 public class SpeechRecognition extends Fragment implements RecognitionListener {
+    public static final String FM_TAG_NAME = "SPEECH_RECOGNITION";
     private static final String TAG = SpeechRecognition.class.getSimpleName();
     private TextView speechToMatchTextView;
     private TextView speechReturnTextView;
@@ -52,7 +53,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     private Object object;
     private long replyTimeOut = 3000;
     private StopWatch stopWatch;
-    private int moduleType;
 
     public SpeechRecognition() {
         // Required empty public constructor
@@ -98,7 +98,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         if (speech != null) {
             releaseResources();
         }
-        mHandler.removeCallbacks(mBackgroundThread);
     }
 
     public void initializeSpeechRecognition() {
@@ -111,8 +110,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         if (SpeechRecognizer.isRecognitionAvailable(getContext())) {
             setButtonListener();
-            mHandler.post(mBackgroundThread);
-            updateUI();
+            updateUI(0);
         } else {
             speechReturnTextView.setText(R.string.Speech_Recognition_Unavailable);
             speechToMatchTextView.setText("");
@@ -128,18 +126,22 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        speechProgressBar.setVisibility(View.VISIBLE);
-                        speechProgressBar.setIndeterminate(true);
-                        speech.startListening(recognizerIntent);
-                        speechReturnTextView.setText("");
+                        if (mainActivity.hasInternetConnection) {
+                            speechProgressBar.setVisibility(View.VISIBLE);
+                            speech.startListening(recognizerIntent);
+                            speechReturnTextView.setText("");
+                        } else {
+                            speechReturnTextView.setText(R.string.speech_recognition_no_internet_connection);
+                        }
                         break;
                     }
                     case MotionEvent.ACTION_UP: {
-                        speechProgressBar.setVisibility(View.INVISIBLE);
-                        speechProgressBar.setIndeterminate(false);
-                        speechReturnTextView.setText("Translating audio...");
-                        speech.stopListening();
-                        startTimeoutTimer();
+                        if (mainActivity.hasInternetConnection) {
+                            speechProgressBar.setVisibility(View.INVISIBLE);
+                            speechReturnTextView.setText("Translating audio...");
+                            speech.stopListening();
+                            startTimeoutTimer();
+                        }
                         break;
                     }
                 }
@@ -241,34 +243,14 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         return message;
     }
 
-    private Runnable mBackgroundThread = new Runnable() {
-        public void run() {
-            //check for page changes
-            if (mainActivity.position != position) {
-                //page has changed
-                position = mainActivity.position;
-                updateUI();
-                //wipe the returnTextView
-                speechReturnTextView.setText("");
-                //stop the timeout stopwatch
-                if (stopWatch != null && stopWatch.isRunning()) {
-                    resetTimeoutTimer();
-                }
-            }
-            //update speech recognition status based on change in wifi status.
-            if (speech == null && mainActivity.hasInternetConnection == true) {
-                initializeSpeechRecognition();
-            } else if (speech != null && mainActivity.hasInternetConnection == false) {
-                disableSpeechRecognition();
-            }
-            if (stopWatch != null && stopWatch.isRunning()) {
-                checkTimeoutTimer();
-            }
-            mHandler.postDelayed(mBackgroundThread, 500);
+    public void updateUI(int pageNumber) {
+        //Update page number for tracking.
+        if (this.position != pageNumber) {
+            position = pageNumber;
         }
-    };
-
-    public void updateUI() {
+        if (speechReturnTextView != null) {
+            speechReturnTextView.setText("");
+        }
         Log.d("Englify", "Class SpeechRecognition: Method updateUI(): Updating UI");
         if (object instanceof Vocab) {
             VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
@@ -349,18 +331,14 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         return 999;
     }
 
-    public void disableSpeechRecognition() {
-        speech.destroy();
-        if (stopWatch != null && stopWatch.isRunning()) {
-            resetTimeoutTimer();
-        }
-        speechReturnTextView.setText(R.string.Speech_Recognition_Requires_Internet);
-    }
-
     public void bindViews(View view) {
         //Bind common modules
         speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
         speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
         Log.i(TAG, "Binding common view modules.");
+    }
+
+    public void addAnswerIntoExerciseText() {
+
     }
 }
