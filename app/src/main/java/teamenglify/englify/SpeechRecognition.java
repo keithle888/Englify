@@ -41,7 +41,7 @@ import static teamenglify.englify.MainActivity.read;
 public class SpeechRecognition extends Fragment implements RecognitionListener {
     public static final String FM_TAG_NAME = "SPEECH_RECOGNITION";
     private static final String TAG = SpeechRecognition.class.getSimpleName();
-    private TextView speechToMatchTextView;
+    public TextView speechToMatchTextView;
     private TextView speechReturnTextView;
     private ProgressBar speechProgressBar;
     private SpeechRecognizer speech;
@@ -336,9 +336,5 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
         speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
         Log.i(TAG, "Binding common view modules.");
-    }
-
-    public void addAnswerIntoExerciseText() {
-
     }
 }

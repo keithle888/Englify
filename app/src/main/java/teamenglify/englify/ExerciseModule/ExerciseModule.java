@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
@@ -28,10 +30,18 @@ public class ExerciseModule extends Fragment {
     public int partNumber;
     private GridView choices_grid_view;
     private ImageView exercise_image_view;
-    private Button exercise_forward_button;
-    private Button exercise_back_button;
-
-
+    private ImageButton exercise_forward_button;
+    private ImageButton exercise_back_button;
+    public static final LinearLayout.LayoutParams exerciseImageView_LayoutParam_Invisible = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            0,
+            0f
+    );
+    public static final LinearLayout.LayoutParams getExerciseImageView_LayoutParam_Visible = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            0,
+            3f
+    );
 
     public ExerciseModule() {
         // Required empty public constructor
@@ -55,6 +65,8 @@ public class ExerciseModule extends Fragment {
         //Bind Views
         choices_grid_view = (GridView) view.findViewById(R.id.exercise_choices_grid_view);
         exercise_image_view = (ImageView) view.findViewById(R.id.exerciseImageView);
+        exercise_forward_button = (ImageButton) view.findViewById(R.id.exerciseForwardButton);
+        exercise_back_button = (ImageButton) view.findViewById(R.id.exerciseBackButton);
 
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
 
@@ -72,16 +84,19 @@ public class ExerciseModule extends Fragment {
                         "SPEECH_RECOGNITION")
                 .commit();
 
-        choices_grid_view.setAdapter(
-                new ExerciseChoicesAdapter(
-                    exerciseChapter.chapterParts.get(partNumber).choices,
-                    exerciseChapter.chapterParts.get(partNumber).answer,
-                    choices_grid_view
-                )
-        );
+        bindButtonBehaviour();
 
-        updateExerciseImageView(partNumber);
+        updateExercisePage(partNumber);
         return view;
+    }
+
+    public void updateExercisePage(int page) {
+        Log.d(TAG,"Updating exercise module for page number:" + page);
+        updateExerciseImageView(page);
+        updateSpeechRecognition(page);
+        updateAudioBar(page);
+        updateButtonSettings(page);
+        updateChoicesView(page);
     }
 
     public void updateExerciseImageView(int i) {
@@ -96,6 +111,101 @@ public class ExerciseModule extends Fragment {
             }
         } else {
             Log.d(TAG, "Exercise Image View not yet binded == is null.");
+        }
+    }
+
+    public void updateSpeechRecognition(int page) {
+        SpeechRecognition sr = (SpeechRecognition) mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);
+        if (sr != null) {
+            sr.updateUI(page);
+        } else {
+            Log.d(TAG, "Unable to find speech recognition to update.");
+        }
+    }
+
+    public void updateAudioBar(int page) {
+        AudioBar ab = (AudioBar) mainActivity.getSupportFragmentManager().findFragmentByTag(AudioBar.FM_TAG_NAME);
+        if (ab != null) {
+            ab.setAudioTrack(page);
+        } else {
+            Log.d(TAG, "Unable to find Audio Bar to update.");
+        }
+    }
+
+    public void updateChoicesView(int page) {
+        if (choices_grid_view != null) {
+            //Make sure choices are visible
+            choices_grid_view.setLayoutParams(getExerciseImageView_LayoutParam_Visible);
+            //Set adapter
+            choices_grid_view.setAdapter(
+                    new ExerciseChoicesAdapter(
+                            exerciseChapter.chapterParts.get(page).choices,
+                            exerciseChapter.chapterParts.get(page).answer,
+                            choices_grid_view
+                            ,this
+                    )
+            );
+        }
+    }
+
+    public void updateButtonSettings(int page) {
+        if (exercise_back_button != null && exercise_forward_button != null) {
+            //Setting for forward button
+            if (page < (exerciseChapter.chapterParts.size() - 1)) {
+                exercise_forward_button.setVisibility(View.VISIBLE);
+                exercise_forward_button.setClickable(true);
+            } else {
+                exercise_forward_button.setVisibility(View.INVISIBLE);
+                exercise_forward_button.setClickable(false);
+            }
+            //Setting for back button
+            if(page > 0) {
+                exercise_back_button.setVisibility(View.VISIBLE);
+                exercise_back_button.setClickable(true);
+            } else {
+                exercise_back_button.setVisibility(View.INVISIBLE);
+                exercise_back_button.setClickable(false);
+            }
+        } else {
+            Log.d(TAG,"Unable to find buttons to update visibility.");
+        }
+    }
+
+    public void bindButtonBehaviour() {
+        if (exercise_back_button != null && exercise_forward_button != null) {
+            exercise_forward_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    partNumber++;
+                    updateExercisePage(partNumber);
+                }
+            });
+
+            exercise_back_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    partNumber--;
+                    updateExercisePage(partNumber);
+                }
+            });
+        } else {
+            Log.d(TAG, "Error binding behaviour to buttons due to null value.");
+        }
+    }
+
+    public void updateTextViewAfterCorrectAnswerChosen() {
+        Log.d(TAG,"Updating Speech Recognition Text To Match with answer.");
+        String answer = exerciseChapter.chapterParts.get(partNumber).answer;
+        String textToMatch = exerciseChapter.chapterParts.get(partNumber).question;
+        if (answer != null && textToMatch != null) {
+            textToMatch = textToMatch.replaceFirst("-", answer);
+        }
+        //Get the speech recognition fragment and replace TextToMatchTextView
+        SpeechRecognition sr = (SpeechRecognition) mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);
+        if (sr != null) {
+            sr.speechToMatchTextView.setText(textToMatch);
+        } else {
+            Log.d(TAG,"Unable to locate speech recognition fragment for text view answer replacement.");
         }
     }
 }

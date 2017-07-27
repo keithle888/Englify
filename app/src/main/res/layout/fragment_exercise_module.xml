@@ -5,11 +5,41 @@
     android:orientation="vertical"
     tools:context="teamenglify.englify.ExerciseModule.ExerciseModule">
 
-    <ImageView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
-        android:id="@+id/exerciseImageView"/>
+        android:layout_weight="5">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/exerciseImageView"/>
+
+        <ImageButton
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/exerciseBackButton"
+            android:src="@drawable/ic_navigate_before_black_24dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:visibility="invisible"/>
+
+        <ImageButton
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/exerciseForwardButton"
+            android:visibility="invisible"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:background="@null"
+            android:src="@drawable/ic_navigate_next_black_24dp"/>
+
+    </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"

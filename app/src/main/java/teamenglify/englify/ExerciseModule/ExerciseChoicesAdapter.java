@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -26,11 +27,13 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
     private String[] choices;
     private String answer;
     private View exerciseChoicesView;
+    private ExerciseModule exerciseModule;
 
-    public ExerciseChoicesAdapter(String[] choices, String answer, GridView exerciseChoicesView) {
+    public ExerciseChoicesAdapter(String[] choices, String answer, GridView exerciseChoicesView, ExerciseModule exerciseModule) {
         this.choices = choices;
         this.answer = answer;
         this.exerciseChoicesView = exerciseChoicesView;
+        this.exerciseModule = exerciseModule;
     }
 
 
@@ -75,13 +78,9 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
                         Log.d(TAG, "Unable to find audio bar fragment to play track after correct choice selected.");
                     }
                     //Set exercise choices weight = 0
-                    exerciseChoicesView.setLayoutParams(new LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            0,
-                            0f
-                        )
-                    );
+                    exerciseChoicesView.setLayoutParams(ExerciseModule.exerciseImageView_LayoutParam_Invisible);
                     //Get text_to_match to put the correct text into place.
+                    exerciseModule.updateTextViewAfterCorrectAnswerChosen();
                 } else {
                     choice_button.setClickable(false);
                     choice_button.setBackgroundColor(mainActivity.getResources().getColor(android.R.color.holo_red_light));
