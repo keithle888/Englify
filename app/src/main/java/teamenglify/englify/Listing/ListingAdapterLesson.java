@@ -24,6 +24,7 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
 
     private Context mContext;
     private Grade grade;
+    public static final String lessonPrefix = "Lesson ";
 
     public ListingAdapterLesson(Grade grade) {
         this.grade = grade;
@@ -50,7 +51,7 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
         } else {
             download_status_text = mainActivity.getString(R.string.lesson_not_downloaded_cardview_text);
         }
-        holder.updateUI(selected, selectedDesc, download_status_text);
+        holder.updateUI(lessonPrefix + selected, selectedDesc, download_status_text);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

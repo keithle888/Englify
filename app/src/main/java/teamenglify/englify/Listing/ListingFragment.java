@@ -148,7 +148,7 @@ public class ListingFragment extends Fragment {
     public void mUpdateUIAfterDataLoaded(Grade grade) {
         Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating ListingFragment UI with the listing of lessons for " + grade.name + " with " + grade.lessons.size() + " lessons.");
         if (listingType == LIST_LESSONS) {
-            mainActivity.getSupportActionBar().setTitle(grade.name);
+            updateActionBarTitle();
             listingAdapterLesson = new ListingAdapterLesson(grade);
             recyclerView.setAdapter(listingAdapterLesson);
             //load additional settings
@@ -159,9 +159,9 @@ public class ListingFragment extends Fragment {
 
     public void updateActionBarTitle() {
         if (listingType == LIST_GRADES) {
-            previous_fragment_action_bar_title = "Grade Listing";
+            mainActivity.getSupportActionBar().setTitle("Grade Listing");
         } else if (listingType == LIST_LESSONS && previous_fragment_action_bar_title != null) {
-            mainActivity.getSupportActionBar().setTitle(((Grade) object_to_load).name);
+            mainActivity.getSupportActionBar().setTitle("G" + ((Grade) object_to_load).name);
         } else if (listingType == LIST_VOCABS) {
             mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.vocabulary));
         } else if (listingType == LIST_READS) {

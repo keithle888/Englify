@@ -18,6 +18,7 @@ public class ListingViewHolderLesson extends RecyclerView.ViewHolder  {
     public TextView textUpdate;
     public TextView descUpdate;
     public TextView download_status;
+    public String prefix = "Lesson ";
     //public ImageView overflow;
 
     public ListingViewHolderLesson (View itemView) {

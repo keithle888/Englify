@@ -37,10 +37,8 @@ import static teamenglify.englify.MainActivity.mainActivity;
  */
 public class AudioBar extends Fragment {
     private ImageButton audioPlayPauseButton;
-    private int position = 99999; /* Used a random value to trigger MediaPlayer to load for the very first time.*/
     private MediaPlayer mediaPlayer;
     private boolean readyToPlay = false;
-    private String audioURL;
     private Object object;
     private FileInputStream fis;
     public static final String FM_TAG_NAME = "AUDIO_BAR";

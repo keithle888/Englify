@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.speech.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ServiceCompat;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,7 +20,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.ExerciseChapter;
@@ -194,7 +199,10 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     public void onResults(Bundle results) {
         Log.d("SpeechRecognition", "onResults");
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        speechReturnTextView.setText(matches.get(0));
+
+        speechReturnTextView.setText(Html.fromHtml(
+                colorCorrectWords(matches.get(0))
+        ));
         //Call off the timeout timer.
         if (stopWatch != null && stopWatch.isRunning()) {
             resetTimeoutTimer();
@@ -245,27 +253,12 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     public void updateUI(int pageNumber) {
         //Update page number for tracking.
-        if (this.position != pageNumber) {
-            position = pageNumber;
-        }
+        position = pageNumber;
         if (speechReturnTextView != null) {
             speechReturnTextView.setText("");
         }
         Log.d("Englify", "Class SpeechRecognition: Method updateUI(): Updating UI");
-        if (object instanceof Vocab) {
-            VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
-            textToMatch = vocabPart.text;
-        } else if (object instanceof Read) {
-            if(((Read) object).readParts.size()!=0){
-                ReadPart readPart = ((Read)object).readParts.get(position);
-                textToMatch = readPart.reading;
-            }
-        } else if (object instanceof ExerciseChapter) {
-            if(((ExerciseChapter) object).chapterParts.size()!=0){
-                ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
-                textToMatch = exerciseChapterPart.question;
-            }
-        }
+        textToMatch = getTextsToMatch(pageNumber);
         if (textToMatch == null) {
             speechToMatchTextView.setText("Text is missing.");
         } else {
@@ -336,5 +329,61 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
         speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
         Log.i(TAG, "Binding common view modules.");
+    }
+
+    public String colorCorrectWords(String returnString) {
+        Log.d(TAG,"Beginning color correction method.");
+        String textsToMatch = getTextsToMatch(position);
+        if (textsToMatch != null) {
+            //Seperate myanmese from english
+            textsToMatch = textsToMatch.split("-")[0];
+            //Break text to match into Set
+            Log.d(TAG,"Text to match: " + textsToMatch);
+            Set<String> set = new HashSet<>();
+            Collections.addAll(set, textsToMatch.split(" "));
+            //Force all string in set to lower case
+            for (String word : set) {
+                word = word.toLowerCase();
+            }
+            //Break return string into arrayList
+            String[] returnStringArray = returnString.split(" ");
+            //Highlight green if the word exists in the texts to match
+            for (String word : returnStringArray) {
+                if (set.contains(word.trim())) {
+                    Log.d(TAG,"Correct word found: " + word);
+                    word = "<font color=\'green\'>" + word + "</font>";
+                } else {
+                    Log.d(TAG,"Wrong word found: "+ word);
+                    word = "<font color=\'red\'>" + word + "</font>";
+                }
+            }
+            returnString = "";
+            for (String word : returnStringArray) {
+                returnString += word + " ";
+            }
+            return returnString;
+        } else {
+            Log.d(TAG,"Texts to match is empty, unable to color correct returned string.");
+        }
+        return returnString;
+    }
+
+    public String getTextsToMatch(int position) {
+        String textToMatch = null;
+        if (object instanceof Vocab) {
+            VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
+            textToMatch = vocabPart.text;
+        } else if (object instanceof Read) {
+            if(((Read) object).readParts.size()!=0){
+                ReadPart readPart = ((Read)object).readParts.get(position);
+                textToMatch = readPart.reading;
+            }
+        } else if (object instanceof ExerciseChapter) {
+            if(((ExerciseChapter) object).chapterParts.size()!=0){
+                ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
+                textToMatch = exerciseChapterPart.question;
+            }
+        }
+        return textToMatch;
     }
 }

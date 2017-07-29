@@ -46,6 +46,10 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     private ArrayList<String> listings;
     private ArrayList<String> listingLessonDesc;
 
+    public static final String gradePrefix = "Grade ";
+    public static final String exerciseChapterPrefix = "Chapter ";
+    public static final String readPrefix = "Read ";
+
     public ListingAdapter(Object object, int listingType) {
         this.object = object;
         this.listingType = listingType;
@@ -115,7 +119,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     @Override
     public void onBindViewHolder(final ListingViewHolder holder, final int position) {
         final String selected = listings.get(position);
-        holder.updateUI(selected);
+        updateHolderUI(holder, selected);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,9 +136,6 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                                     "LESSON_LISTING")
                             .addToBackStack(null).commit();
                     Log.d(bucketName, "Class ListingAdapter: Method onBindViewHolder(): " + selected + " was selected.");
-                } else if (listingType == ListingFragment.LIST_LESSONS) {
-                    MainActivity.lesson = selected;
-                    //mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));
                 } else if (listingType == ListingFragment.LIST_READS) {
                     MainActivity.read = selected;
                     ReadImage.recordDataRead(position);
@@ -164,7 +165,22 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
         return listings.size();
     }
 
-
+    public void updateHolderUI(ListingViewHolder holder, String selected) {
+        switch (listingType) {
+            case ListingFragment.LIST_GRADES:
+                holder.updateUI(gradePrefix + selected);
+                break;
+            case ListingFragment.LIST_READS:
+                holder.updateUI(readPrefix + selected);
+                break;
+            case ListingFragment.LIST_EXERCISES:
+                holder.updateUI(exerciseChapterPrefix + selected);
+                break;
+            case ListingFragment.LIST_VOCABS:
+                holder.updateUI(selected);
+                break;
+        }
+    }
 }
 
 
