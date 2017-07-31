@@ -14,6 +14,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
@@ -70,17 +71,21 @@ public class ExerciseModule extends Fragment {
 
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
 
-        //Pull in audio player and speech recognition
+        //Pull in audio player
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.audioBarFrameLayoutExercise, AudioBar.newInstance(exerciseChapter), AudioBar.FM_TAG_NAME)
                 .commit();
+
+        //Pull in speech recognition
+        ProgressBar pb = (ProgressBar) view.findViewById(R.id.speechProgressBar_Exercise);
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.speechRecognitionButtonFrameLayoutExercise,
                         SpeechRecognition.newInstance(exerciseChapter,
                                 (TextView) view.findViewById(R.id.speechRecognitionTextViewExercise_TextToMatch),
-                                (TextView) view.findViewById(R.id.speechRecognitionTextViewExercise_Return)),
+                                (TextView) view.findViewById(R.id.speechRecognitionTextViewExercise_Return),
+                                pb),
                         "SPEECH_RECOGNITION")
                 .commit();
 

@@ -54,7 +54,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     private Intent recognizerIntent;
     private String textToMatch;
     private int position;
-    private Handler mHandler = new Handler();
     private Object object;
     private long replyTimeOut = 3000;
     private StopWatch stopWatch;
@@ -63,12 +62,13 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         // Required empty public constructor
     }
 
-    public static SpeechRecognition newInstance(Object object, TextView speechToMatchTextView, TextView speechReturnTextView) {
+    public static SpeechRecognition newInstance(Object object, TextView speechToMatchTextView, TextView speechReturnTextView, ProgressBar progressBar) {
         SpeechRecognition fragment = new SpeechRecognition();
         Bundle args = new Bundle();
         fragment.object = object;
         fragment.speechToMatchTextView = speechToMatchTextView;
         fragment.speechReturnTextView = speechReturnTextView;
+        fragment.speechProgressBar = progressBar;
         fragment.setArguments(args);
         return fragment;
     }
@@ -132,7 +132,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         if (mainActivity.hasInternetConnection) {
-                            speechProgressBar.setVisibility(View.VISIBLE);
+                            if (speechProgressBar != null) {
+                                speechProgressBar.setVisibility(View.VISIBLE);
+                            }
                             speech.startListening(recognizerIntent);
                             speechReturnTextView.setText("");
                         } else {
@@ -142,7 +144,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                     }
                     case MotionEvent.ACTION_UP: {
                         if (mainActivity.hasInternetConnection) {
-                            speechProgressBar.setVisibility(View.INVISIBLE);
+                            if (speechProgressBar != null) {
+                                speechProgressBar.setVisibility(View.INVISIBLE);
+                            }
                             speechReturnTextView.setText("Translating audio...");
                             speech.stopListening();
                             startTimeoutTimer();
@@ -159,8 +163,10 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     @Override
     public void onBeginningOfSpeech() {
         Log.d("SpeechRecognition", "onBeginningOfSpeech");
-        speechProgressBar.setIndeterminate(false);
-        speechProgressBar.setMax(20);
+        if (speechProgressBar != null) {
+            speechProgressBar.setIndeterminate(false);
+            speechProgressBar.setMax(20);
+        }
     }
 
     @Override
@@ -171,7 +177,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     @Override
     public void onEndOfSpeech() {
         Log.d("SpeechRecognition", "End of speech");
-        speechProgressBar.setIndeterminate(true);
     }
 
     @Override
@@ -211,7 +216,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     @Override
     public void onRmsChanged(float rmsdB) {
-        speechProgressBar.setProgress((int) rmsdB);
+        if (speechProgressBar != null) {
+            speechProgressBar.setProgress((int) rmsdB);
+        }
     }
 
     public static String getErrorText(int errorCode) {
@@ -327,7 +334,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     public void bindViews(View view) {
         //Bind common modules
         speechButton = (ImageButton) view.findViewById(R.id.speechImageButton);
-        speechProgressBar = (ProgressBar) view.findViewById(R.id.speechProgressBar);
         Log.i(TAG, "Binding common view modules.");
     }
 

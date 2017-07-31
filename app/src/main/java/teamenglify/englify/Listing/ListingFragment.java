@@ -165,7 +165,7 @@ public class ListingFragment extends Fragment {
         } else if (listingType == LIST_VOCABS) {
             mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.vocabulary));
         } else if (listingType == LIST_READS) {
-            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.conversation));
+            mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + "Read");
         } else if (listingType == LIST_EXERCISES) {
             mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.exercise));
         }

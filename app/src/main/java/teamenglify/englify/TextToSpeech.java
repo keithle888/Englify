@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import java.util.Locale;
 
@@ -21,19 +22,16 @@ import java.util.Locale;
  * create an instance of this fragment.
  */
 public class TextToSpeech extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
     private android.speech.tts.TextToSpeech tts;
     private EditText inputTextView;
-    private Button button;
+    private ImageButton button;
 
     public TextToSpeech() {
         // Required empty public constructor
@@ -71,7 +69,7 @@ public class TextToSpeech extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_text_to_speech, container, false);
-        button = (Button) view.findViewById(R.id.ttsButton);
+        button = (ImageButton) view.findViewById(R.id.ttsButton);
         inputTextView = (EditText) view.findViewById(R.id.ttsInputText);
         initialize();
         return view;

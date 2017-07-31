@@ -5,29 +5,13 @@
     android:layout_height="match_parent"
     tools:context="teamenglify.englify.SpeechRecognition">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/speechProgressBar"
-            android:visibility="invisible"
-            android:layout_weight="1"/>
-
         <ImageButton
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             app:srcCompat="@android:drawable/ic_btn_speak_now"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:background="@null"
-            android:id="@+id/speechImageButton"
-            android:layout_weight="19" />
-
-    </LinearLayout>
+            android:id="@+id/speechImageButton" />
 
 </FrameLayout>

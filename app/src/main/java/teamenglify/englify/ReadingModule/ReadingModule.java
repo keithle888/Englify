@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
@@ -44,9 +45,12 @@ public class ReadingModule extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reading_module, container, false);
         FragmentManager fm = mainActivity.getSupportFragmentManager();
         ReadImage readImage = ReadImage.newInstance(read);
+        //Pull in speech recognition
+        ProgressBar pb = (ProgressBar) view.findViewById(R.id.speechProgressBar_Read);
         SpeechRecognition speechRecognition = SpeechRecognition.newInstance(read,
                 (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_TextToMatch),
-                (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_Return));
+                (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_Return),
+                pb);
         AudioBar audioBar = AudioBar.newInstance(read);
         fm.beginTransaction().add(R.id.audioBarFrameLayoutRead, audioBar, "AUDIO_BAR").commit();
         fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutRead, speechRecognition, "SPEED_RECOGNITION").commit();

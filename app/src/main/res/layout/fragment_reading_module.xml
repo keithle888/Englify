@@ -13,46 +13,61 @@
         android:orientation="vertical">
     </FrameLayout>
 
-    <TextView
+    <me.grantland.widget.AutofitTextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:textAlignment="center"
         android:textSize="@dimen/speech_recognition_text_size"
         android:id="@+id/speechRecognitionTextViewRead_TextToMatch"
-        android:orientation="vertical"/>
+        android:maxLines="1"/>
 
-    <TextView
+    <me.grantland.widget.AutofitTextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:textSize="@dimen/speech_recognition_text_size"
         android:textAlignment="center"
         android:id="@+id/speechRecognitionTextViewRead_Return"
-        android:orientation="vertical"/>
+        android:maxLines="1"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="horizontal">
+        android:layout_weight="2">
 
-        <FrameLayout
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/audioBarFrameLayoutRead"
-            android:orientation="vertical">
-        </FrameLayout>
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/speechRecognitionButtonFrameLayoutRead"
-            android:orientation="vertical">
-        </FrameLayout>
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/audioBarFrameLayoutRead"
+                android:orientation="vertical">
+            </FrameLayout>
 
-    </LinearLayout>
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/speechRecognitionButtonFrameLayoutRead"
+                android:orientation="vertical">
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/speechProgressBar_Read"
+            android:visibility="invisible"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
 
 </LinearLayout>
