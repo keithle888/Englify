@@ -204,10 +204,9 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     public void onResults(Bundle results) {
         Log.d("SpeechRecognition", "onResults");
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-
-        speechReturnTextView.setText(Html.fromHtml(
-                colorCorrectWords(matches.get(0))
-        ));
+        String returnText = colorCorrectWords(matches.get(0));
+        Log.d(TAG,"Color processed words from speech recognition: " + returnText);
+        speechReturnTextView.setText(Html.fromHtml(returnText));
         //Call off the timeout timer.
         if (stopWatch != null && stopWatch.isRunning()) {
             resetTimeoutTimer();
@@ -341,26 +340,26 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         Log.d(TAG,"Beginning color correction method.");
         String textsToMatch = getTextsToMatch(position);
         if (textsToMatch != null) {
-            //Seperate myanmese from english
+            //Separate burmese from english
             textsToMatch = textsToMatch.split("-")[0];
             //Break text to match into Set
             Log.d(TAG,"Text to match: " + textsToMatch);
             Set<String> set = new HashSet<>();
-            Collections.addAll(set, textsToMatch.split(" "));
-            //Force all string in set to lower case
-            for (String word : set) {
-                word = word.toLowerCase();
+            //Force all string in set to lower case and remove special characters
+            for (String word : textToMatch.split(" ")) {
+                set.add(word.toLowerCase().replaceAll("[^a-zA-Z0-9]", ""));
             }
             //Break return string into arrayList
             String[] returnStringArray = returnString.split(" ");
             //Highlight green if the word exists in the texts to match
-            for (String word : returnStringArray) {
-                if (set.contains(word.trim())) {
+            for (int i = 0; i < returnStringArray.length; i++) {
+                String word = returnStringArray[i];
+                if (set.contains(word.trim().toLowerCase())) {
                     Log.d(TAG,"Correct word found: " + word);
-                    word = "<font color=\'green\'>" + word + "</font>";
+                     returnStringArray[i] = "<font color=\'green\'>" + word + "</font>";
                 } else {
                     Log.d(TAG,"Wrong word found: "+ word);
-                    word = "<font color=\'red\'>" + word + "</font>";
+                    returnStringArray[i] = "<font color=\'red\'>" + word + "</font>";
                 }
             }
             returnString = "";
