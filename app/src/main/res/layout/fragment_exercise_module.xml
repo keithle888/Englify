@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8">
+        android:layout_weight="6">
 
         <ImageView
             android:layout_width="match_parent"
@@ -45,11 +45,21 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:textAlignment="center"
+        android:gravity="center"
         android:textSize="@dimen/speech_recognition_text_size"
         android:id="@+id/speechRecognitionTextViewExercise_TextToMatch"
         android:maxLines="1">
     </me.grantland.widget.AutofitTextView>
+
+    <me.grantland.widget.AutofitTextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0"
+        android:textSize="@dimen/speech_recognition_text_size"
+        android:gravity="center"
+        android:maxLines="2"
+        android:id="@+id/exercise_translation_textview"
+        android:text="Translation Placeholder"/>
 
     <GridView
         android:layout_width="match_parent"
@@ -63,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        android:textAlignment="center"
+        android:gravity="center"
         android:textSize="@dimen/speech_recognition_text_size"
         android:id="@+id/speechRecognitionTextViewExercise_Return"
         android:maxLines="1">

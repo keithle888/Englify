@@ -28,12 +28,14 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
     private String answer;
     private View exerciseChoicesView;
     private ExerciseModule exerciseModule;
+    private me.grantland.widget.AutofitTextView exercise_translation;
 
-    public ExerciseChoicesAdapter(String[] choices, String answer, GridView exerciseChoicesView, ExerciseModule exerciseModule) {
+    public ExerciseChoicesAdapter(String[] choices, String answer, GridView exerciseChoicesView, ExerciseModule exerciseModule, me.grantland.widget.AutofitTextView exercise_translation) {
         this.choices = choices;
         this.answer = answer;
         this.exerciseChoicesView = exerciseChoicesView;
         this.exerciseModule = exerciseModule;
+        this.exercise_translation = exercise_translation;
     }
 
 
@@ -78,9 +80,11 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
                         Log.d(TAG, "Unable to find audio bar fragment to play track after correct choice selected.");
                     }
                     //Set exercise choices weight = 0
-                    exerciseChoicesView.setLayoutParams(ExerciseModule.exerciseImageView_LayoutParam_Invisible);
+                    exerciseChoicesView.setLayoutParams(ExerciseModule.exerciseChoices_LayoutParam_Invisible);
                     //Get text_to_match to put the correct text into place.
                     exerciseModule.updateTextViewAfterCorrectAnswerChosen();
+                    //Make translation visible
+                    exercise_translation.setLayoutParams(ExerciseModule.exercise_translation_Visible);
                 } else {
                     choice_button.setClickable(false);
                     choice_button.setBackgroundColor(mainActivity.getResources().getColor(android.R.color.holo_red_light));

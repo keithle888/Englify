@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
+import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.R;
@@ -29,28 +30,42 @@ public class ExerciseModule extends Fragment {
     private static final String TAG = ExerciseModule.class.getSimpleName();
     private ExerciseChapter exerciseChapter;
     public int partNumber;
+    private String previous_actionbar_title;
     private GridView choices_grid_view;
     private ImageView exercise_image_view;
     private ImageButton exercise_forward_button;
     private ImageButton exercise_back_button;
-    public static final LinearLayout.LayoutParams exerciseImageView_LayoutParam_Invisible = new LinearLayout.LayoutParams(
+    private me.grantland.widget.AutofitTextView exercise_translation;
+    //Layout params for reactive views.
+    public static final LinearLayout.LayoutParams exerciseChoices_LayoutParam_Invisible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             0,
             0f
     );
-    public static final LinearLayout.LayoutParams getExerciseImageView_LayoutParam_Visible = new LinearLayout.LayoutParams(
+    public static final LinearLayout.LayoutParams exerciseChoices_LayoutParam_Visible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             0,
-            3f
+            6f
+    );
+    public static final LinearLayout.LayoutParams exercise_translation_Invisible = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            0,
+            0f
+    );
+    public static final LinearLayout.LayoutParams exercise_translation_Visible = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            0,
+            2f
     );
 
     public ExerciseModule() {
         // Required empty public constructor
     }
 
-    public static ExerciseModule newInstance(ExerciseChapter exerciseChapter) {
+    public static ExerciseModule newInstance(ExerciseChapter exerciseChapter, String previous_actionbar_title) {
         ExerciseModule fragment = new ExerciseModule();
         fragment.exerciseChapter = exerciseChapter;
+        fragment.previous_actionbar_title = previous_actionbar_title;
         return fragment;
     }
 
@@ -63,11 +78,15 @@ public class ExerciseModule extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_exercise_module, container, false);
 
+        //Update action bar
+        mainActivity.getSupportActionBar().setTitle(previous_actionbar_title + ListingFragment.ACTION_BAR_DELIMITER + exerciseChapter.name);
+
         //Bind Views
         choices_grid_view = (GridView) view.findViewById(R.id.exercise_choices_grid_view);
         exercise_image_view = (ImageView) view.findViewById(R.id.exerciseImageView);
         exercise_forward_button = (ImageButton) view.findViewById(R.id.exerciseForwardButton);
         exercise_back_button = (ImageButton) view.findViewById(R.id.exerciseBackButton);
+        exercise_translation = (me.grantland.widget.AutofitTextView) view.findViewById(R.id.exercise_translation_textview);
 
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
 
@@ -102,6 +121,11 @@ public class ExerciseModule extends Fragment {
         updateAudioBar(page);
         updateButtonSettings(page);
         updateChoicesView(page);
+        updateTranslationView();
+    }
+
+    public void updateTranslationView() {
+        exercise_translation.setLayoutParams(exercise_translation_Invisible);
     }
 
     public void updateExerciseImageView(int i) {
@@ -140,14 +164,15 @@ public class ExerciseModule extends Fragment {
     public void updateChoicesView(int page) {
         if (choices_grid_view != null) {
             //Make sure choices are visible
-            choices_grid_view.setLayoutParams(getExerciseImageView_LayoutParam_Visible);
+            choices_grid_view.setLayoutParams(exerciseChoices_LayoutParam_Visible);
             //Set adapter
             choices_grid_view.setAdapter(
                     new ExerciseChoicesAdapter(
                             exerciseChapter.chapterParts.get(page).choices,
                             exerciseChapter.chapterParts.get(page).answer,
-                            choices_grid_view
-                            ,this
+                            choices_grid_view,
+                            this,
+                            exercise_translation
                     )
             );
         }

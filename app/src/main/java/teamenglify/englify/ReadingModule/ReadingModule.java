@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
+import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;
@@ -25,15 +26,17 @@ import static teamenglify.englify.MainActivity.mainActivity;
  */
 public class ReadingModule extends Fragment {
     private Read read;
+    private String previous_actionbar_title;
 
     public ReadingModule() {
         // Required empty public constructor
     }
 
-    public static ReadingModule newInstance(Read read) {
+    public static ReadingModule newInstance(Read read, String previous_actionbar_title) {
         ReadingModule fragment = new ReadingModule();
         Bundle args = new Bundle();
         fragment.read = read;
+        fragment.previous_actionbar_title = previous_actionbar_title;
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +59,7 @@ public class ReadingModule extends Fragment {
         fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutRead, speechRecognition, "SPEED_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.readImage,readImage).commit();
 
+        mainActivity.getSupportActionBar().setTitle(previous_actionbar_title + ListingFragment.ACTION_BAR_DELIMITER + read.name);
         return view;
     }
 }

@@ -341,7 +341,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadExerciseModule(ExerciseChapter exerciseChapter) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, ExerciseModule.newInstance(exerciseChapter)).addToBackStack(null).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_main_container,
+                    ExerciseModule.newInstance(exerciseChapter,
+                            mainActivity.getSupportActionBar().getTitle().toString()))
+                .addToBackStack(null)
+                .commit();
     }
 
     private Runnable startS3Client = new Runnable() {

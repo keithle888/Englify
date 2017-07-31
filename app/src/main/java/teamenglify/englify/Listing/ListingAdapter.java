@@ -142,7 +142,9 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                     mainActivity.position = 0;
                     mainActivity.getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.activity_main_container, ReadingModule.newInstance(((Conversation) object).findRead(selected)))
+                            .replace(R.id.activity_main_container,
+                                    ReadingModule.newInstance(((Conversation) object).findRead(selected),
+                                        mainActivity.getSupportActionBar().getTitle().toString()))
                             .addToBackStack(null)
                             .commit();
                 } else if (listingType == ListingFragment.LIST_VOCABS) {
