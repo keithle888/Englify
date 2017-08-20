@@ -46,8 +46,7 @@ public class ReadingModule extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reading_module, container, false);
-        FragmentManager fm = mainActivity.getSupportFragmentManager();
-        ReadImage readImage = ReadImage.newInstance(read);
+        FragmentManager fm = getFragmentManager();
         //Pull in speech recognition
         ProgressBar pb = (ProgressBar) view.findViewById(R.id.speechProgressBar_Read);
         SpeechRecognition speechRecognition = SpeechRecognition.newInstance(read,
@@ -55,6 +54,7 @@ public class ReadingModule extends Fragment {
                 (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_Return),
                 pb);
         AudioBar audioBar = AudioBar.newInstance(read);
+        ReadImage readImage = ReadImage.newInstance(read, speechRecognition, audioBar);
         fm.beginTransaction().add(R.id.audioBarFrameLayoutRead, audioBar, "AUDIO_BAR").commit();
         fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutRead, speechRecognition, "SPEED_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.readImage,readImage).commit();

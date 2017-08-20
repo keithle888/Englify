@@ -52,8 +52,7 @@ public class VocabModule extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vocab_module, container, false);
         //Log.d("vocab", MainActivity.getMainActivity().getCurrentListingURL());
         MainActivity.getMainActivity().getSupportActionBar().setTitle("Study Vocab");
-        FragmentManager fm = mainActivity.getSupportFragmentManager();
-        VocabImage vocabImage = VocabImage.newInstance(vocab);
+        FragmentManager fm = getFragmentManager();
         //Pull in speech recognition
         ProgressBar pb = (ProgressBar) view.findViewById(R.id.speechProgressBar_Exercise);
         SpeechRecognition speechRecognition = SpeechRecognition.newInstance(vocab,
@@ -61,6 +60,7 @@ public class VocabModule extends Fragment {
                 (TextView) view.findViewById(R.id.speechRecognitionTextViewVocab_Return),
                 pb);
         AudioBar audioBar = AudioBar.newInstance(vocab);
+        VocabImage vocabImage = VocabImage.newInstance(vocab, speechRecognition, audioBar);
         fm.beginTransaction().add(R.id.audioBarFrameLayoutVocab, audioBar, "AUDIO_BAR").commit();
         fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutVocab, speechRecognition, "SPEECH_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.vocabImage,vocabImage).commit();

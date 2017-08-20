@@ -8,11 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;
 import teamenglify.englify.ReadingModule.ImageFragmentStateAdapter;
+import teamenglify.englify.SpeechRecognition;
 
 import static teamenglify.englify.MainActivity.mainActivity;
 
@@ -21,7 +23,6 @@ public class ExerciseImage extends Fragment {
     private ExerciseFragmentStateAdapter imageFragmentStateAdapter;
     private ExerciseChapter exerciseChapter;
     private ExerciseModule exerciseModule;
-
     public ExerciseImage() {
         // Required empty public constructor
     }

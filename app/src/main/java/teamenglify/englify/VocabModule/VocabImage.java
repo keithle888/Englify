@@ -31,15 +31,19 @@ public class VocabImage extends Fragment {
     private VocabFragmentStateAdapter vocabFragmentStateAdapter;
     private Vocab vocab;
     private static final String TAG = VocabImage.class.getSimpleName();
+    private SpeechRecognition speechRecognition;
+    private AudioBar audioBar;
 
     public VocabImage() {
         // Required empty public constructor
     }
 
-    public static VocabImage newInstance(Vocab vocab) {
+    public static VocabImage newInstance(Vocab vocab, SpeechRecognition speechRecognition, AudioBar audioBar) {
         VocabImage fragment = new VocabImage();
         Bundle args = new Bundle();
         fragment.vocab = vocab;
+        fragment.speechRecognition = speechRecognition;
+        fragment.audioBar = audioBar;
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,8 +80,6 @@ public class VocabImage extends Fragment {
         vocabFragmentStateAdapter = new VocabFragmentStateAdapter(MainActivity.getMainActivity().getSupportFragmentManager(), vocab);
         viewPager.setAdapter(vocabFragmentStateAdapter);
         viewPager.setCurrentItem(MainActivity.position);
-        final Fragment fragment_audio_bar = mainActivity.getSupportFragmentManager().findFragmentByTag("AUDIO_BAR");
-        final Fragment fragmentSpeechRecognition = mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -92,18 +94,18 @@ public class VocabImage extends Fragment {
                 }
                 recordDataVocab(position);
                 //Trigger for Audio Bar and speech recognition to change track/answer
-                if (fragment_audio_bar != null) {
-                    Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position => " + Integer.toString(position));
-                    ((AudioBar)fragment_audio_bar).setAudioTrack(position);
+                if (audioBar != null) {
+                    Log.e(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position => " + Integer.toString(position));
+                    audioBar.setAudioTrack(position);
                 } else {
-                    Log.d(TAG, "Unable to find Audio Bar to trigger UI update.");
+                    Log.e(TAG, "Unable to find Audio Bar to trigger UI update.");
                 }
 
                 //Trigger for speech recognition
-                if (fragmentSpeechRecognition != null) {
-                    ((SpeechRecognition)fragmentSpeechRecognition).updateUI(position);
+                if (speechRecognition!= null) {
+                    speechRecognition.updateUI(position);
                 } else {
-                    Log.d(TAG, "Unable to find Speech Recognition to trigger UI update.");
+                    Log.e(TAG, "Unable to find Speech Recognition to trigger UI update.");
                 }
             }
 

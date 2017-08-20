@@ -498,7 +498,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                         }
                         exercise.addChapter(exerciseChapter);
                     } catch (Exception e) {
-                        Log.d(TAG,"Error trying to create ExerciseChapterPart: " + exerciseChapterName);
+                        Log.e(TAG,"Error trying to create ExerciseChapterPart: " + exerciseChapterName);
                         e.printStackTrace();
                     }
                 }

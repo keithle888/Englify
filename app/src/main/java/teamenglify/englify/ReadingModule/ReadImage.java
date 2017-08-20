@@ -26,14 +26,18 @@ public class ReadImage extends Fragment {
     private ImageFragmentStateAdapter imageFragmentStateAdapter;
     private Read read;
     private static final String TAG = ReadImage.class.getSimpleName();
+    private SpeechRecognition speechRecognition;
+    private AudioBar audioBar;
 
     public ReadImage() {
         // Required empty public constructor
     }
 
-    public static ReadImage newInstance(Read read) {
+    public static ReadImage newInstance(Read read, SpeechRecognition speechRecognition, AudioBar audioBar) {
         ReadImage fragment = new ReadImage();
         fragment.read = read;
+        fragment.speechRecognition = speechRecognition;
+        fragment.audioBar = audioBar;
         return fragment;
     }
 
@@ -67,8 +71,6 @@ public class ReadImage extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.readViewPager);
         imageFragmentStateAdapter = new ImageFragmentStateAdapter(MainActivity.getMainActivity().getSupportFragmentManager(), read);
         viewPager.setAdapter(imageFragmentStateAdapter);
-        final Fragment fragment_audio_bar = mainActivity.getSupportFragmentManager().findFragmentByTag(AudioBar.FM_TAG_NAME);
-        final Fragment fragmentSpeechRecognition = mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -82,15 +84,15 @@ public class ReadImage extends Fragment {
                     mainActivity.position = position;
                 }
                 //Trigger for Audio Bar to change track/answer
-                if (fragment_audio_bar != null) {
-                    Log.d(bucketName, "Class ReadImageImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
-                    ((AudioBar)fragment_audio_bar).setAudioTrack(position);
+                if (audioBar != null) {
+                    Log.d(bucketName, "Class ReadImageImage: Method viewPager:onPageSelected: Changing Audio track to position => " + Integer.toString(position));
+                    audioBar.setAudioTrack(position);
                 } else {
                     Log.d(TAG, "Unable to find Audio Bar to trigger UI update.");
                 }
                 //Trigger for speech recognition
-                if (fragmentSpeechRecognition != null) {
-                    ((SpeechRecognition)fragmentSpeechRecognition).updateUI(position);
+                if (speechRecognition != null) {
+                    speechRecognition.updateUI(position);
                 } else {
                     Log.d(TAG, "Unable to find Speech Recognition to trigger UI update.");
                 }
