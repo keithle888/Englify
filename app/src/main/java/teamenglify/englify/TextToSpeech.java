@@ -97,6 +97,9 @@ public class TextToSpeech extends Fragment {
             }
         });
 
+        //Set speech rate of TTS to be slower.
+        tts.setSpeechRate(0.7f);
+
         //set listener for TTS and when button is clicked to translate
         button.setOnClickListener(new View.OnClickListener() {
             @Override
