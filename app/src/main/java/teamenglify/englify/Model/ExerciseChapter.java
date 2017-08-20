@@ -44,43 +44,11 @@ public class ExerciseChapter implements Serializable {
         }
     }
 
-    public void addExerciseChapterPartDetails(LinkedList<String> details) {
-        if (details != null && details.size() != 0) {
-            for (String detail : details) {
-                String[] delimited_detail = detail.split(":");
-                if (delimited_detail.length == 4) {
-                    String name = delimited_detail[0];
-                    String question = delimited_detail[1];
-                    String[] choices = delimited_detail[2].split(",");
-                    String answer = delimited_detail[3];
-
-                    if (doesExerciseChapterPartExist(name)) {
-                        ExerciseChapterPart exerciseChapterPart = findExerciseChapterPart(name);
-                        exerciseChapterPart.question = question;
-                        exerciseChapterPart.choices = choices;
-                        exerciseChapterPart.answer = answer;
-                        Log.d(TAG, "Found existing exercise chapter part: " + exerciseChapterPart.name + ", and added details: " + detail);
-                    } else {
-                        chapterParts.add(new ExerciseChapterPart(name,
-                                question,
-                                answer,
-                                choices));
-                        Log.d(TAG, "Created new ExerciseChapterPart: " + detail);
-                    }
-                } else {
-                    Log.d(TAG, "ExerciseChapterPart detail format has an error: " + detail);
-                }
-            }
-        } else {
-            Log.d(TAG, "Error trying to add ExerciseChapterPart details.");
-        }
-    }
-
 
     public boolean doesExerciseChapterPartExist(String exerciseChapterPartName) {
         if (chapterParts != null && chapterParts.size() != 0) {
             for (ExerciseChapterPart exerciseChapterPart : chapterParts) {
-                if (exerciseChapterPart.name.equalsIgnoreCase(exerciseChapterPartName)) {
+                if (exerciseChapterPart.name.equals(exerciseChapterPartName)) {
                     return true;
                 }
             }
@@ -91,7 +59,7 @@ public class ExerciseChapter implements Serializable {
     public ExerciseChapterPart findExerciseChapterPart(String exerciseChapterPartName) {
         ExerciseChapterPart toReturn = null;
         for (ExerciseChapterPart exerciseChapterPart : chapterParts) {
-            if (exerciseChapterPart.name.equalsIgnoreCase(exerciseChapterPartName)) {
+            if (exerciseChapterPart.name.equals(exerciseChapterPartName)) {
                 toReturn = exerciseChapterPart;
             }
         }

@@ -424,18 +424,12 @@ public class MainActivity extends AppCompatActivity {
                         newFragment = new LoginFragment();
                         break;
                     case 1:
-                        //Clear backstack
-                        clearBackStack();
-                        //Goes to Grade
-                        newFragment = ListingFragment.newInstance(ListingFragment.LIST_GRADES);
-                        break;
-                    case 2:
                         newFragment = new TextToSpeech();
                         break;
-                    case 3:
+                    case 2:
                         newFragment = new Feedback();
                         break;
-                    case 4:
+                    case 3:
                         //redirects user back if nothing has been downloaded
                         RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                         if (root == null || root.grades == null) {
@@ -444,10 +438,10 @@ public class MainActivity extends AppCompatActivity {
                             newFragment = new DeleteGrade();
                         }
                         break;
-                    case 5:
+                    case 4:
                         newFragment = new Tutorial();
                         break;
-                    case 6:
+                    case 5:
                         new DataManager().checkForUpdates();
                         break;
                 }

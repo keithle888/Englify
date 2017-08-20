@@ -65,6 +65,12 @@ public class TextToSpeech extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity.mainActivity.getSupportActionBar().setTitle(R.string.pronounce_title);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -101,7 +107,6 @@ public class TextToSpeech extends Fragment {
         });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);

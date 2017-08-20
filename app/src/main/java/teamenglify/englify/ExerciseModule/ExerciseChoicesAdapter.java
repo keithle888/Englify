@@ -10,10 +10,15 @@ import android.widget.Button;
 import android.support.v4.app.Fragment;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+
+import java.util.Arrays;
+import java.util.List;
 
 import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.ExerciseChapter;
+import teamenglify.englify.Model.ExerciseChapterPart;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -24,29 +29,31 @@ import static teamenglify.englify.MainActivity.mainActivity;
 
 public class ExerciseChoicesAdapter extends BaseAdapter {
     private static final String TAG = ExerciseChoicesAdapter.class.getSimpleName();
-    private String[] choices;
-    private String answer;
+    private ExerciseChapterPart exerciseChapterPart;
     private View exerciseChoicesView;
     private ExerciseModule exerciseModule;
     private me.grantland.widget.AutofitTextView exercise_translation;
+    private RelativeLayout exerciseUtils;
 
-    public ExerciseChoicesAdapter(String[] choices, String answer, GridView exerciseChoicesView, ExerciseModule exerciseModule, me.grantland.widget.AutofitTextView exercise_translation) {
-        this.choices = choices;
-        this.answer = answer;
+    private static final String delimiterBetweenAnswerOptions = ", ";
+
+    public ExerciseChoicesAdapter(ExerciseChapterPart exerciseChapterPart, GridView exerciseChoicesView, ExerciseModule exerciseModule, me.grantland.widget.AutofitTextView exercise_translation, RelativeLayout exerciseUtils) {
+        this.exerciseChapterPart = exerciseChapterPart;
         this.exerciseChoicesView = exerciseChoicesView;
         this.exerciseModule = exerciseModule;
         this.exercise_translation = exercise_translation;
+        this.exerciseUtils = exerciseUtils;
     }
 
 
     @Override
     public int getCount() {
-        return choices.length;
+        return exerciseChapterPart.choices.get(0).size();
     }
 
     @Override
     public Object getItem(int i) {
-        return choices[i];
+        return extractChoicesFromList(i, exerciseChapterPart.choices);
     }
 
     @Override
@@ -55,18 +62,23 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, final ViewGroup viewGroup) {
+    public View getView(final int i, View view, final ViewGroup viewGroup) {
 
         final Button choice_button = (Button) new Button(viewGroup.getContext());
         choice_button.setPadding(5,5,5,5);
 
         //Set text for button
-        final String textForButton = choices[i];
+        final String textForButton = extractChoicesFromList(i, exerciseChapterPart.choices);
         choice_button.setText(textForButton);
         //setting so the text does not appear all caps.
         choice_button.setTransformationMethod(null);
 
         //Set behaviour of button
+        StringBuilder builder = new StringBuilder();
+        for (String s : exerciseChapterPart.answer) {
+            builder.append(s);
+        }
+        final String answer = builder.toString();
         choice_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,9 +94,11 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
                     //Set exercise choices weight = 0
                     exerciseChoicesView.setLayoutParams(ExerciseModule.exerciseChoices_LayoutParam_Invisible);
                     //Get text_to_match to put the correct text into place.
-                    exerciseModule.updateTextViewAfterCorrectAnswerChosen();
+                    exerciseModule.replaceQuestionWithAnswerIncluded(i);
                     //Make translation visible
                     exercise_translation.setLayoutParams(ExerciseModule.exercise_translation_Visible);
+                    //Make media/util (speech recognition/audio bar) appear
+                    exerciseUtils.setLayoutParams(ExerciseModule.utils_Visible);
                 } else {
                     choice_button.setClickable(false);
                     choice_button.setBackgroundColor(mainActivity.getResources().getColor(android.R.color.holo_red_light));
@@ -95,5 +109,14 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
             }
         });
         return choice_button;
+    }
+
+    private String extractChoicesFromList(int i, List<List<String>> choices) {
+        StringBuilder builder = new StringBuilder();
+        for (List<String> list : exerciseChapterPart.choices) {
+            builder.append(list.get(i) + delimiterBetweenAnswerOptions);
+        }
+        return builder.toString().substring(0,
+                builder.toString().length() - 2);
     }
 }

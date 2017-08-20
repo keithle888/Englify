@@ -15,12 +15,10 @@ import teamenglify.englify.Model.ReadPart;
 import teamenglify.englify.ReadingModule.ReadSwipeImage;
 
 public class ExerciseFragmentStateAdapter extends FragmentStatePagerAdapter {
-    private ExerciseChapter exerciseChapter;
     private ArrayList<String> imageUrlList = new ArrayList<>();
 
     public ExerciseFragmentStateAdapter(FragmentManager fm, ExerciseChapter exerciseChapter) {
         super(fm);
-        this.exerciseChapter = exerciseChapter;
         for (ExerciseChapterPart exerciseChapterPart : exerciseChapter.chapterParts) {
             imageUrlList.add(exerciseChapterPart.imageURL);
         }

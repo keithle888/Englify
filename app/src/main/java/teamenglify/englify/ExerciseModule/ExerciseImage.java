@@ -20,14 +20,16 @@ public class ExerciseImage extends Fragment {
     private ViewPager viewPager;
     private ExerciseFragmentStateAdapter imageFragmentStateAdapter;
     private ExerciseChapter exerciseChapter;
+    private ExerciseModule exerciseModule;
 
     public ExerciseImage() {
         // Required empty public constructor
     }
 
-    public static ExerciseImage newInstance(ExerciseChapter exerciseChapter) {
+    public static ExerciseImage newInstance(ExerciseModule exerciseModule, ExerciseChapter exerciseChapter) {
         ExerciseImage fragment = new ExerciseImage();
         fragment.exerciseChapter = exerciseChapter;
+        fragment.exerciseModule = exerciseModule;
         return fragment;
     }
 
@@ -47,9 +49,7 @@ public class ExerciseImage extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 Log.d("Englify", "Class ExerciseImage: Method viewPager:onPageSelected: " + Integer.toString(position));
-                if (mainActivity.position != position) {
-                    mainActivity.position = position;
-                }
+                exerciseModule.updateExercisePage(position);
             }
 
             @Override

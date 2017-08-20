@@ -93,7 +93,7 @@ public class VocabImage extends Fragment {
                 recordDataVocab(position);
                 //Trigger for Audio Bar and speech recognition to change track/answer
                 if (fragment_audio_bar != null) {
-                    Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
+                    Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position => " + Integer.toString(position));
                     ((AudioBar)fragment_audio_bar).setAudioTrack(position);
                 } else {
                     Log.d(TAG, "Unable to find Audio Bar to trigger UI update.");

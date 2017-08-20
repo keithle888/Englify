@@ -35,9 +35,6 @@ public class ReadSwipeImage extends Fragment {
         imageView = (ImageView) v.findViewById(R.id.readImageView);
         Glide.with(this)
                 .load(LocalSave.loadImage(imageUrl))
-                .fitCenter()
-                .placeholder(R.drawable.loadinglogo)
-                .crossFade()
                 .into(imageView);
 
         return v;

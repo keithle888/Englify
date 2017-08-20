@@ -100,6 +100,16 @@ public class AudioBar extends Fragment {
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            Log.d(TAG,"Null Pointer caught. Audio track not available.");
+            e.printStackTrace();
+            //Set play pause button listener behavior
+            audioPlayPauseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(mainActivity,"Audio not available.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 

@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.amazonaws.com.google.gson.Gson;
+import com.amazonaws.mobileconnectors.amazonmobileanalytics.internal.core.util.JSONBuilder;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -14,9 +16,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -192,32 +197,32 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             pd.setProgress(0);
             Log.d("Englify", "Class DownloadService: Method downloadListing(): Downloaded object listing from AWS S3.");
             //identify grades
-            HashMap<String, Date> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
+            HashMap<Integer, Date> identifiedGrades = new HashMap<>(); //the key is the grade name , the value is the URL for the image.
             for (S3ObjectSummary summary : summaries) {
                 String key = summary.getKey();
-                if (key.split("/").length == 2 && isFolder(key)) { //Ensure that we are looking at a folder and that the folder name has "grade"
+                if (key.split("/").length == 2 && isFolder(key)) { //Ensure that we are looking at a folder
                     String[] dKeys = key.split("/");            //Split key to extract specifically the grade name
-                    identifiedGrades.put(dKeys[1], summary.getLastModified());
+                    identifiedGrades.put(Integer.parseInt(dKeys[1]), summary.getLastModified());
                 }
                 //Update progress in progress dialog
                 pd.setProgress(pd.getProgress() + 1);
             }
             //Generate grades based on identified grades
-            Set<String> listOfGrades = identifiedGrades.keySet();
+            Set<Integer> listOfGrades = identifiedGrades.keySet();
             Log.d("Englify", "Class DownloadService: Method downloadListing(): Identified grades: " + listOfGrades.toString());
-            List<String> sortedListOfGrades = new ArrayList(listOfGrades);
+            List<Integer> sortedListOfGrades = new ArrayList(listOfGrades);
             Collections.sort(sortedListOfGrades);
             ArrayList<Grade> grades = new ArrayList<Grade>();
-            for (String gradeName : sortedListOfGrades) {
+            for (Integer gradeName : sortedListOfGrades) {
                 //save each grade into internal storage
-                Grade newGrade = new Grade(gradeName, new ArrayList<Lesson>(), identifiedGrades.get(gradeName));
+                Grade newGrade = new Grade(gradeName.toString(), new ArrayList<Lesson>(), identifiedGrades.get(gradeName));
                 Log.d("Englify", "Class DownloadService: Method downloadListing(): Created grade -> " + newGrade.toString());
                 grades.add(newGrade);
             }
             //save the grades to internal storage
             LocalSave.saveObject(mainActivity.getString(R.string.S3_Object_Listing), new RootListing(grades));
         } catch (Exception e) {
-            Log.d("Englify", "Class DownloadService: Method downloadListing(): Caught Exception: " + e.toString());
+            e.printStackTrace();
             throw e;
         }
         return true;
@@ -247,7 +252,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                 }
             } else if (isTextFile(path, "LessonDescription")) {              //find the lesson descriptions and handle after all lessons have been created
                 lessonDescriptions = readTextFile(s3Client.getObject(bucketName, path));
-                Log.d(bucketName, "Class DownloadService: Method download_list_of_lessons(): Description for " + grade.name + " lessons. -> " + lessonDescriptions.toString());
+                Log.d(bucketName, "Class DownloadService: Method download_list_of_lessons(): Description for Grade " + grade.name + " lessons. -> " + lessonDescriptions.toString());
                 //Update lastModified date of Grade if the description is the latest thing to be updated in S3.
                 if (grade.lastModified.before(lastModified)) {
                     grade.lastModified = lastModified;
@@ -390,21 +395,21 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                                 if (isTextFile(key)) {
                                     texts = readTextFile(s3Client.getObject(bucketName, key));
                                     publishProgress(key);
-                                    Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Text file found for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name));
+                                    Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Text file found for " + key);
                                     this.lesson.updateLastModifiedDate(summary.getLastModified());
                                 } else if (isAudioFile(key)) {
                                     S3Object s3Object = s3Client.getObject(bucketName, key);
                                     LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
                                     publishProgress(key);
                                     read.addReadPartAudio(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
-                                    Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Audio file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
+                                    Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Audio file for " + key + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                     this.lesson.updateLastModifiedDate(summary.getLastModified());
                                 } else if (isImg(key)) {
                                     S3Object s3Object = s3Client.getObject(bucketName, key);
                                     LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]), s3Object);
                                     publishProgress(key);
                                     read.addReadPartImg(removeExtension(dKey[5]), createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
-                                    Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Image file for " + generatePrefix(grade.name, lesson.name, conversation.name, read.name) + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
+                                    Log.d("Englify", "Class DownloadService: Method downloadReadParts(): Image file for " + key + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, conversation.name, read.name, dKey[5]));
                                     this.lesson.updateLastModifiedDate(summary.getLastModified());
                                 }
                             }
@@ -426,43 +431,75 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, "Exercise");
         //Download exercise chapter
         if (summaries != null && summaries.size() != 0) {
+            //Create exercise class
             Exercise exercise = new Exercise("Exercise");
             if (lesson.findModule("Exercise") == null) {
                 lesson.addModule(exercise);
             } else {
                 exercise = (Exercise) lesson.findModule("Exercise");
             }
-            for (S3ObjectSummary summary : summaries) {
-                String path = summary.getKey();
-                Date lastModified = summary.getLastModified();
-                String[] delimited_path = path.split("/");
-                if (delimited_path.length == 6) {
-                    ExerciseChapter exerciseChapter = new ExerciseChapter(delimited_path[4]);
-                    if (exercise.findExerciseChapter(delimited_path[4]) == null) { //Exercise Chapter not yet created
-                        exercise.addChapter(exerciseChapter);
-                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): Created new exercise chapter -> " + exerciseChapter.name);
-                    } else {
-                        exerciseChapter = exercise.findExerciseChapter(delimited_path[4]);
+            //Check what exercise chapters are available.
+            HashSet<String> exerciseChapters = new HashSet<>();
+            for (S3ObjectSummary summary: summaries) {
+                String[] delimited_key = summary.getKey().split("/");
+                if (delimited_key.length == 5) {
+                    if (!exerciseChapters.contains(delimited_key[4])) {
+                        exerciseChapters.add(delimited_key[4]);
                     }
-                    if (isTextFile(path)) {
-                        exerciseChapter.addExerciseChapterPartDetails(readTextFile(s3Client.getObject(bucketName, path)));
-                        publishProgress(path);
-                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart details -> " + path);
-                        lesson.updateLastModifiedDate(lastModified);
-                    } else if (isAudioFile(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4], delimited_path[5]);
-                        LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
-                        exerciseChapter.addExerciseChapterPartAudio(removeExtension(delimited_path[5]), mediaFilePath);
-                        publishProgress(path);
-                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + mediaFilePath);
-                        lesson.updateLastModifiedDate(lastModified);
-                    } else if (isImg(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4], delimited_path[5]);
-                        LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
-                        exerciseChapter.addExerciseChapterPartImg(removeExtension(delimited_path[5]), mediaFilePath);
-                        publishProgress(path);
-                        Log.d(bucketName, "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart image -> " + mediaFilePath);
-                        lesson.updateLastModifiedDate(lastModified);
+                }
+            }
+            //Iterate through the exerciseChapters and see if they have exercise.json available. If not, do not bother creating the execise chapter.
+            for (String exerciseChapterName : exerciseChapters) {
+                summaries = getSummaries(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapterName);
+                Log.d(TAG,"Looking for JSON file within exercise chapter.");
+                String jsonFilePath = null;
+                for (S3ObjectSummary summary: summaries) {
+                    if (isJsonFile(summary.getKey())) {
+                        jsonFilePath = summary.getKey();
+                        Log.d(TAG,"JSON file found for exercise chapter.");
+                    }
+                }
+                //If Json file is found, create the exerciseChapter and create exerciseChapterParts
+                if (jsonFilePath != null) {
+                    try {
+                        ExerciseChapter exerciseChapter = new ExerciseChapter(exerciseChapterName);
+                        //Get JSON Object for exercise chapter
+                        S3Object jsonObject = s3Client.getObject(bucketName, jsonFilePath);
+                        String json = "";
+                        for (String s : readTextFile(jsonObject)) {
+                            json += s;
+                        }
+                        Log.d(TAG, "JSON String retrieved: " + json);
+                        ExerciseChapterPart[] exerciseChapterParts = new Gson().fromJson(json, ExerciseChapterPart[].class);
+                        exerciseChapter.chapterParts = new ArrayList<>(Arrays.asList(exerciseChapterParts));
+                        //Add media files to ExerciseChapterPart
+                        for (S3ObjectSummary summary : summaries) {
+                            String key = summary.getKey();
+                            String[] dKey = summary.getKey().split("/");
+                            if (isAudioFile(summary.getKey())) {
+                                ExerciseChapterPart exerciseChapterPart = exerciseChapter.findExerciseChapterPart(removeExtension(dKey[5]));
+                                if (exerciseChapterPart != null) {
+                                    exerciseChapterPart.audioURL = createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]);
+                                    S3Object s3Object = s3Client.getObject(bucketName, key);
+                                    LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]), s3Object);
+                                    publishProgress(key);
+                                    Log.d("Englify", "Class DownloadService: Method download_lesson_exercise: Audio file for " + key + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]));
+                                }
+                            } else if (isImg(summary.getKey())) {
+                                ExerciseChapterPart exerciseChapterPart = exerciseChapter.findExerciseChapterPart(removeExtension(dKey[5]));
+                                if (exerciseChapterPart != null) {
+                                    exerciseChapterPart.imageURL = createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]);
+                                    S3Object s3Object = s3Client.getObject(bucketName, key);
+                                    LocalSave.saveMedia(createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]), s3Object);
+                                    publishProgress(key);
+                                    Log.d("Englify", "Class DownloadService: Method download_lesson_exercise: Img file for " + key + " saved to " + createMediaFileName(rootDirectory, grade.name, lesson.name, exercise.name, exerciseChapter.name, dKey[5]));
+                                }
+                            }
+                        }
+                        exercise.addChapter(exerciseChapter);
+                    } catch (Exception e) {
+                        Log.d(TAG,"Error trying to create ExerciseChapterPart: " + exerciseChapterName);
+                        e.printStackTrace();
                     }
                 }
             }
@@ -615,5 +652,12 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         } else {
             return name;
         }
+    }
+
+    public boolean isJsonFile(String path) {
+        if (path.contains(".json")) {
+            return true;
+        }
+        return false;
     }
 }

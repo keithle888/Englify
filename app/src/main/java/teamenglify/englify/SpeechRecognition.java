@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
 
+import teamenglify.englify.ExerciseModule.ExerciseModule;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.ExerciseChapterPart;
@@ -182,6 +183,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     @Override
     public void onError(int errorCode) {
         String errorMessage = getErrorText(errorCode);
+        speechReturnTextView.setText(R.string.Speech_Recognition_Timeout);
         Log.d("SpeechRecognition", "FAILED " + errorMessage);
     }
 
@@ -356,7 +358,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                 String word = returnStringArray[i];
                 if (set.contains(word.trim().toLowerCase())) {
                     Log.d(TAG,"Correct word found: " + word);
-                     returnStringArray[i] = "<font color=\'green\'>" + word + "</font>";
+                     returnStringArray[i] = "<font color=\'#006400\'>" + word + "</font>";
                 } else {
                     Log.d(TAG,"Wrong word found: "+ word);
                     returnStringArray[i] = "<font color=\'red\'>" + word + "</font>";
@@ -387,6 +389,11 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             if(((ExerciseChapter) object).chapterParts.size()!=0){
                 ExerciseChapterPart exerciseChapterPart = ((ExerciseChapter) object).chapterParts.get(position);
                 textToMatch = exerciseChapterPart.question;
+                Log.d(TAG,"textToMatch before blank character replacement: " + textToMatch);
+                //Additional step of turning "_"s longer. (4x)
+                textToMatch = textToMatch.replace(ExerciseModule.exerciseTextToMatchBlankCharacter,
+                        ExerciseModule.exerciseTextToMatchAnswerBlank);
+                Log.d(TAG,"textToMatch after blank character replacement: " + textToMatch);
             }
         }
         return textToMatch;

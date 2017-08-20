@@ -2,7 +2,6 @@
 <resources>
     <string-array name="menu_items" >
         <item>Main Menuအိမ်</item>
-        <item>Grade တန်း</item>
         <item>Pronounce ပွောကွား </item>
         <item>Feedback တုံ့ပြန်ချက်</item>
         <item>Delete Grade ဖျက်ပစ်ပါ</item>

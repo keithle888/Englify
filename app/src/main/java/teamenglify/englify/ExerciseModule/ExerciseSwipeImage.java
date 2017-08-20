@@ -35,9 +35,8 @@ public class ExerciseSwipeImage extends Fragment {
         imageView = (ImageView) v.findViewById(R.id.exerciseImageView);
         Glide.with(this)
                 .load(LocalSave.loadImage(imageUrl))
+                .placeholder(R.drawable.logonocontent)
                 .fitCenter()
-                .placeholder(R.drawable.loadinglogo)
-                .crossFade()
                 .into(imageView);
 
         return v;
