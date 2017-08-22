@@ -138,9 +138,10 @@ public class ExerciseModule extends Fragment {
 
     public void updateExercisePage(int page) {
         Log.d(TAG,"Updating exercise module for page number:" + page);
+        partNumber = page;
         updateSpeechRecognition(page);
         updateAudioBar(page);
-        updateButtonSettings(page);
+        //updateButtonSettings(page);
         updateChoicesView(page);
         updateTranslationView(page);
         updateUtilView();
@@ -234,10 +235,10 @@ public class ExerciseModule extends Fragment {
         }
     }
 
-    public void replaceQuestionWithAnswerIncluded(int page) {
+    public void replaceQuestionWithAnswerIncluded() {
         Log.d(TAG,"Updating Speech Recognition Text To Match with answer.");
-        String question = exerciseChapter.chapterParts.get(page).question;
-        for (String answerPart : exerciseChapter.chapterParts.get(page).answer) {
+        String question = exerciseChapter.chapterParts.get(partNumber).question;
+        for (String answerPart : exerciseChapter.chapterParts.get(partNumber).answer) {
             if (question != null) {
                 question = question.replaceFirst(exerciseTextToMatchAnswerBlank, answerPart);
             }

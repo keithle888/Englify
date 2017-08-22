@@ -70,4 +70,5 @@
     <string name="text_to_speech_hint">Enter text to pronounce...</string>
     <string name="speech_recognition_no_internet_connection">No internet connection.</string>
     <string name="pronounce_title">Pronounce</string>
+    <string name="text_to_speech_slider_title">Speech Rate</string>
 </resources>

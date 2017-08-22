@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.speech.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ServiceCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;

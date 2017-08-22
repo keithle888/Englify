@@ -83,6 +83,7 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 if (textForButton.contentEquals(answer)) {
+                    Log.i(TAG,"Correct answer selected.");
                     choice_button.setClickable(false);
                     //Play audio after correct answer
                     Fragment fragment = MainActivity.mainActivity.getSupportFragmentManager().findFragmentByTag(AudioBar.FM_TAG_NAME);
@@ -94,12 +95,13 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
                     //Set exercise choices weight = 0
                     exerciseChoicesView.setLayoutParams(ExerciseModule.exerciseChoices_LayoutParam_Invisible);
                     //Get text_to_match to put the correct text into place.
-                    exerciseModule.replaceQuestionWithAnswerIncluded(i);
+                    exerciseModule.replaceQuestionWithAnswerIncluded();
                     //Make translation visible
                     exercise_translation.setLayoutParams(ExerciseModule.exercise_translation_Visible);
                     //Make media/util (speech recognition/audio bar) appear
                     exerciseUtils.setLayoutParams(ExerciseModule.utils_Visible);
                 } else {
+                    Log.i(TAG,"Wrong answer selected.");
                     choice_button.setClickable(false);
                     choice_button.setBackgroundColor(mainActivity.getResources().getColor(android.R.color.holo_red_light));
                     Animation fadeout = AnimationUtils.loadAnimation(viewGroup.getContext(), R.anim.exercise_choices_button_fadeout);
