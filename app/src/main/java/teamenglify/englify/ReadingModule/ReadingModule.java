@@ -4,6 +4,7 @@ package teamenglify.englify.ReadingModule;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,10 @@ import static teamenglify.englify.MainActivity.mainActivity;
  * create an instance of this fragment.
  */
 public class ReadingModule extends Fragment {
+    private static final String TAG = ReadingModule.class.getSimpleName();
     private Read read;
     private String previous_actionbar_title;
+    private me.grantland.widget.AutofitTextView translationTextView;
 
     public ReadingModule() {
         // Required empty public constructor
@@ -54,12 +57,26 @@ public class ReadingModule extends Fragment {
                 (TextView) view.findViewById(R.id.speechRecognitionTextViewRead_Return),
                 pb);
         AudioBar audioBar = AudioBar.newInstance(read);
-        ReadImage readImage = ReadImage.newInstance(read, speechRecognition, audioBar);
+        ReadImage readImage = ReadImage.newInstance(read, speechRecognition, audioBar, this);
         fm.beginTransaction().add(R.id.audioBarFrameLayoutRead, audioBar, "AUDIO_BAR").commit();
         fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutRead, speechRecognition, "SPEED_RECOGNITION").commit();
         fm.beginTransaction().add(R.id.readImage,readImage).commit();
 
         mainActivity.getSupportActionBar().setTitle(previous_actionbar_title + ListingFragment.ACTION_BAR_DELIMITER + read.name);
+
+        //Bind view
+        translationTextView = (me.grantland.widget.AutofitTextView) view.findViewById(R.id.Read_Translation_TextView);
+
+        //Update views
+        updateTranslationView(0);
         return view;
+    }
+
+    public void updateTranslationView(int page) {
+        if (translationTextView != null) {
+            translationTextView.setText(read.readParts.get(page).translation);
+        } else {
+            Log.e(TAG, "TranslationTextView is null. Unable to update.");
+        }
     }
 }

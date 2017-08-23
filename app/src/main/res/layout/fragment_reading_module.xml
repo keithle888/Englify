@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:id="@+id/speechRecognitionTextViewRead_Translation"
+        android:id="@+id/Read_Translation_TextView"
         android:maxLines="2"
         autofit:minTextSize="@dimen/speech_recognition_text_size"
         android:text="Translation Placeholder." />

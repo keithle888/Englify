@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class ReadPart implements Serializable {
     public String reading;
+    public String translation;
     public String audioURL;
     public String imgURL;
     public Date lastModified;

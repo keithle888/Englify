@@ -28,16 +28,18 @@ public class ReadImage extends Fragment {
     private static final String TAG = ReadImage.class.getSimpleName();
     private SpeechRecognition speechRecognition;
     private AudioBar audioBar;
+    private ReadingModule readingModule;
 
     public ReadImage() {
         // Required empty public constructor
     }
 
-    public static ReadImage newInstance(Read read, SpeechRecognition speechRecognition, AudioBar audioBar) {
+    public static ReadImage newInstance(Read read, SpeechRecognition speechRecognition, AudioBar audioBar, ReadingModule readingModule) {
         ReadImage fragment = new ReadImage();
         fragment.read = read;
         fragment.speechRecognition = speechRecognition;
         fragment.audioBar = audioBar;
+        fragment.readingModule = readingModule;
         return fragment;
     }
 
@@ -95,6 +97,10 @@ public class ReadImage extends Fragment {
                     speechRecognition.updateUI(position);
                 } else {
                     Log.d(TAG, "Unable to find Speech Recognition to trigger UI update.");
+                }
+                //Trigger for translation view update.
+                if (readingModule != null) {
+                    readingModule.updateTranslationView(position);
                 }
             }
 

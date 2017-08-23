@@ -14,6 +14,7 @@ import static teamenglify.englify.MainActivity.bucketName;
  */
 
 public class Read implements Serializable{
+    private static final String TAG = Read.class.getSimpleName();
     public String name;
     public ArrayList<ReadPart> readParts;
     public Date lastModified;
@@ -78,15 +79,28 @@ public class Read implements Serializable{
             //There may be more pictures than texts (DB Error). Run only up to which ever list size is the smallest.
             if (readParts.size() <= texts.size()) {
                 for (ReadPart readPart : readParts) {
-                    String text = texts.pop();
-                    Log.d(bucketName, "Class Read, Method overwriteTexts(): Overwriting -> " + readPart.reading + " with -> " + text);
-                    readPart.reading = text;
+                    String[] insertStrings = texts.pop().split(":");
+                    try {
+                        readPart.reading = insertStrings[0];
+                        Log.d(TAG, "Class Read, Method overwriteTexts(): Overwriting -> " + readPart.reading + " with -> " + insertStrings[0]);
+                        readPart.translation = insertStrings[1];
+                        Log.d(TAG, "Class Read, Method overwriteTexts(): Overwriting -> " + readPart.reading + " with -> " + insertStrings[1]);
+                    } catch (IndexOutOfBoundsException e) {
+                        Log.e(TAG,"Missing part of the string to be inserted.");
+                    }
                 }
             } else {
                 for (int i = 0; i < texts.size() ; i++) {
-                    String text = texts.pop();
-                    Log.d(bucketName, "Class Read, Method overwriteTexts(): Overwriting -> " + readParts.get(i).reading + " with -> " + text);
-                    readParts.get(i).reading = text;
+                    String[] insertStrings = texts.pop().split(":");
+                    ReadPart readPart = readParts.get(i);
+                    try {
+                        readPart.reading = insertStrings[0];
+                        Log.d(TAG, "Class Read, Method overwriteTexts(): Overwriting -> " + readPart.reading + " with -> " + insertStrings[0]);
+                        readPart.translation = insertStrings[1];
+                        Log.d(TAG, "Class Read, Method overwriteTexts(): Overwriting -> " + readPart.reading + " with -> " + insertStrings[1]);
+                    } catch (IndexOutOfBoundsException e) {
+                        Log.e(TAG,"Missing part of the string to be inserted.");
+                    }
                 }
             }
         }
