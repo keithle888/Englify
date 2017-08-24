@@ -4,6 +4,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,9 +34,7 @@ public class ExerciseModule extends Fragment {
     public int partNumber;
     private String previous_actionbar_title;
     private GridView choices_grid_view;
-    private ImageButton exercise_forward_button;
-    private ImageButton exercise_back_button;
-    private me.grantland.widget.AutofitTextView exercise_translation;
+    private TextView exercise_translation;
     private RelativeLayout exerciseUtils;
 
     public static final String exerciseTextToMatchBlankCharacter = "_";
@@ -50,17 +49,17 @@ public class ExerciseModule extends Fragment {
     public static final LinearLayout.LayoutParams exerciseChoices_LayoutParam_Visible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             0,
-            6f
+            40f
     );
-    public static final LinearLayout.LayoutParams exercise_translation_Invisible = new LinearLayout.LayoutParams(
+    public static final LinearLayout.LayoutParams exercise_textview_Invisible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             0,
             0f
     );
-    public static final LinearLayout.LayoutParams exercise_translation_Visible = new LinearLayout.LayoutParams(
+    public static final LinearLayout.LayoutParams exercise_textview_Visible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            2f
+            10f
     );
     public static final LinearLayout.LayoutParams utils_Invisible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -70,7 +69,7 @@ public class ExerciseModule extends Fragment {
     public static final LinearLayout.LayoutParams utils_Visible = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             0,
-            2f
+            20f
     );
 
     public ExerciseModule() {
@@ -105,9 +104,7 @@ public class ExerciseModule extends Fragment {
 
         //Bind Views
         choices_grid_view = (GridView) view.findViewById(R.id.exercise_choices_grid_view);
-        exercise_forward_button = (ImageButton) view.findViewById(R.id.exerciseForwardButton);
-        exercise_back_button = (ImageButton) view.findViewById(R.id.exerciseBackButton);
-        exercise_translation = (me.grantland.widget.AutofitTextView) view.findViewById(R.id.exercise_translation_textview);
+        exercise_translation = (TextView) view.findViewById(R.id.exercise_translation_textview);
         exerciseUtils = (RelativeLayout) view.findViewById(R.id.exercise_utils);
 
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
@@ -141,7 +138,6 @@ public class ExerciseModule extends Fragment {
         partNumber = page;
         updateSpeechRecognition(page);
         updateAudioBar(page);
-        //updateButtonSettings(page);
         updateChoicesView(page);
         updateTranslationView(page);
         updateUtilView();
@@ -152,7 +148,13 @@ public class ExerciseModule extends Fragment {
     }
 
     private void updateTranslationView(int page) {
-        exercise_translation.setText(exerciseChapter.chapterParts.get(page).translation);
+        Log.d(TAG,"Updating translation text view.");
+        if (exercise_translation != null) {
+            exercise_translation.setText(exerciseChapter.chapterParts.get(page).translation);
+            exercise_translation.setLayoutParams(exercise_textview_Invisible);
+        } else {
+            Log.e(TAG,"Updating translation text view failed.");
+        }
     }
 
     private void updateSpeechRecognition(int page) {
@@ -190,51 +192,6 @@ public class ExerciseModule extends Fragment {
         }
     }
 
-    private void updateButtonSettings(int page) {
-        if (exercise_back_button != null && exercise_forward_button != null) {
-            //Setting for forward button
-            if (page < (exerciseChapter.chapterParts.size() - 1)) {
-                exercise_forward_button.setVisibility(View.VISIBLE);
-                exercise_forward_button.setClickable(true);
-            } else {
-                exercise_forward_button.setVisibility(View.INVISIBLE);
-                exercise_forward_button.setClickable(false);
-            }
-            //Setting for back button
-            if(page > 0) {
-                exercise_back_button.setVisibility(View.VISIBLE);
-                exercise_back_button.setClickable(true);
-            } else {
-                exercise_back_button.setVisibility(View.INVISIBLE);
-                exercise_back_button.setClickable(false);
-            }
-        } else {
-            Log.d(TAG,"Unable to find buttons to update visibility.");
-        }
-    }
-
-    public void bindButtonBehaviour() {
-        if (exercise_back_button != null && exercise_forward_button != null) {
-            exercise_forward_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    partNumber++;
-                    updateExercisePage(partNumber);
-                }
-            });
-
-            exercise_back_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    partNumber--;
-                    updateExercisePage(partNumber);
-                }
-            });
-        } else {
-            Log.d(TAG, "Error binding behaviour to buttons due to null value.");
-        }
-    }
-
     public void replaceQuestionWithAnswerIncluded() {
         Log.d(TAG,"Updating Speech Recognition Text To Match with answer.");
         String question = exerciseChapter.chapterParts.get(partNumber).question;
@@ -248,6 +205,11 @@ public class ExerciseModule extends Fragment {
             sr.speechToMatchTextView.setText(question);
         } else {
             Log.d(TAG,"Unable to locate speech recognition fragment for text view answer replacement.");
+        }
+
+        Log.d(TAG,"Making translation text view visible.");
+        if (exercise_translation != null) {
+            exercise_translation.setLayoutParams(exercise_textview_Visible);
         }
     }
 }

@@ -29,7 +29,7 @@ public class ReadingModule extends Fragment {
     private static final String TAG = ReadingModule.class.getSimpleName();
     private Read read;
     private String previous_actionbar_title;
-    private me.grantland.widget.AutofitTextView translationTextView;
+    private TextView translationTextView;
 
     public ReadingModule() {
         // Required empty public constructor
@@ -65,7 +65,7 @@ public class ReadingModule extends Fragment {
         mainActivity.getSupportActionBar().setTitle(previous_actionbar_title + ListingFragment.ACTION_BAR_DELIMITER + read.name);
 
         //Bind view
-        translationTextView = (me.grantland.widget.AutofitTextView) view.findViewById(R.id.Read_Translation_TextView);
+        translationTextView = (TextView) view.findViewById(R.id.Read_Translation_TextView);
 
         //Update views
         updateTranslationView(0);

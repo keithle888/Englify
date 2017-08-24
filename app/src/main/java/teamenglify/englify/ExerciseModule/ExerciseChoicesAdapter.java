@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,12 +33,12 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
     private ExerciseChapterPart exerciseChapterPart;
     private View exerciseChoicesView;
     private ExerciseModule exerciseModule;
-    private me.grantland.widget.AutofitTextView exercise_translation;
+    private TextView exercise_translation;
     private RelativeLayout exerciseUtils;
 
     private static final String delimiterBetweenAnswerOptions = ", ";
 
-    public ExerciseChoicesAdapter(ExerciseChapterPart exerciseChapterPart, GridView exerciseChoicesView, ExerciseModule exerciseModule, me.grantland.widget.AutofitTextView exercise_translation, RelativeLayout exerciseUtils) {
+    public ExerciseChoicesAdapter(ExerciseChapterPart exerciseChapterPart, GridView exerciseChoicesView, ExerciseModule exerciseModule, TextView exercise_translation, RelativeLayout exerciseUtils) {
         this.exerciseChapterPart = exerciseChapterPart;
         this.exerciseChoicesView = exerciseChoicesView;
         this.exerciseModule = exerciseModule;
@@ -97,7 +98,7 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
                     //Get text_to_match to put the correct text into place.
                     exerciseModule.replaceQuestionWithAnswerIncluded();
                     //Make translation visible
-                    exercise_translation.setLayoutParams(ExerciseModule.exercise_translation_Visible);
+                    exercise_translation.setLayoutParams(ExerciseModule.exercise_textview_Visible);
                     //Make media/util (speech recognition/audio bar) appear
                     exerciseUtils.setLayoutParams(ExerciseModule.utils_Visible);
                 } else {

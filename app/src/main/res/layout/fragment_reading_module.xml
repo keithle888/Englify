@@ -2,50 +2,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:weightSum="100"
     tools:context="teamenglify.englify.ReadingModule.ReadingModule">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
+        android:layout_weight="50"
         android:id="@+id/readImage"
         android:orientation="vertical">
     </FrameLayout>
 
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="10"
         android:gravity="center"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
+        android:autoSizeTextType="uniform"
         android:id="@+id/speechRecognitionTextViewRead_TextToMatch"
         android:maxLines="2"/>
 
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="10"
         android:gravity="center"
         android:id="@+id/Read_Translation_TextView"
         android:maxLines="2"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
-        android:text="Translation Placeholder." />
+        android:autoSizeTextType="uniform" />
 
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="10"
         android:gravity="center"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
+        android:autoSizeTextType="uniform"
         android:id="@+id/speechRecognitionTextViewRead_Return"
         android:maxLines="2"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="20">
 
         <LinearLayout
             android:layout_width="match_parent"

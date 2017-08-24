@@ -4,31 +4,32 @@
     android:layout_height="match_parent"
     xmlns:autofit="http://schemas.android.com/apk/res-auto"
     tools:context="teamenglify.englify.VocabModule.VocabModule"
+    android:weightSum="100"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
+        android:layout_weight="50"
         android:id="@+id/vocabImage"
         android:orientation="vertical">
     </FrameLayout>
 
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="15"
         android:gravity="center"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
+        android:autoSizeTextType="uniform"
         android:id="@+id/speechRecognitionTextViewVocab_TextToMatch"
         android:maxLines="2"/>
 
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="15"
         android:gravity="center"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
+        android:autoSizeTextType="uniform"
         android:id="@+id/speechRecognitionTextViewVocab_Return"
         android:maxLines="2"/>
 
@@ -36,7 +37,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="20">
 
         <LinearLayout
             android:layout_width="match_parent"

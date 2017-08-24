@@ -4,86 +4,55 @@
     android:layout_height="match_parent"
     xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:weightSum="100"
     tools:context="teamenglify.englify.ExerciseModule.ExerciseModule">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6">
+        android:layout_weight="50"
+        android:id="@+id/exerciseImages"/>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/exerciseImages"/>
-
-        <ImageButton
-            android:layout_width="50sp"
-            android:layout_height="50sp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/exerciseBackButton"
-            android:src="@drawable/ic_navigate_before_black_24dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:background="@null"
-            android:visibility="invisible"/>
-
-        <ImageButton
-            android:layout_width="50sp"
-            android:layout_height="50sp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:id="@+id/exerciseForwardButton"
-            android:visibility="invisible"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:background="@null"
-            android:src="@drawable/ic_navigate_next_black_24dp"/>
-
-    </RelativeLayout>
-
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="10"
         android:gravity="center"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
+        android:autoSizeTextType="uniform"
         android:id="@+id/speechRecognitionTextViewExercise_TextToMatch"
-        android:maxLines="2">
-    </me.grantland.widget.AutofitTextView>
+        android:maxLines="2"/>
 
-    <me.grantland.widget.AutofitTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
+        android:layout_weight="0"
         android:gravity="center"
         android:maxLines="2"
-        android:id="@+id/exercise_translation_textview" />
+        android:autoSizeTextType="uniform"
+        android:id="@+id/exercise_translation_textview"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:gravity="center"
+        android:autoSizeTextType="uniform"
+        android:id="@+id/speechRecognitionTextViewExercise_Return"
+        android:maxLines="2"/>
 
     <GridView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_weight="40"
         android:numColumns="2"
         android:id="@+id/exercise_choices_grid_view">
     </GridView>
-
-    <me.grantland.widget.AutofitTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:gravity="center"
-        autofit:minTextSize="@dimen/speech_recognition_text_size"
-        android:id="@+id/speechRecognitionTextViewExercise_Return"
-        android:maxLines="2">
-    </me.grantland.widget.AutofitTextView>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/exercise_utils"
-        android:layout_weight="2">
+        android:layout_weight="0">
 
         <LinearLayout
             android:layout_width="match_parent"
