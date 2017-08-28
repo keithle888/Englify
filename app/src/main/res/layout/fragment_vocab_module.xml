@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:autofit="http://schemas.android.com/apk/res-auto"
     tools:context="teamenglify.englify.VocabModule.VocabModule"
     android:weightSum="100"
     android:orientation="vertical">
@@ -15,21 +15,25 @@
         android:orientation="vertical">
     </FrameLayout>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="15"
         android:gravity="center"
-        android:autoSizeTextType="uniform"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
         android:id="@+id/speechRecognitionTextViewVocab_TextToMatch"
         android:maxLines="2"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="15"
         android:gravity="center"
-        android:autoSizeTextType="uniform"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
         android:id="@+id/speechRecognitionTextViewVocab_Return"
         android:maxLines="2"/>
 
@@ -67,16 +71,15 @@
                     android:layout_alignParentTop="true"/>
 
                 <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     android:id="@+id/speechRecognitionButtonFrameLayoutVocab"
-                    android:orientation="vertical">
-                </FrameLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible" />
 
             </RelativeLayout>
 
         </LinearLayout>
 
-
     </RelativeLayout>
+
 </LinearLayout>

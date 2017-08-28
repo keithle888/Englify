@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:autofit="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:weightSum="100"
     tools:context="teamenglify.englify.ExerciseModule.ExerciseModule">
@@ -13,12 +13,14 @@
         android:layout_weight="50"
         android:id="@+id/exerciseImages"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="10"
         android:gravity="center"
-        android:autoSizeTextType="uniform"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
         android:id="@+id/speechRecognitionTextViewExercise_TextToMatch"
         android:maxLines="2"/>
 
@@ -28,7 +30,9 @@
         android:layout_weight="0"
         android:gravity="center"
         android:maxLines="2"
-        android:autoSizeTextType="uniform"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
         android:id="@+id/exercise_translation_textview"/>
 
     <android.support.v7.widget.AppCompatTextView
@@ -36,7 +40,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:gravity="center"
-        android:autoSizeTextType="uniform"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="22sp"
+        app:autoSizeStepGranularity="2sp"
         android:id="@+id/speechRecognitionTextViewExercise_Return"
         android:maxLines="2"/>
 

@@ -4,6 +4,7 @@ package teamenglify.englify.VocabModule;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,8 @@ import static teamenglify.englify.MainActivity.mainActivity;
  * create an instance of this fragment.
  */
 public class VocabModule extends Fragment {
+    private final static String TAG = VocabModule.class.getSimpleName();
     private Vocab vocab;
-
-
 
     public VocabModule() {
         // Required empty public constructor
@@ -61,9 +61,13 @@ public class VocabModule extends Fragment {
                 pb);
         AudioBar audioBar = AudioBar.newInstance(vocab);
         VocabImage vocabImage = VocabImage.newInstance(vocab, speechRecognition, audioBar);
-        fm.beginTransaction().add(R.id.audioBarFrameLayoutVocab, audioBar, "AUDIO_BAR").commit();
-        fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutVocab, speechRecognition, "SPEECH_RECOGNITION").commit();
-        fm.beginTransaction().add(R.id.vocabImage,vocabImage).commit();
+
+        Log.d(TAG, "Loading fragment for vocab image.");
+        fm.beginTransaction().add(R.id.vocabImage, vocabImage).commit();
+        Log.d(TAG, "Loading fragment for vocab audio bar.");
+        fm.beginTransaction().add(R.id.audioBarFrameLayoutVocab, audioBar, AudioBar.FM_TAG_NAME).commit();
+        Log.d(TAG, "Loading fragment for vocab speech recognition.");
+        fm.beginTransaction().add(R.id.speechRecognitionButtonFrameLayoutVocab, speechRecognition, SpeechRecognition.FM_TAG_NAME).commit();
 
         return view;
     }

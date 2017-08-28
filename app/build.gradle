@@ -42,8 +42,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:support-v4:26.0.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
-    //Autofit text view
-    compile 'me.grantland:autofittextview:0.2.1'
 }
 
 
