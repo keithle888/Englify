@@ -75,11 +75,7 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
         choice_button.setTransformationMethod(null);
 
         //Set behaviour of button
-        StringBuilder builder = new StringBuilder();
-        for (String s : exerciseChapterPart.answer) {
-            builder.append(s);
-        }
-        final String answer = builder.toString();
+        final String answer = createStringFromList(exerciseChapterPart.answer);
         choice_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,6 +114,15 @@ public class ExerciseChoicesAdapter extends BaseAdapter {
         StringBuilder builder = new StringBuilder();
         for (List<String> list : exerciseChapterPart.choices) {
             builder.append(list.get(i) + delimiterBetweenAnswerOptions);
+        }
+        return builder.toString().substring(0,
+                builder.toString().length() - 2);
+    }
+
+    private String createStringFromList(List<String> list) {
+        StringBuilder builder = new StringBuilder();
+        for (String string : list) {
+            builder.append(string + delimiterBetweenAnswerOptions);
         }
         return builder.toString().substring(0,
                 builder.toString().length() - 2);

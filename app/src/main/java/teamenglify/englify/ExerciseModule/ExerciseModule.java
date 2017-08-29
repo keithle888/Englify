@@ -197,7 +197,7 @@ public class ExerciseModule extends Fragment {
         String question = exerciseChapter.chapterParts.get(partNumber).question;
         for (String answerPart : exerciseChapter.chapterParts.get(partNumber).answer) {
             if (question != null) {
-                question = question.replaceFirst(exerciseTextToMatchAnswerBlank, answerPart);
+                question = question.replaceFirst(exerciseTextToMatchBlankCharacter, answerPart);
             }
         }
         SpeechRecognition sr = (SpeechRecognition) mainActivity.getSupportFragmentManager().findFragmentByTag(SpeechRecognition.FM_TAG_NAME);

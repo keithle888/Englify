@@ -1,9 +1,11 @@
 package teamenglify.englify.Listing;
 
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -137,10 +139,16 @@ public class ListingFragment extends Fragment {
                 mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
                 recyclerView.setLayoutManager(mainActivity.mLayoutManager);
             } else {
-                mainActivity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.activity_main_container, new ContentNotAvailable(), "CONTENT_NOT_AVAILABLE")
-                        .commit();
+                new AlertDialog.Builder(getContext())
+                        .setMessage(R.string.content_not_available)
+                        .setPositiveButton(R.string.alert_dialog_close, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .create()
+                        .show();
             }
         }
     }
@@ -169,11 +177,6 @@ public class ListingFragment extends Fragment {
         } else if (listingType == LIST_EXERCISES) {
             mainActivity.getSupportActionBar().setTitle(previous_fragment_action_bar_title + ACTION_BAR_DELIMITER + getString(R.string.exercise));
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     public boolean isContentAvailable() {

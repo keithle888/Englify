@@ -61,7 +61,7 @@
     <string name="Update_Progress_Dialog_Title">Checking For Updates</string>
     <string name="Update_Available_Prompt_Title">Update Available</string>
     <string name="Update_Service_Base_Message">Checking: </string>
-    <string name="content_not_available">Coming Soon...</string>
+    <string name="content_not_available">Sorry, content not yet available.</string>
     <string name="lesson_has_been_downloaded_cardview_text">Downloaded</string>
     <string name="lesson_not_downloaded_cardview_text">Click to download</string>
     <string name="vocabulary">Vocab</string>
@@ -71,4 +71,5 @@
     <string name="speech_recognition_no_internet_connection">No internet connection.</string>
     <string name="pronounce_title">Pronounce</string>
     <string name="text_to_speech_slider_title">Speech Rate</string>
+    <string name="alert_dialog_close">Close</string>
 </resources>

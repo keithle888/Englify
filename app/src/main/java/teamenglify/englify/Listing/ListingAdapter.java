@@ -47,7 +47,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
     private ArrayList<String> listingLessonDesc;
 
     public static final String gradePrefix = "Grade ";
-    public static final String exerciseChapterPrefix = "Chapter ";
+    public static final String exerciseChapterPrefix = "Exercise ";
     public static final String readPrefix = "Read ";
 
     public ListingAdapter(Object object, int listingType) {
