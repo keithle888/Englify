@@ -143,6 +143,7 @@ public class ListingFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
+                                mainActivity.onBackPressed();
                             }
                         })
                         .create()
