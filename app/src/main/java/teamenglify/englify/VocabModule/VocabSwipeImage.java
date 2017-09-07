@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-import teamenglify.englify.LocalSave;
+import teamenglify.englify.DataService.LocalSave;
 import teamenglify.englify.R;
 
 /**

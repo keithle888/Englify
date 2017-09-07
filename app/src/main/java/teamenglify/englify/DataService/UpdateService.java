@@ -1,32 +1,24 @@
 package teamenglify.englify.DataService;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
-import teamenglify.englify.Model.Module;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.DataService.DownloadService.getSummaries;
-import static teamenglify.englify.DataService.DownloadService.isFolder;
 import static teamenglify.englify.DataService.DownloadService.readTextFile;
 import static teamenglify.englify.MainActivity.bucketName;
-import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 import static teamenglify.englify.MainActivity.rootDirectory;
 import static teamenglify.englify.MainActivity.s3Client;

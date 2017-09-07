@@ -6,23 +6,18 @@ package teamenglify.englify.DataService;
  */
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import teamenglify.englify.Listing.ListingFragment;
-import teamenglify.englify.LocalSave;
-import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
 
-import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 
@@ -93,7 +88,7 @@ public class DataManager {
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        new DeleteService(grade).execute();
+                        DeleteService.INSTANCE.deleteGradeRx(mainActivity.getApplicationContext(), grade.name).blockingGet();
                     }
                 })
                 .show();

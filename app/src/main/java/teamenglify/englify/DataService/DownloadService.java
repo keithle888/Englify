@@ -6,7 +6,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.amazonaws.com.google.gson.Gson;
-import com.amazonaws.mobileconnectors.amazonmobileanalytics.internal.core.util.JSONBuilder;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,23 +25,19 @@ import java.util.List;
 import java.util.Set;
 
 import teamenglify.englify.Listing.ListingFragment;
-import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.ExerciseChapterPart;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
-import teamenglify.englify.Model.Module;
 import teamenglify.englify.Model.Read;
-import teamenglify.englify.Model.ReadPart;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.ModuleSelection.ModuleSelection;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.bucketName;
-import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 import static teamenglify.englify.MainActivity.rootDirectory;
 import static teamenglify.englify.MainActivity.s3Client;
@@ -63,6 +57,8 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     private ProgressDialog pd;
     public LinkedList<String> texts;
     private String baseMessage = "Downloading:";
+    static final String mediaFileDelimiter = "_";
+
 
     /**
      * Constructor used to download the list of grades available. Parameter should be DownloadService.DOWNLOAD_LISTING.
@@ -166,12 +162,14 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             }
         } else {
             if (downloadType == DOWNLOAD_LISTING_OF_GRADES) {
-                new DeleteService().deleteRootListing();
+                DeleteService.INSTANCE.deleteRootListingRx(mainActivity.getApplicationContext());
             } else if (downloadType == DOWNLOAD_LISTING_OF_LESSONS) {
                 mainActivity.clearBackStack();
                 mainActivity.loadLoginFragment();
             } else if (downloadType == DOWNLOAD_LESSON) {
-                new DeleteService(grade, lesson).execute();
+                DeleteService.INSTANCE.deleteLessonRx(mainActivity.getApplicationContext(),
+                        grade.name,
+                        lesson.name);
             }
             mainActivity.onBackPressed();
             if (mainActivity.hasInternetConnection == false) {
@@ -633,7 +631,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     public String createMediaFileName(String... params) {
         String toReturn = "";
         for (String param : params) {
-            toReturn = toReturn + param + "_";
+            toReturn = toReturn + param + mediaFileDelimiter;
         }
         //get rid of last "/"
         toReturn = toReturn.substring(0, toReturn.length() - 1);

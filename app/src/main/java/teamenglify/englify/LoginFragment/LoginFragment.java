@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import teamenglify.englify.Listing.ListingFragment;
-import teamenglify.englify.LocalSave;
-import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 import static teamenglify.englify.MainActivity.mainActivity;

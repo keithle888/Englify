@@ -1,7 +1,6 @@
 package teamenglify.englify.Settings;
 
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import teamenglify.englify.DataService.DataManager;
-import teamenglify.englify.LocalSave;
+import teamenglify.englify.DataService.LocalSave;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;

@@ -2,13 +2,10 @@ package teamenglify.englify.DataService;
 
 import android.util.Log;
 
-import com.amazonaws.mobileconnectors.amazonmobileanalytics.AnalyticsEvent;
 import com.amazonaws.services.s3.model.S3Object;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.AnalyticsConfiguration;
 

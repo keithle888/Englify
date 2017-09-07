@@ -12,12 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 
 
-import teamenglify.englify.ContentNotAvailable;
 import teamenglify.englify.DataService.DataManager;
-import teamenglify.englify.LocalSave;
+import teamenglify.englify.DataService.LocalSave;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.Grade;

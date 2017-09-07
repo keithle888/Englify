@@ -9,6 +9,8 @@ public class RootListing implements Serializable{
     public ArrayList<Grade> grades;
     public Date lastModified;
 
+    public RootListing() { grades = new ArrayList<>(); }
+
     public RootListing (ArrayList<Grade> grades) {
         this.grades = grades;
     }
