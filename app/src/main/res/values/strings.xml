@@ -72,4 +72,5 @@
     <string name="pronounce_title">Pronounce</string>
     <string name="text_to_speech_slider_title">Speech Rate</string>
     <string name="alert_dialog_close">Close</string>
+    <string name="message_on_successfully_deletion">Deletion successful.</string>
 </resources>

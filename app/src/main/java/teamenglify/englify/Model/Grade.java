@@ -39,6 +39,12 @@ public class Grade implements Serializable{
         this.lessons = new ArrayList<Lesson>();
     }
 
+    public Grade(String name, Date lastModified) {
+        this.name = name;
+        this.lessons = new ArrayList<Lesson>();
+        this.lastModified = lastModified;
+    }
+
     public void addLesson(Lesson lesson) {
         if (lessons == null) {
             lessons = new ArrayList<Lesson>();

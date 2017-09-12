@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -136,7 +137,8 @@ public class DeleteGrade extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                             new DataManager(getContext()).deleteGrade(grade);
-                            mainActivity.onBackPressed();
+                            mainActivity.clearBackStack();
+                            Toast.makeText(context, R.string.message_on_successfully_deletion, Toast.LENGTH_LONG).show();
                         }
                     })
                     .show();

@@ -8,6 +8,8 @@ import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import teamenglify.englify.MainActivity
+import teamenglify.englify.Model.Grade
+import teamenglify.englify.Model.Lesson
 import teamenglify.englify.Model.RootListing
 import teamenglify.englify.R
 
@@ -35,14 +37,21 @@ object DeleteService {
                 progressDialog.progress = progressDialog.progress + 1
                 //Check if file should be deleted.
                 val delimited_key = file.split(DownloadService.mediaFileDelimiter)
-                if (delimited_key.size >= 2) {
-                    val gradeID = delimited_key[1]
+                if (delimited_key.isNotEmpty()) {
+                    val gradeID = delimited_key[0]
                     if (gradeID == gradeName) {
                         Log.d(TAG, "Deleting file: $file")
                         context.deleteFile(file)
                     }
                 }
             }
+
+            //Get root listing and replace the grade inside.
+            Log.d(TAG,"Replacing grade object in root listing.")
+            val rootListing = LocalSave.loadObject(R.string.S3_Object_Listing) as RootListing
+            val oldGrade = rootListing.findGrade(gradeName)
+            rootListing.overrideGrade(Grade(gradeName,oldGrade.lastModified))
+            LocalSave.saveObject(R.string.S3_Object_Listing, rootListing)
 
             //Close progres dialog
             progressDialog.dismiss()
@@ -57,20 +66,34 @@ object DeleteService {
     }
 
     fun deleteLesson(context: Context, gradeName: String, lessonName: String): Boolean {
-            val progressDialog = ProgressDialog(context)
-            progressDialog.setTitle(R.string.Deletion_Prompt_Title)
-            progressDialog.isIndeterminate = false
-            progressDialog.setCancelable(isProgressDialogCancellable)
-            progressDialog.max = context.fileList().size
-            progressDialog.show()
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(R.string.Deletion_Prompt_Title)
+        progressDialog.isIndeterminate = false
+        progressDialog.setCancelable(isProgressDialogCancellable)
+        progressDialog.max = context.fileList().size
+        progressDialog.show()
 
-            //Insert code here.
+        //Insert code here.
+        Log.d(TAG,"Removing media files for lesson $lessonName.")
+        for (file in context.fileList()) {
+            if (file.split(DownloadService.mediaFileDelimiter).size > 1 && file.split(DownloadService.mediaFileDelimiter)[1].equals(lessonName)) {
+                Log.d(TAG,"Deleting file: $file")
+                context.deleteFile(file)
+            }
+        }
 
-            //Close progres dialog
-            progressDialog.dismiss()
+        //Get rootlisting and override the old lesson
+        Log.d(TAG,"Replacing grade object in root listing.")
+        val rootListing = LocalSave.loadObject(R.string.S3_Object_Listing) as RootListing
+        val oldLesson = rootListing.findGrade(gradeName).findLesson(lessonName)
+        rootListing.findGrade(gradeName).overrideLesson(Lesson(lessonName, oldLesson.description))
+        LocalSave.saveObject(R.string.S3_Object_Listing, rootListing)
 
-            //End the process
-            return true
+        //Close progres dialog
+        progressDialog.dismiss()
+
+        //End the process
+        return true
     }
 
     fun deleteRootListing(context: Context): Boolean {

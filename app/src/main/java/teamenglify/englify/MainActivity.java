@@ -490,42 +490,4 @@ public class MainActivity extends AppCompatActivity {
             fm.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
-
-    public void initializeDictionary() {
-        //Initialize Myanmar-Dictionary App
-        externalApp = getPackageManager().getLaunchIntentForPackage("com.naing.englishmyanmardictionary");
-        if (externalApp == null) {
-            //Ask them whether they want to download another app?
-            if (hasInternetConnection == false) {
-                Toast.makeText(this, R.string.Dictionary_Download_Unavailable, Toast.LENGTH_LONG).show();
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.Dictionary_Download_Prompt);
-                builder.setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent market = new Intent(Intent.ACTION_VIEW);
-                        market.setData(Uri.parse("market://details?id=com.naing.englishmyanmardictionary&hl=en"));
-                        startActivity(market);
-                    }
-                });
-                builder.setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(mainActivity, R.string.Dictionary_Download_Reject, Toast.LENGTH_LONG).show();
-                    }
-                });
-                AlertDialog ap = builder.create();
-                ap.show();
-            }
-        } else {
-            externalApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(externalApp);
-            //Toast.makeText(this, R.string.Dictionary_Load_Success, Toast.LENGTH_LONG).show();
-            //Reorder our main activity to the top.
-            Intent mApp = getPackageManager().getLaunchIntentForPackage("teamenglify.englify");
-            mApp.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(mApp);
-        }
-    }
 }
