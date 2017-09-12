@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         newFragment = new Tutorial();
                         break;
                     case 5:
-                        new DataManager().checkForUpdates();
+                        new DataManager(getApplicationContext()).checkForUpdates();
                         break;
                 }
                 if (newFragment != null) {

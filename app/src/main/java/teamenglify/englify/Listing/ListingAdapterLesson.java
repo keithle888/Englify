@@ -26,9 +26,9 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
     private Grade grade;
     public static final String lessonPrefix = "Lesson ";
 
-    public ListingAdapterLesson(Grade grade) {
+    public ListingAdapterLesson(Grade grade, Context context) {
         this.grade = grade;
-        this.mContext = mainActivity.getApplicationContext();
+        this.mContext = context;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ListingAdapterLesson extends RecyclerView.Adapter<ListingViewHolder
                 MainActivity.lesson = selected;
                 Lesson lesson = grade.findLesson(selected);
                 if (lesson.modules.size() == 0) { //Lesson has not been downloaded.
-                    new DataManager().download_lesson(grade, lesson);
+                    new DataManager(mContext).download_lesson(grade, lesson);
                 } else {
                     mainActivity.getSupportFragmentManager()
                             .beginTransaction()

@@ -6,6 +6,7 @@ package teamenglify.englify.DataService;
  */
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,6 +27,11 @@ public class DataManager {
     private static final String TAG = DataManager.class.getSimpleName();
     private static final int LOCAL_STORAGE_VERSION = 1;
     private static final String LOCAL_STORAGE_VERSION_FILE_NAME = "LOCAL_STORAGE_VERSION";
+    private Context context;
+
+    public DataManager(Context context) {
+        this.context = context;
+    }
     /**
      * getListing() is to get a listing of all the Grades (a RootListing)
      * Once it has been loaded, the MainActivity variable downloadedObject will be set as the RootListing object.
@@ -39,7 +45,7 @@ public class DataManager {
         } else {
             if (mainActivity.hasInternetConnection) {
                 Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
-                new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_GRADES).execute();
+                new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_GRADES, context).execute();
             } else {
                 Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
             }
@@ -48,7 +54,7 @@ public class DataManager {
 
     public void download_list_of_lessons(Grade grade) {
         if (mainActivity.hasInternetConnection) {
-            new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_LESSONS, grade).execute();
+            new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_LESSONS, grade, context).execute();
         } else {
             Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();
         }
@@ -67,31 +73,7 @@ public class DataManager {
      * @param grade
      */
     public void deleteGrade(Grade grade) {
-        promptForDeletion(grade);
-    }
-
-    /**
-     * The AlertDialog prompt to get confirmation that the user wants to delete the grade. Is called by getDelete() method.
-     * @param grade
-     */
-    public void promptForDeletion(final Grade grade) {
-        //create a dialog to ask whether they want to download the grade
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        builder.setTitle(mainActivity.getString(R.string.Deletion_Prompt_Title))
-                .setMessage(mainActivity.getString(R.string.Deletion_Check) + " " + grade.name + " ?")
-                .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        mainActivity.onBackPressed();
-                    }
-                })
-                .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        DeleteService.INSTANCE.deleteGradeRx(mainActivity.getApplicationContext(), grade.name).blockingGet();
-                    }
-                })
-                .show();
+        DeleteService.INSTANCE.deleteGrade(context, grade.name);
     }
 
     public void ask_to_download_lesson(final Grade grade,final Lesson lesson) {
@@ -101,7 +83,7 @@ public class DataManager {
                 .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        new DownloadService(DownloadService.DOWNLOAD_LESSON, grade, lesson).execute();
+                        new DownloadService(DownloadService.DOWNLOAD_LESSON, grade, lesson, context).execute();
                     }
                 })
                 .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
@@ -137,7 +119,7 @@ public class DataManager {
             if (gradesToBeChecked.size() == 0) {
                 showToastNoLessonsDownloaded();
             } else { // There are lessons that can be checked for updates
-                new UpdateService(gradesToBeChecked).execute();
+                new UpdateService(gradesToBeChecked, context).execute();
             }
         } else {
             showToastNoLessonsDownloaded();

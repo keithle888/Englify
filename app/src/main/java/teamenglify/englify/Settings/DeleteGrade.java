@@ -1,5 +1,8 @@
 package teamenglify.englify.Settings;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import teamenglify.englify.DataService.DataManager;
+import teamenglify.englify.DataService.DeleteService;
 import teamenglify.englify.DataService.LocalSave;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
@@ -56,14 +60,16 @@ public class DeleteGrade extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
         //specify adapter
-        mAdapter = new DeleteGradeAdapter(mRootListing);
+        mAdapter = new DeleteGradeAdapter(mRootListing, getContext());
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private class DeleteGradeAdapter extends RecyclerView.Adapter<DeleteGradeAdapter.DeleteGradeViewHolder> {
         private RootListing rootListing;
+        private Context context;
 
-        public DeleteGradeAdapter(RootListing rootListing) {
+        public DeleteGradeAdapter(RootListing rootListing, Context context) {
+            this.context = context;
             //filter and remove grades that are not downloaded
             RootListing newListing = new RootListing(new ArrayList<Grade>());
             for (int i = 0; i < rootListing.grades.size(); i++) {
@@ -89,7 +95,7 @@ public class DeleteGrade extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new DataManager().deleteGrade(rootListing.grades.get(position));
+                    promptForDeletion(rootListing.grades.get(position));
                 }
             });
         }
@@ -109,6 +115,31 @@ public class DeleteGrade extends Fragment {
             }
 
             public void updateUI(String text) {mTextView.setText(text);}
+        }
+
+        /**
+         * The AlertDialog prompt to get confirmation that the user wants to delete the grade. Is called by getDelete() method.
+         * @param grade
+         */
+        public void promptForDeletion(final Grade grade) {
+            //create a dialog to ask whether they want to download the grade
+            AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+            builder.setTitle(mainActivity.getString(R.string.Deletion_Prompt_Title))
+                    .setMessage(mainActivity.getString(R.string.Deletion_Check) + " " + grade.name + " ?")
+                    .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            mainActivity.onBackPressed();
+                        }
+                    })
+                    .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            new DataManager(getContext()).deleteGrade(grade);
+                            mainActivity.onBackPressed();
+                        }
+                    })
+                    .show();
         }
     }
 }

@@ -2,6 +2,7 @@ package teamenglify.englify.DataService;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 
@@ -32,10 +33,12 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
     private ProgressDialog pd;
     private ArrayList<Grade> gradesToBeChecked;
     private ArrayList<Grade> gradesToBeUpdated;
+    private Context context;
 
 
-    public UpdateService (ArrayList<Grade> grades) {
+    public UpdateService (ArrayList<Grade> grades, Context context) {
         gradesToBeChecked = grades;
+        this.context = context;
     }
 
     @Override
@@ -97,7 +100,7 @@ public class UpdateService extends AsyncTask<Void, String, Boolean> {
                         summaries = getSummaries(rootDirectory, grade.name, lesson.name);
                         for (S3ObjectSummary summary : summaries) {
                             if (summary.getLastModified().after(lesson.lastModified)) {
-                                new DownloadService(DownloadService.DOWNLOAD_LESSON, grade, lesson).execute();
+                                new DownloadService(DownloadService.DOWNLOAD_LESSON, grade, lesson, context).execute();
                                 break;
                             }
                         }

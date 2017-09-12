@@ -1,6 +1,7 @@
 package teamenglify.englify.DataService;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -58,6 +59,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     public LinkedList<String> texts;
     private String baseMessage = "Downloading:";
     static final String mediaFileDelimiter = "_";
+    private Context context;
 
 
     /**
@@ -65,8 +67,9 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      *
      * @param i Should be DOWNLOAD_LISTING
      */
-    public DownloadService(int i) {
+    public DownloadService(int i, Context context) {
         this.downloadType = i;
+        this.context = context;
     }
 
     /**
@@ -75,15 +78,17 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @param downloadType     Based on integer static variables
      * @param grade Grade object to be downloaded. Can found from RootListing object in local memory.
      */
-    public DownloadService(int downloadType, Grade grade) {
+    public DownloadService(int downloadType, Grade grade, Context context) {
         this.downloadType = downloadType;
         this.grade = grade;
+        this.context = context;
     }
 
-    public DownloadService(int downloadType, Grade grade, Lesson lesson) {
+    public DownloadService(int downloadType, Grade grade, Lesson lesson, Context context) {
         this.downloadType = downloadType;
         this.grade = grade;
         this.lesson = lesson;
+        this.context = context;
     }
 
     @Override
@@ -162,12 +167,12 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             }
         } else {
             if (downloadType == DOWNLOAD_LISTING_OF_GRADES) {
-                DeleteService.INSTANCE.deleteRootListingRx(mainActivity.getApplicationContext());
+                DeleteService.INSTANCE.deleteRootListing(context);
             } else if (downloadType == DOWNLOAD_LISTING_OF_LESSONS) {
                 mainActivity.clearBackStack();
                 mainActivity.loadLoginFragment();
             } else if (downloadType == DOWNLOAD_LESSON) {
-                DeleteService.INSTANCE.deleteLessonRx(mainActivity.getApplicationContext(),
+                DeleteService.INSTANCE.deleteLesson(context,
                         grade.name,
                         lesson.name);
             }

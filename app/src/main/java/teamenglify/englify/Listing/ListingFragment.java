@@ -102,12 +102,12 @@ public class ListingFragment extends Fragment {
         super.onStart();
         //objectToLoad not present, download
         if (listingType == LIST_GRADES) {
-            new DataManager().getListing();
+            new DataManager(getContext()).getListing();
         } else if (listingType == LIST_LESSONS) {
             //check if the list of lessons for the grade has been downloaded (using size)
             Grade selected_grade = (Grade) object_to_load;
             if (selected_grade.lessons.size() == 0) {
-                new DataManager().download_list_of_lessons(selected_grade);
+                new DataManager(getContext()).download_list_of_lessons(selected_grade);
             } else {
                 mUpdateUIAfterDataLoaded(selected_grade);
             }
@@ -156,7 +156,7 @@ public class ListingFragment extends Fragment {
         Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating ListingFragment UI with the listing of lessons for " + grade.name + " with " + grade.lessons.size() + " lessons.");
         if (listingType == LIST_LESSONS) {
             updateActionBarTitle();
-            listingAdapterLesson = new ListingAdapterLesson(grade);
+            listingAdapterLesson = new ListingAdapterLesson(grade, getContext());
             recyclerView.setAdapter(listingAdapterLesson);
             //load additional settings
             mainActivity.mLayoutManager = new GridLayoutManager(mainActivity.getApplicationContext(), 1);
