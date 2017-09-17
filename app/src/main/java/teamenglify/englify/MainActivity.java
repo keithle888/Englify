@@ -423,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
                         newFragment = new Tutorial();
                         break;
                     case 5:
+                        //Toast.makeText(getApplicationContext(), "Coming soon.", Toast.LENGTH_LONG).show();
                         new DataManager(getApplicationContext()).checkForUpdates();
                         break;
                 }

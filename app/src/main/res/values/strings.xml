@@ -45,7 +45,7 @@
     <string name="Download_Failed_No_Internet">Download failed due to lack of internet connection.</string>
     <string name="Deletion_Check">Are you sure you want to delete</string>
     <string name="Deletion_Check_b">အမွန္တကယ္ဖ်က္းလိုပါသလား။</string>
-    <string name="Update_Reject">No grade(s) have been downloaded.</string>
+    <string name="Update_Reject">No lesson(s) have been downloaded.</string>
     <string name="Update_Reject_b">မည္သည့္အဆင့္မွ် ထုတ္ယူ (download) ၿခင္းမရွိပ္။</string>
     <string name="Update_Prompt_Message">An update is available. Would you like to update?</string>
     <string name="Update_Prompt_Message_b">အဆင့္ၿမင့္ၿခင္း (update) လုပ္ႏိုင္ပါၿပီ။ လိုပ္လိုပါသလာ။</string>
