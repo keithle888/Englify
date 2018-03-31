@@ -1,14 +1,9 @@
 package teamenglify.englify;
 
 import android.content.Intent;
-import android.nfc.Tag;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.*;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ServiceCompat;
-import android.support.v4.widget.TextViewCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,30 +16,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-import java.util.StringJoiner;
 
-import teamenglify.englify.ExerciseModule.ExerciseModule;
-import teamenglify.englify.Model.Conversation;
-import teamenglify.englify.Model.ExerciseChapter;
-import teamenglify.englify.Model.ExerciseChapterPart;
-import teamenglify.englify.Model.Read;
-import teamenglify.englify.Model.ReadPart;
-import teamenglify.englify.Model.Vocab;
-import teamenglify.englify.Model.VocabPart;
+/*
 
-import static teamenglify.englify.MainActivity.mainActivity;
-import static teamenglify.englify.MainActivity.read;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SpeechRecognition#newInstance} factory method to
- * create an instance of this fragment.
- * */
 public class SpeechRecognition extends Fragment implements RecognitionListener {
     public static final String FM_TAG_NAME = "SPEECH_RECOGNITION";
     private static final String TAG = SpeechRecognition.class.getSimpleName();
@@ -58,7 +35,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     private int position;
     private Object object;
     private long replyTimeOut = 3000;
-    private StopWatch stopWatch;
 
     public SpeechRecognition() {
         // Required empty public constructor
@@ -394,4 +370,6 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         }
         return textToMatch;
     }
+
 }
+*/

@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
 
 /**
@@ -51,7 +50,6 @@ public class Feedback extends Fragment {
         final EditText feedback = (EditText) v.findViewById(R.id.feedEditText);
 
         Button sendBtn = (Button)v.findViewById(R.id.sendFeedback);
-        MainActivity.getMainActivity().getSupportActionBar().setTitle("Feedback");
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,14 +68,14 @@ public class Feedback extends Fragment {
                     phoneNumber.setTextColor(Color.RED);
                 } else {
                     name.setTextColor(Color.BLACK);
-                    new AsyncSendMail(MainActivity.getMainActivity(),name.getText().toString(), phoneNumber.getText().toString(), feedback.getText().toString()).execute();
+                    //new AsyncSendMail(MainActivity.getMainActivity(),name.getText().toString(), phoneNumber.getText().toString(), feedback.getText().toString()).execute();
                 }
             }
         });
 
         return v;
     }
-
+/*
     private class AsyncSendMail extends AsyncTask<Void,Void,Void> {
         private MainActivity context;
         private String name;
@@ -128,4 +126,5 @@ public class Feedback extends Fragment {
             }
         }
     }
+    */
 }

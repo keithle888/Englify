@@ -22,4 +22,6 @@
     <dimen name="speech_recognition_text_size">24sp</dimen>
     <dimen name="max_text_size">16sp</dimen>
     <dimen name="min_text_size">24sp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
 </resources>

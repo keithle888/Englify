@@ -1,35 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/tutorialLayout"
-    tools:context="teamenglify.englify.Tutorial.Tutorial">
+    tools:context=".fragments.TutorialFragment">
 
-    <android.support.v4.view.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ffffff"
-        android:id="@+id/tutorialViewPager">
-    </android.support.v4.view.ViewPager>
+    <com.yarolegovich.discretescrollview.DiscreteScrollView
+        android:id="@+id/fragment_tutorial_carousel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/btnLeftPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="90dp"
-        android:maxHeight="40dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:layout_gravity="bottom|left" />
-
-    <ImageButton
-        android:id="@+id/btnRightPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="90dp"
-        android:maxHeight="40dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:layout_gravity="bottom|right" />
-
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

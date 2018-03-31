@@ -10,22 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import teamenglify.englify.DataService.LocalSave;
-import teamenglify.englify.Model.ExerciseChapter;
-import teamenglify.englify.Model.Read;
-import teamenglify.englify.Model.Vocab;
-
-import static teamenglify.englify.MainActivity.mainActivity;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AudioBar#newInstance} factory method to
- * create an instance of this fragment.
- */
+/*
 public class AudioBar extends Fragment {
     private ImageButton audioPlayPauseButton;
     private MediaPlayer mediaPlayer;
@@ -194,3 +179,4 @@ public class AudioBar extends Fragment {
         audioPlayPauseButton.setImageResource(R.drawable.pause_button_transparent_background);
     }
 }
+*/
