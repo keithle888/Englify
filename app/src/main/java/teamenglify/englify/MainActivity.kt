@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Completable
@@ -20,7 +19,7 @@ import io.realm.RealmConfiguration
 import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import teamenglify.englify.Model.AppSettings
+import teamenglify.englify.Model.realm.AppSettings
 import teamenglify.englify.fragments.HomeFragment
 import teamenglify.englify.fragments.TutorialFragment
 import timber.log.Timber
@@ -37,11 +36,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -64,12 +58,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val mAuth = FirebaseAuth.getInstance()
         //Variable initialization
         realm = Realm.getDefaultInstance()
+    }
 
+    override fun onStart() {
+        super.onStart()
         loginAnonymousUser()
                 .andThen(decideNextUiToLoad())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Timber.d("onCreate tasks finished.")
+                    Timber.d("onStart tasks finished.")
                 }, {
                     Timber.e(it,"Failed to finish onCreate tasks.")
                     finish()
@@ -139,7 +136,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             } else {
                 if (!emitter.isDisposed) emitter.onComplete()
             }
-        }.doOnSubscribe { dialog.show() }
+        }.doOnSubscribe {  }
                 .doFinally { if (dialog.isShowing) dialog.dismiss() }
     }
 

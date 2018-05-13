@@ -2,20 +2,23 @@ package teamenglify.englify.fragments
 
 import android.os.Bundle
 import android.app.Fragment
-import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.yarolegovich.discretescrollview.DiscreteScrollView
+import io.realm.Realm
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.fragment_tutorial.*
 import teamenglify.englify.MainActivity
+import teamenglify.englify.Model.realm.AppSettings
 
 import teamenglify.englify.R
 import timber.log.Timber
 
 class TutorialFragment : Fragment() {
+    lateinit var realm: Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -25,6 +28,9 @@ class TutorialFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        //Init
+        realm = Realm.getDefaultInstance()
 
         val adapter = TutorialAdapter()
         fragment_tutorial_carousel.adapter = adapter
@@ -39,6 +45,7 @@ class TutorialFragment : Fragment() {
                 Timber.d("onScrollEnd() -> adapterPosition: $adapterPosition")
                 if (adapterPosition == (adapter.tutorials.size-1)) {
                     Timber.d("Done with tutorial.")
+                    realm.executeTransaction { it.where<AppSettings>().findFirst()!!.tutorialCompleted = true }
                     (activity as MainActivity).loadHomeFragment()
                 }
             }
@@ -47,6 +54,11 @@ class TutorialFragment : Fragment() {
                 //Do nothing
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     private class TutorialAdapter: RecyclerView.Adapter<TutorialViewHolder>() {

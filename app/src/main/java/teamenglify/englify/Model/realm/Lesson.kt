@@ -1,11 +1,11 @@
-package teamenglify.englify.Model
+package teamenglify.englify.Model.realm
 
-import io.realm.RealmList
 import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
 open class Lesson: RealmObject() {
     lateinit var name: String
-    lateinit var description: String
+    var description: String? = null
     var vocabulary: Vocabulary? = null
     var conversation: Conversation? = null
     var exercise: Exercise? = null

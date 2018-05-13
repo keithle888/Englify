@@ -7,8 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import teamenglify.englify.Model.ExerciseChapter
-import teamenglify.englify.Model.Read
+import teamenglify.englify.Model.realm.ExerciseChapter
 
 import teamenglify.englify.R
 
@@ -37,7 +36,7 @@ class ExerciseFragment : Fragment() {
             //
         }
 
-        fun addRead(exerciseChapter: ExerciseChapter) {
+        fun addChapter(exerciseChapter: ExerciseChapter) {
             chapters.add(exerciseChapter)
             notifyDataSetChanged()
         }

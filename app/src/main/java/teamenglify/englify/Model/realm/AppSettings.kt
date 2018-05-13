@@ -1,4 +1,4 @@
-package teamenglify.englify.Model
+package teamenglify.englify.Model.realm
 
 import io.realm.RealmObject
 

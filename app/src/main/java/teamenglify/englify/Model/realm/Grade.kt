@@ -1,10 +1,10 @@
-package teamenglify.englify.Model
+package teamenglify.englify.Model.realm
 
 import io.realm.RealmList
 import io.realm.RealmObject
-import java.util.*
+import io.realm.annotations.PrimaryKey
 
 open class Grade: RealmObject() {
-    lateinit var name: String
+    @PrimaryKey lateinit var name: String
     var lessons = RealmList<Lesson>()
 }

@@ -1,10 +1,9 @@
-package teamenglify.englify.Model
+package teamenglify.englify.Model.realm
 
 import io.realm.RealmList
 import io.realm.RealmObject
 
 open class ExerciseChapterPart: RealmObject() {
-    lateinit var name: String
     lateinit var question: String
     var answer = RealmList<String>()
     var choices = RealmList<Choice>()

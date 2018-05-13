@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "144180510059",
+    "firebase_url": "https://englify-app.firebaseio.com",
+    "project_id": "englify-app",
+    "storage_bucket": "englify-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144180510059:android:b1f45608f1daabe8",
+        "android_client_info": {
+          "package_name": "teamenglify.englify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144180510059-ojh0cvh0f0ko3qnero9h1rha8pbd4q9c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "teamenglify.englify",
+            "certificate_hash": "4077c3a90331c126fcc5c33a408666271b45f2f5"
+          }
+        },
+        {
+          "client_id": "144180510059-cloiro66d2o7lvdmi860fmhitiioncsa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKB34hpeikXdnHsfvBppsJIzk8yUqqLCs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144180510059-cloiro66d2o7lvdmi860fmhitiioncsa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,8 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_conversation.*
-import teamenglify.englify.Model.Grade
-import teamenglify.englify.Model.Read
+import teamenglify.englify.Model.realm.Read
 
 import teamenglify.englify.R
 
