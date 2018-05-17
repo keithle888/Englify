@@ -32,7 +32,7 @@ public class DataManager {
      */
     public void getListing() {
         Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
-        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null) {
+        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades.size() != 0) {
             Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
             //Call Update UI method in "GRADE_LISTING" ListingFragment to update grade
             ((ListingFragment) mainActivity.getSupportFragmentManager().findFragmentByTag("GRADE_LISTING")).mUpdateUIAfterDataLoaded();

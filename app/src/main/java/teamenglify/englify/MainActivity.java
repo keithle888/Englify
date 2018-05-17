@@ -67,6 +67,7 @@ import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.Settings.DeleteGrade;
 import teamenglify.englify.Tutorial.Tutorial;
 import teamenglify.englify.VocabModule.VocabModule;
+import timber.log.Timber;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
     public static String read;
     public static String bucketName;
     public static String rootDirectory;
-    public static String currentDirectory;
     public static int position;
     public static AmazonS3Client s3Client;
     public static TransferUtility transferUtility;
@@ -125,14 +125,16 @@ public class MainActivity extends AppCompatActivity {
         //default code
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Init Timber
+        if (BuildConfig.DEBUG) { Timber.plant(new Timber.DebugTree()); }
         //initialize background thread
         HandlerThread mHandlerThread = new HandlerThread(getLocalClassName());
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper());
         mHandler.post(mBackgroundThread);
         //initialize variables
-        bucketName = getString(R.string.Bucket_Name);
-        currentDirectory = rootDirectory = getString(R.string.Root_Directory);
+        bucketName = S3Properties.s3BucketName;
+        rootDirectory = getString(R.string.Root_Directory);
         transferUtility = new TransferUtility(s3Client, getApplicationContext());
         //check permissions, else request for them
         checkAndRequestPermissions();
@@ -314,6 +316,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(analytics != null) {
+            analytics.getSessionClient().resumeSession();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         Log.d("on paused", "paused");
@@ -322,11 +332,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if(analytics != null) {
-            analytics.getSessionClient().resumeSession();
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        mainActivity = null;
     }
 
     public static MainActivity getMainActivity(){
@@ -353,11 +361,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Runnable startS3Client = new Runnable() {
         public void run() {
-            CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
-                    MainActivity.getMainActivity().getApplicationContext(),
-                    S3Properties.IDENTITYPOOLID, // Identity Pool ID
-                    Regions.AP_NORTHEAST_1); // Region
-            s3Client = new AmazonS3Client(credentialsProvider);
+            s3Client = new AmazonS3Client(S3Properties.getCredentialsProvider(mainActivity.getApplicationContext()));
         }
     };
 
