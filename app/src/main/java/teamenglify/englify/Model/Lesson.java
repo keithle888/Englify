@@ -56,14 +56,13 @@ public class Lesson implements Serializable{
         return this.name;
     }
 
-    public Module findModule(String moduleName) {
-        Module toReturn = null;
-        for (Module module : modules) {
-            if (module.name.equalsIgnoreCase(moduleName)) {
-                toReturn = module;
+    public <T> Module findModuleByType(Class<T> moduleClass) {
+        for (Module module: modules) {
+            if (moduleClass.isInstance(module)) {
+                return module;
             }
         }
-        return toReturn;
+        return null;
     }
 
     public boolean updateLastModifiedDate(Date lastModified) {

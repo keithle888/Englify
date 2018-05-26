@@ -8,7 +8,10 @@ import android.view.ViewGroup;
 
 import teamenglify.englify.Listing.ListingFragment;
 import teamenglify.englify.MainActivity;
+import teamenglify.englify.Model.Conversation;
+import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.Lesson;
+import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
 import android.widget.ImageButton;
 
@@ -56,7 +59,7 @@ public class ModuleSelection extends Fragment {
                         .beginTransaction()
                         .replace(R.id.activity_main_container,
                                 ListingFragment.newInstance(ListingFragment.LIST_READS,
-                                    lesson.findModule(getString(R.string.Conversation_Folder_Name)),
+                                    lesson.findModuleByType(Conversation.class),
                                     mainActivity.getSupportActionBar().getTitle().toString()),
                                 "READ_LISTING")
                         .addToBackStack(null)
@@ -71,7 +74,7 @@ public class ModuleSelection extends Fragment {
                         .beginTransaction()
                         .replace(R.id.activity_main_container,
                                 ListingFragment.newInstance(ListingFragment.LIST_VOCABS,
-                                    lesson.findModule(getString(R.string.Vocab_Folder_Name)),
+                                    lesson.findModuleByType(Vocab.class),
                                     mainActivity.getSupportActionBar().getTitle().toString()),
                                 "VOCAB_LISTING")
                         .addToBackStack(null)
@@ -86,7 +89,7 @@ public class ModuleSelection extends Fragment {
                         .beginTransaction()
                         .replace(R.id.activity_main_container,
                                 ListingFragment.newInstance(ListingFragment.LIST_EXERCISES,
-                                        lesson.findModule("Exercise"),
+                                        lesson.findModuleByType(Exercise.class),
                                         mainActivity.getSupportActionBar().getTitle().toString()),
                                 "EXERCISE_LISTING")
                         .addToBackStack(null)

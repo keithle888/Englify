@@ -287,6 +287,21 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         //Save to local memory
         RootListing rootListing = (RootListing) LocalSave.loadObject(mainActivity.getString(R.string.S3_Object_Listing));
         rootListing.overrideGrade(grade);
+        Timber.d("Lesson conversation saved = " + lesson.findModuleByType(Conversation.class).toString());
+        if (lesson.findModuleByType(Conversation.class) != null) {
+            Conversation convo = (Conversation) lesson.findModuleByType(Conversation.class);
+            Timber.d("Lesson conversation saved = count: " + convo.reads.size());
+        }
+        Timber.d("Lesson exercise saved = " + lesson.findModuleByType(Exercise.class).toString());
+        if (lesson.findModuleByType(Exercise.class) != null) {
+            Exercise convo = (Exercise) lesson.findModuleByType(Exercise.class);
+            Timber.d("Lesson exercise saved = count: " + convo.chapters.size());
+        }
+        Timber.d("Lesson vocab saved = " + lesson.findModuleByType(Vocab.class).toString());
+        if (lesson.findModuleByType(Vocab.class) != null) {
+            Vocab convo = (Vocab) lesson.findModuleByType(Vocab.class);
+            Timber.d("Lesson vocab saved = count: " + convo.vocabParts.size());
+        }
         LocalSave.saveObject(mainActivity.getString(R.string.S3_Object_Listing), rootListing);
     }
 
@@ -296,11 +311,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, vocabKey);
         if (summaries != null) {
             Vocab vocab = new Vocab(vocabKey);
-            if (lesson.findModule(vocabKey) == null) {
+            if (lesson.findModuleByType(Vocab.class) == null) {
                 publishProgress(lesson.name + "/" + vocabKey);
                 lesson.addModule(vocab);
             } else {
-                vocab = (Vocab) lesson.findModule(vocabKey);
+                vocab = (Vocab) lesson.findModuleByType(Vocab.class);
             }
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
@@ -349,11 +364,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, conversationKey);
         if (summaries != null) {
             //Get module if lesson contains it already contains it, if not add it in.
-            if (lesson.findModule(conversationKey) == null) {
+            if (lesson.findModuleByType(Conversation.class) == null) {
                 lesson.addModule(conversation);
                 publishProgress(lesson.name + "/" + conversationKey);
             } else {
-                conversation = (Conversation) lesson.findModule(conversationKey);
+                conversation = (Conversation) lesson.findModuleByType(Conversation.class);
             }
             //Run through summaries
             for (S3ObjectSummary summary : summaries) {
@@ -378,7 +393,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      */
     public void downloadReadParts() {
         try {
-                Conversation conversation = (Conversation) lesson.findModule(conversationKey);
+                Conversation conversation = (Conversation) lesson.findModuleByType(Conversation.class);
                 if (conversation != null) {
                     for (Read read : conversation.reads) { //FOR EACH READ
                         List<S3ObjectSummary> summaries = getSummaries(generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name));
@@ -427,10 +442,10 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
         //Download exercise chapter
         if (summaries != null && summaries.size() != 0) {
             Exercise exercise = new Exercise(exerciseKey);
-            if (lesson.findModule(exerciseKey) == null) {
+            if (lesson.findModuleByType(Exercise.class) == null) {
                 lesson.addModule(exercise);
             } else {
-                lesson.findModule(exerciseKey);
+                lesson.findModuleByType(Exercise.class);
             }
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
