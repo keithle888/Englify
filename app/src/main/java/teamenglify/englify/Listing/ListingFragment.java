@@ -36,7 +36,6 @@ public class ListingFragment extends Fragment {
     //Fixed variables to be used to determine listing type
     public static final int LIST_GRADES = 0;
     public static final int LIST_LESSONS = 1;
-    public static final int LIST_MODULES = 2;
     public static final int LIST_READS = 3;
     public static final int LIST_VOCABS = 4;
     public static final int LIST_EXERCISES = 5;

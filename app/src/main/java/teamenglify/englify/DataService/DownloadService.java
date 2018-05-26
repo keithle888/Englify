@@ -56,6 +56,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     public LinkedList<String> texts;
     private String baseMessage = "Downloading:";
 
+    //AWS S3 Folder Keys
+    private String vocabKey = "vocabulary";
+    private String exerciseKey = "exercise";
+    private String conversationKey = "read";
+
     /**
      * Constructor used to download the list of grades available. Parameter should be DownloadService.DOWNLOAD_LISTING.
      *
@@ -288,14 +293,14 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     public void download_lesson_vocab() {
         //Create variables
         LinkedList<String> vocabDescriptions = null;
-        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, "Vocabulary");
+        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, vocabKey);
         if (summaries != null) {
-            Vocab vocab = new Vocab("Vocabulary");
-            if (lesson.findModule("Vocabulary") == null) {
-                publishProgress(lesson.name + "/" + "Vocabulary");
+            Vocab vocab = new Vocab(vocabKey);
+            if (lesson.findModule(vocabKey) == null) {
+                publishProgress(lesson.name + "/" + vocabKey);
                 lesson.addModule(vocab);
             } else {
-                vocab = (Vocab) lesson.findModule("Vocabulary");
+                vocab = (Vocab) lesson.findModule(vocabKey);
             }
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
@@ -340,21 +345,21 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     public void download_lesson_conversation(){
         //Create variables
         LinkedList<String> texts = null;
-        Conversation conversation = new Conversation("Conversation");
-        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, "Conversation");
+        Conversation conversation = new Conversation(conversationKey);
+        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, conversationKey);
         if (summaries != null) {
             //Get module if lesson contains it already contains it, if not add it in.
-            if (lesson.findModule("Conversation") == null) {
+            if (lesson.findModule(conversationKey) == null) {
                 lesson.addModule(conversation);
-                publishProgress(lesson.name + "/" + "Conversation");
+                publishProgress(lesson.name + "/" + conversationKey);
             } else {
-                conversation = (Conversation) lesson.findModule("Conversation");
+                conversation = (Conversation) lesson.findModule(conversationKey);
             }
             //Run through summaries
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
                 String[] delimited_path = path.split("/");
-                if (delimited_path.length == 5 && path.contains("Read")) {
+                if (delimited_path.length == 5 && path.contains(conversationKey)) {
                     conversation.addRead(new Read(delimited_path[4]));
                     publishProgress(path);
                 }
@@ -373,7 +378,7 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      */
     public void downloadReadParts() {
         try {
-                Conversation conversation = (Conversation) lesson.findModule("Conversation");
+                Conversation conversation = (Conversation) lesson.findModule(conversationKey);
                 if (conversation != null) {
                     for (Read read : conversation.reads) { //FOR EACH READ
                         List<S3ObjectSummary> summaries = getSummaries(generatePrefix(rootDirectory, grade.name, lesson.name, conversation.name, read.name));
@@ -418,14 +423,14 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
     }
 
     public void download_lesson_exercise() {
-        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, "Exercise");
+        List<S3ObjectSummary> summaries = getSummaries(rootDirectory, grade.name, lesson.name, exerciseKey);
         //Download exercise chapter
         if (summaries != null && summaries.size() != 0) {
-            Exercise exercise = new Exercise("Exercise");
-            if (lesson.findModule("Exercise") == null) {
+            Exercise exercise = new Exercise(exerciseKey);
+            if (lesson.findModule(exerciseKey) == null) {
                 lesson.addModule(exercise);
             } else {
-                lesson.findModule("Exercise");
+                lesson.findModule(exerciseKey);
             }
             for (S3ObjectSummary summary : summaries) {
                 String path = summary.getKey();
@@ -445,14 +450,14 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                         Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart details -> " + path);
                         lesson.updateLastModifiedDate(lastModified);
                     } else if (isAudioFile(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4]);
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, exerciseKey, delimited_path[4]);
                         LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
                         exerciseChapter.addExerciseChapterPartAudio(removeExtension(delimited_path[5]), mediaFilePath);
                         publishProgress(path);
                         Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + path);
                         lesson.updateLastModifiedDate(lastModified);
                     } else if (isImg(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, "Exercise", delimited_path[4]);
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, exerciseKey, delimited_path[4]);
                         LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
                         exerciseChapter.addExerciseChapterPartImg(removeExtension(delimited_path[5]), mediaFilePath);
                         publishProgress(path);

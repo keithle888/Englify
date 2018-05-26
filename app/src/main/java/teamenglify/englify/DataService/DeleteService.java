@@ -101,6 +101,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
             }
         }
         Grade newGrade = new Grade(grade.name);
+        newGrade.lastModified = grade.lastModified;
         //reset grade stored in Root Listing
         RootListing rootListing = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
         rootListing.overrideGrade(newGrade);

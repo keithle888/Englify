@@ -188,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void submitMobileAnalytics (){
+        /*
         int analyticsPercentage = S3Properties.analyticsPercentage;
 
         if(analytics != null) {
@@ -289,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
             appUsage.setFirstThreeLessonSubmitted(true);
             Log.d("completed event", "submit 3 lessons completed");
         }
+        */
     }
 
     @Override
