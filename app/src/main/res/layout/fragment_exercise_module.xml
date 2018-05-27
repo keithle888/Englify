@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
-        android:numColumns="5"
+        android:numColumns="auto_fit"
         android:id="@+id/exercise_choices">
     </GridView>
 

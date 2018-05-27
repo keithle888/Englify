@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import teamenglify.englify.AudioBar;
@@ -21,7 +22,7 @@ public class ExerciseModule extends Fragment {
     private ExerciseChapter exerciseChapter;
     public int partNumber;
     public TextView questionView;
-    public RecyclerView choices_recycler;
+    public GridView choices_recycler;
 
 
 
@@ -45,7 +46,7 @@ public class ExerciseModule extends Fragment {
         View view = inflater.inflate(R.layout.fragment_exercise_module, container, false);
         Log.d("Englify", "Class ExerciseModule: Method onCreateView(): Loading Exercise Module.");
         questionView = (TextView) view.findViewById(R.id.exercise_question);
-        choices_recycler = (RecyclerView) view.findViewById(R.id.exercise_choices);
+        choices_recycler = (GridView) view.findViewById(R.id.exercise_choices);
 
         //Pull in audio player and speech recognition
         mainActivity.getSupportFragmentManager()
