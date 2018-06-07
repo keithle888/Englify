@@ -19,6 +19,7 @@ import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -31,14 +32,17 @@ public class DataManager {
      * Once it has been loaded, the MainActivity variable downloadedObject will be set as the RootListing object.
      */
     public void getListing() {
-        Log.d("Englify", "Class DataManager: Method getListing(): Checking memory for listing availability.");
-        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null && ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades.size() != 0) {
-            Log.d("Englify", "Class DataManager: Method getListing(): Listing was found in internal memory.");
+        Timber.d("Class DataManager: Method getListing(): Checking memory for listing availability.");
+        if (LocalSave.doesFileExist(mainActivity.getString(R.string.S3_Object_Listing)) &&
+                LocalSave.loadObject(R.string.S3_Object_Listing) != null &&
+                ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades != null &&
+                ((RootListing)LocalSave.loadObject(R.string.S3_Object_Listing)).grades.size() != 0) {
+            Timber.d("Class DataManager: Method getListing(): Listing was found in internal memory.");
             //Call Update UI method in "GRADE_LISTING" ListingFragment to update grade
             ((ListingFragment) mainActivity.getSupportFragmentManager().findFragmentByTag("GRADE_LISTING")).mUpdateUIAfterDataLoaded();
         } else {
             if (mainActivity.hasInternetConnection) {
-                Log.d("Englify", "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
+                Timber.d( "Class DataManager: Method getListing(): Listing not available in internal memory. Moving to download listing from AWS S3");
                 new DownloadService(DownloadService.DOWNLOAD_LISTING_OF_GRADES).execute();
             } else {
                 Toast.makeText(mainActivity, "No internet connection detected.", Toast.LENGTH_SHORT).show();

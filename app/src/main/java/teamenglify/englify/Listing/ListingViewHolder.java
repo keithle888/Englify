@@ -11,6 +11,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 
 public class ListingViewHolder extends RecyclerView.ViewHolder {
@@ -23,7 +24,7 @@ public class ListingViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ListingViewHolder", "card view clicked");
+                Timber.d("card view clicked");
             }
         });
     }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+import timber.log.Timber;
 
 
 public class Grade implements Serializable{
@@ -72,7 +73,7 @@ public class Grade implements Serializable{
                 if (lesson != null) {
                     lesson.description = keys[1];
                 } else {
-                    Log.d("Englify", "Class Grade: Method overwriteLessonDescriptions(): Description found without matching lesson -> " + description);
+                    Timber.d("Class Grade: Method overwriteLessonDescriptions(): Description found without matching lesson -> " + description);
                 }
             }
         }

@@ -27,6 +27,7 @@ import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.ReadPart;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.Model.VocabPart;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.mainActivity;
 import static teamenglify.englify.MainActivity.read;
@@ -124,7 +125,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     }
 
     public void setButtonListener() {
-        Log.d("SpeechRecognition", "Setting speechButton onTouchListeners");
+        Timber.d( "Setting speechButton onTouchListeners");
         speechButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -153,31 +154,31 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     @Override
     public void onBeginningOfSpeech() {
-        Log.d("SpeechRecognition", "onBeginningOfSpeech");
+        Timber.d( "onBeginningOfSpeech");
         speechProgressBar.setIndeterminate(false);
         speechProgressBar.setMax(20);
     }
 
     @Override
     public void onBufferReceived(byte[] buffer) {
-        Log.d("SpeechRecognition", "onBufferReceived: " + buffer);
+        Timber.d( "onBufferReceived: " + buffer);
     }
 
     @Override
     public void onEndOfSpeech() {
-        Log.d("SpeechRecognition", "End of speech");
+        Timber.d( "End of speech");
         speechProgressBar.setIndeterminate(true);
     }
 
     @Override
     public void onError(int errorCode) {
         String errorMessage = getErrorText(errorCode);
-        Log.d("SpeechRecognition", "FAILED " + errorMessage);
+        Timber.d( "FAILED " + errorMessage);
     }
 
     @Override
     public void onEvent(int arg0, Bundle arg1) {
-        Log.d("SpeechRecognition", "onEvent");
+        Timber.d( "onEvent");
     }
 
     @Override
@@ -187,12 +188,12 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
 
     @Override
     public void onReadyForSpeech(Bundle arg0) {
-        Log.d("SpeechRecognition", "onReadyForSpeech");
+        Timber.d( "onReadyForSpeech");
     }
 
     @Override
     public void onResults(Bundle results) {
-        Log.d("SpeechRecognition", "onResults");
+        Timber.d("onResults");
         ArrayList<String> matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         int score = calculateScore(results);
@@ -277,7 +278,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
     };
 
     public void updateUI() {
-        Log.d("Englify", "Class SpeechRecognition: Method updateUI(): Updating UI");
+        Timber.d( "Class SpeechRecognition: Method updateUIBasedOnPage(): Updating UI");
         if (object instanceof Vocab) {
             VocabPart vocabPart = ((Vocab)object).vocabParts.get(position);
             textToMatch = vocabPart.text;
@@ -311,21 +312,21 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
             stopWatch = new StopWatch();
         }
         stopWatch.start();
-        Log.d("Englify", "Class SpeechRecognition: Method startTimeoutTimer(): Timer started." );
+        Timber.d( "Class SpeechRecognition: Method startTimeoutTimer(): Timer started." );
     }
 
     public void checkTimeoutTimer() {
         if (stopWatch.isRunning() && stopWatch.lapTime() > replyTimeOut) {
             speechReturnTextView.setText(getString(R.string.Speech_Recognition_Timeout) + " - " + getString(R.string.Speech_Recognition_Timeout_b));
             resetTimeoutTimer();
-            Log.d("Englify", "Class SpeechRecognition: Method checkTimeoutTimer(): Timed out." );
+            Timber.d( "Class SpeechRecognition: Method checkTimeoutTimer(): Timed out." );
         }
-        Log.d("Englify", "Class SpeechRecognition: Method checkTimeoutTimer(): Timer has not timed out. " + (replyTimeOut - stopWatch.lapTime()) + "ms left." );
+        Timber.d( "Class SpeechRecognition: Method checkTimeoutTimer(): Timer has not timed out. " + (replyTimeOut - stopWatch.lapTime()) + "ms left." );
     }
 
     public void resetTimeoutTimer() {
         stopWatch.stop();
-        Log.d("Englify", "Class SpeechRecognition: Method resetTimeoutTimer: Timer reset." );
+        Timber.d( "Class SpeechRecognition: Method resetTimeoutTimer: Timer reset." );
     }
 
     public int calculateScore(Bundle results) {
@@ -333,10 +334,10 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
         float[] scores = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
         if (scores != null && scores.length != 0) {
             float score = scores[0];
-            Log.d("Englify", "Class SpeechRecognition: Method calculateScore(): Base score received from results is => " + score);
+            Timber.d( "Class SpeechRecognition: Method calculateScore(): Base score received from results is => " + score);
             String[] dReturnText = returnText.split(" ");
             String[] dMatchText = (textToMatch.split("-"))[0].trim().split(" "); //Seperate the myanmese part out, then trim whitespaces, then break the english part down into words.
-            Log.d("Englify", "Class SpeechRecognition: Method calculateScore(): MatchText => " + Arrays.toString(dMatchText) + " ReturnText => " + Arrays.toString(dReturnText));
+            Timber.d( "Class SpeechRecognition: Method calculateScore(): MatchText => " + Arrays.toString(dMatchText) + " ReturnText => " + Arrays.toString(dReturnText));
             int correctWords = 0;
             if (dReturnText.length >= dMatchText.length) {
                 for (int i = 0; i < dMatchText.length ; i++) {
@@ -351,7 +352,7 @@ public class SpeechRecognition extends Fragment implements RecognitionListener {
                     }
                 }
             }
-            Log.d("Englify", "Class SpeechRecognition: Method calculateScore(): Number of correct words => " + correctWords);
+            Timber.d( "Class SpeechRecognition: Method calculateScore(): Number of correct words => " + correctWords);
             return (int)((score * (correctWords / (double) dMatchText.length)) * 100);
         }
         return 999;

@@ -6,17 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,8 +37,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
 
 import teamenglify.englify.DataService.DataManager;
@@ -50,33 +44,17 @@ import teamenglify.englify.DataService.S3Properties;
 import teamenglify.englify.ExerciseModule.ExerciseModule;
 import teamenglify.englify.FeedbackModule.Feedback;
 import teamenglify.englify.Listing.ListingFragment;
-import teamenglify.englify.LoginFragment.LoginFragment;
-import teamenglify.englify.Model.Conversation;
-import teamenglify.englify.Model.Exercise;
+import teamenglify.englify.LoginFragment.HomeFragment;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.AppUsage;
-import teamenglify.englify.Model.Grade;
-import teamenglify.englify.Model.Lesson;
-import teamenglify.englify.Model.Module;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.TutorialObj;
 import teamenglify.englify.Model.Vocab;
-import teamenglify.englify.ModuleSelection.ModuleSelection;
-import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.Settings.DeleteGrade;
 import teamenglify.englify.Tutorial.Tutorial;
 import teamenglify.englify.VocabModule.VocabModule;
 import timber.log.Timber;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.ListActivity;
-import android.os.Bundle;
-import android.os.Environment;
-import android.widget.ArrayAdapter;
 
 import com.amazonaws.mobileconnectors.amazonmobileanalytics.*;
 public class MainActivity extends AppCompatActivity {
@@ -169,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         completedList = appUsage.getCompletedList();
         analyticListVocab =  appUsage.getAnalyticListVocab();
         analyticListRead = appUsage.getAnalyticListRead();
-        Log.d("load from object", appUsage.getAnalyticListVocab().toString());
+        Timber.d(appUsage.getAnalyticListVocab().toString());
     }
 
     @Override
@@ -192,13 +170,13 @@ public class MainActivity extends AppCompatActivity {
         int analyticsPercentage = S3Properties.analyticsPercentage;
 
         if(analytics != null) {
-            //Log.d("MainActivity", "event not recorded");
+            //Timber.d("MainActivity", "event not recorded");
             //analytics.getEventClient().submitEvents();
             Iterator itVocab = analyticListVocab.entrySet().iterator();
             while (itVocab.hasNext()) {
                 Map.Entry pair = (Map.Entry) itVocab.next();
                 ArrayList<String> dataListVocab = (ArrayList<String>) pair.getValue();
-                //Log.d("main activity", ""+dataListVocab.toString());
+                //Timber.d("main activity", ""+dataListVocab.toString());
                 String eventName = pair.getKey().toString();
                 String gradeName = pair.getKey().toString().substring(0, 7);
                 String lessonName = pair.getKey().toString().substring(7, 15);
@@ -233,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if (!eventRecorded) {
                             analytics.getEventClient().recordEvent(event);
-                            Log.d("event recorded", event.toString());
+                            Timber.d("event recorded", event.toString());
                             completedList.add(eventName);
                         }
                     }
@@ -249,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 String lessonName = pair.getKey().toString().substring(7,15);
                 RootListing root = (RootListing) LocalSave.loadObject(R.string.S3_Object_Listing);
                 Grade grade = root.findGrade(gradeName);
-                Log.d("grade root check", grade.toString());
+                Timber.d("grade root check", grade.toString());
                 if (grade!=null && grade.lessons.size()!=0) {
                     Lesson lesson = grade.findLesson(lessonName);
                     Vocab vocab = (Vocab) lesson.findModule((getString(R.string.Vocab_Folder_Name)));
@@ -288,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
             AnalyticsEvent event = analytics.getEventClient().createEvent("completedFirst3Lessons").withAttribute("UserID", userID+"");
             analytics.getEventClient().recordEvent(event);
             appUsage.setFirstThreeLessonSubmitted(true);
-            Log.d("completed event", "submit 3 lessons completed");
+            Timber.d("completed event", "submit 3 lessons completed");
         }
         */
     }
@@ -328,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("on paused", "paused");
+        Timber.d( "onPause()");
         submitMobileAnalytics();
         mHandler.removeCallbacks(mBackgroundThread);
     }
@@ -344,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadLoginFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment(), "LOGIN_FRAGMENT").addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new HomeFragment(), "LOGIN_FRAGMENT").addToBackStack(null).commit();
         //Initialize English-Myanmar Dictionary
         //initializeDictionary();
     }
@@ -408,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
 
             );
         } catch(InitializationException ex) {
-            Log.e(this.getClass().getName(), "Failed to initialize Amazon Mobile Analytics", ex);
+            Timber.e(this.getClass().getName(), "Failed to initialize Amazon Mobile Analytics", ex);
         }
     }
 
@@ -428,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         //Goes to Login
-                        newFragment = new LoginFragment();
+                        newFragment = new HomeFragment();
                         break;
                     case 1:
                         //Clear backstack
@@ -491,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
             if (activeNetwork != null && hasInternetConnection != activeNetwork.isConnected() ) {
                 hasInternetConnection = activeNetwork.isConnected();
                 isWiFiConnection = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-                Log.d("Englify", "Class MainActivity: Method mBackgroundThread: Internet Status -> " + hasInternetConnection);
+                Timber.d( "Class MainActivity: Method mBackgroundThread: Internet Status -> " + hasInternetConnection);
             }
             //cause the background thread to run every 1000ms.
             mHandler.postDelayed(mBackgroundThread, 1000);
@@ -505,9 +483,9 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("MainActivity", "Record Audio Permission Granted.");
+                    Timber.d( "Record Audio Permission Granted.");
                 } else {
-                    Log.d("MainActivity", "Record Audio Permission Denied.");
+                    Timber.d("Record Audio Permission Denied.");
                 }
 
             }
@@ -515,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clearBackStack() {
-        Log.d("Englify", "Class MainActivity: Method clearBackStack(): Clearing Back Stack.");
+        Timber.d( "Class MainActivity: Method clearBackStack(): Clearing Back Stack.");
         FragmentManager fm = getSupportFragmentManager();
         if (fm.getBackStackEntryCount() > 0) {
             FragmentManager.BackStackEntry first = fm.getBackStackEntryAt(0);

@@ -22,6 +22,7 @@ import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.mainActivity;
 
@@ -116,7 +117,7 @@ public class ListingFragment extends Fragment {
     }
 
     public void mUpdateUIAfterDataLoaded() {
-        Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
+        Timber.d( "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating UI.");
         //get the listings based on which listingType
         if (listingType == LIST_GRADES) {
             Object object = LocalSave.loadObject(getString(R.string.S3_Object_Listing));
@@ -143,7 +144,7 @@ public class ListingFragment extends Fragment {
     }
 
     public void mUpdateUIAfterDataLoaded(Grade grade) {
-        Log.d("Englify", "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating ListingFragment UI with the listing of lessons for " + grade.name + " with " + grade.lessons.size() + " lessons.");
+        Timber.d( "Class ListingFragment: Method mUpdateUIAfterDataLoaded(): Updating ListingFragment UI with the listing of lessons for " + grade.name + " with " + grade.lessons.size() + " lessons.");
         if (listingType == LIST_LESSONS) {
             mainActivity.getSupportActionBar().setTitle(grade.name);
             listingAdapterLesson = new ListingAdapterLesson(grade);

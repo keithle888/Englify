@@ -34,6 +34,7 @@ import teamenglify.englify.R;
 import teamenglify.englify.ReadingModule.ReadImage;
 import teamenglify.englify.ReadingModule.ReadingModule;
 import teamenglify.englify.VocabModule.VocabImage;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -131,7 +132,7 @@ public class ListingAdapter extends RecyclerView.Adapter<ListingViewHolder> {
                                             mainActivity.getSupportActionBar().getTitle().toString()),
                                     "LESSON_LISTING")
                             .addToBackStack(null).commit();
-                    Log.d(bucketName, "Class ListingAdapter: Method onBindViewHolder(): " + selected + " was selected.");
+                    Timber.d("Class ListingAdapter: Method onBindViewHolder(): " + selected + " was selected.");
                 } else if (listingType == ListingFragment.LIST_LESSONS) {
                     MainActivity.lesson = selected;
                     //mainActivity.loadModuleListing(ListingFragment.MODULE_LISTING, ((Grade)object).lessons.get(position));

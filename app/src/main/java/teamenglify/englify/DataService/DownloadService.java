@@ -9,6 +9,11 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +32,7 @@ import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Conversation;
 import teamenglify.englify.Model.Exercise;
 import teamenglify.englify.Model.ExerciseChapter;
+import teamenglify.englify.Model.ExerciseChapterPart;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.Read;
@@ -459,24 +465,24 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
                     } else {
                         exerciseChapter = exercise.findExerciseChapter(delimited_path[4]);
                     }
-                    if (isTextFile(path)) {
-                        exerciseChapter.addExerciseChapterPartDetails(removeExtension(delimited_path[5]), readTextFile(s3Client.getObject(bucketName, path)));
+                    if (isJsonFile(path)) {
+                        processExerciseChapterJson(exerciseChapter, s3Client.getObject(bucketName, path));
                         publishProgress(path);
                         Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart details -> " + path);
                         lesson.updateLastModifiedDate(lastModified);
                     } else if (isAudioFile(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, exerciseKey, delimited_path[4]);
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, exerciseKey, exerciseChapter.name, delimited_path[5]);
                         LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
                         exerciseChapter.addExerciseChapterPartAudio(removeExtension(delimited_path[5]), mediaFilePath);
                         publishProgress(path);
-                        Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + path);
+                        Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart audio -> " + mediaFilePath);
                         lesson.updateLastModifiedDate(lastModified);
                     } else if (isImg(path)) {
-                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, exerciseKey, delimited_path[4]);
+                        String mediaFilePath = createMediaFileName(grade.name, lesson.name, exerciseKey, exerciseChapter.name, delimited_path[5]);
                         LocalSave.saveMedia(mediaFilePath, s3Client.getObject(bucketName, path));
                         exerciseChapter.addExerciseChapterPartImg(removeExtension(delimited_path[5]), mediaFilePath);
                         publishProgress(path);
-                        Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart image -> " + path);
+                        Timber.d( "Class DownloadService: Method download_lesson_exercise(): ExerciseChapterPart image -> " + mediaFilePath);
                         lesson.updateLastModifiedDate(lastModified);
                     }
                 }
@@ -534,11 +540,10 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @return true: if it is a folder
      */
     public static boolean isFolder(String folderName) {
-        if (folderName.contains(".txt") || folderName.contains(".png") || folderName.contains(".jpg") || folderName.contains(".mp3")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(isJsonFile(folderName) ||
+        isAudioFile(folderName) ||
+        isImg(folderName) ||
+        isTextFile(folderName));
     }
 
     /**
@@ -548,11 +553,11 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @return true; if it is a text file
      */
     public static boolean isTextFile(String path) {
-        if (path.contains(".txt")) {
-            return true;
-        } else {
-            return false;
-        }
+        return path.contains(".txt");
+    }
+
+    public static boolean isJsonFile(String path) {
+        return path.contains(".json");
     }
 
     /**
@@ -563,27 +568,15 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
      * @return true; if there is a match.
      */
     public static boolean isTextFile(String path, String fileName) {
-        if (path.contains(".txt") && path.toLowerCase().contains(fileName.toLowerCase())) {
-            return true;
-        } else {
-            return false;
-        }
+        return path.contains(".txt") && path.toLowerCase().contains(fileName.toLowerCase());
     }
 
     public static boolean isAudioFile(String fileName) {
-        if (fileName.contains(".mp3")) {
-            return true;
-        } else {
-            return false;
-        }
+        return fileName.contains(".mp3");
     }
 
     public static boolean isImg(String fileName) {
-        if (fileName.contains(".png") || fileName.contains(".jpg")) {
-            return true;
-        } else {
-            return false;
-        }
+        return fileName.contains(".png") || fileName.contains(".jpg");
     }
 
     public static LinkedList<String> readTextFile(S3Object s3Object) {
@@ -628,6 +621,61 @@ public class DownloadService extends AsyncTask<Void, String, Boolean> {
             return name.substring(0, name.lastIndexOf('.'));
         } else {
             return name;
+        }
+    }
+
+    public void processExerciseChapterJson(ExerciseChapter exerciseChapter, S3Object s3Object) {
+        //Process whole json into a string
+        StringBuilder stringBuilder = new StringBuilder();
+        S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+        BufferedReader in = new BufferedReader(new InputStreamReader(s3ObjectInputStream));
+        String s;
+        try {
+            while ((s = in.readLine()) != null) {
+                stringBuilder.append(s);
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error extracting text file into string.");
+        }
+        String jsonString = stringBuilder.toString();
+
+        //Parse json string as a json object
+        JsonArray json = new Gson().fromJson(jsonString, JsonArray.class);
+        Timber.d("Got json array: %s", json.toString());
+
+        //Iterate through json object and insert into chapter parts.
+        for (int i = 0; i < json.size(); i++) {
+            JsonObject details = json.get(i).getAsJsonObject();
+            //Get exercise chapter part.
+            String exerciseChapterPartName = details.get("name").getAsString();
+            if (exerciseChapterPartName == null || exerciseChapterPartName.isEmpty()) { continue; }
+            ExerciseChapterPart exerciseChapterPart = exerciseChapter.findExerciseChapterPart(exerciseChapterPartName);
+            if (exerciseChapterPart == null) {
+                exerciseChapterPart = new ExerciseChapterPart(exerciseChapterPartName);
+                exerciseChapter.chapterParts.add(exerciseChapterPart);
+            }
+            //Start adding details
+            exerciseChapterPart.question = details.get("question").getAsString();
+            ArrayList<String> answers = new ArrayList<>();
+            for (JsonElement answer: details.getAsJsonArray("answer")) {
+                answers.add(answer.getAsString());
+            }
+            exerciseChapterPart.answer = answers;
+            ArrayList<ArrayList<String>> outerArray = new ArrayList<>();
+            JsonArray choiceArray;
+            if ((choiceArray = details.getAsJsonArray("choices")) != null) {
+                //Outer array
+                for (JsonElement choice: choiceArray) {
+                    ArrayList<String> innerArray = new ArrayList<>();
+                    JsonArray subChoiceArray = choice.getAsJsonArray();
+                    //Inner array
+                    for (JsonElement subChoice : subChoiceArray) {
+                        innerArray.add(subChoice.getAsString());
+                    }
+                    outerArray.add(innerArray);
+                }
+                exerciseChapterPart.choices = outerArray;
+            }
         }
     }
 }

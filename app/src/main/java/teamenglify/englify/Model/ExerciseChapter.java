@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import timber.log.Timber;
+
 /**
  * Created by keith on 29-Mar-17.
  */
@@ -23,23 +25,21 @@ public class ExerciseChapter implements Serializable {
         if (doesExerciseChapterPartExist(exerciseChapterPartName)) {
             ExerciseChapterPart exerciseChapterPart = findExerciseChapterPart(exerciseChapterPartName);
             exerciseChapterPart.audioURL = audioAbsolutePath;
-        } else {
-            chapterParts.add(new ExerciseChapterPart(exerciseChapterPartName, null, audioAbsolutePath));
-        }
-    }
-
-    public void addExerciseChapterPartImg(String exerciseChapterPartName, String audioAbsolutePath) {
-        if (doesExerciseChapterPartExist(exerciseChapterPartName)) {
-            ExerciseChapterPart exerciseChapterPart = findExerciseChapterPart(exerciseChapterPartName);
-            exerciseChapterPart.imageURL = audioAbsolutePath;
+            Timber.d("Saved audio path: %s to chapterPart: %s", audioAbsolutePath, exerciseChapterPartName);
         } else {
             chapterParts.add(new ExerciseChapterPart(exerciseChapterPartName, audioAbsolutePath, null));
+            Timber.d("Created new exerciseChapterPart = name: %s", exerciseChapterPartName);
         }
     }
 
-    public void addExerciseChapterPartDetails(String exerciseChapterPartName, LinkedList<String> details) {
-        if (!doesExerciseChapterPartExist(exerciseChapterPartName)) {
-            chapterParts.add(new ExerciseChapterPart(exerciseChapterPartName, details));
+    public void addExerciseChapterPartImg(String exerciseChapterPartName, String imgAbsolutePath) {
+        if (doesExerciseChapterPartExist(exerciseChapterPartName)) {
+            ExerciseChapterPart exerciseChapterPart = findExerciseChapterPart(exerciseChapterPartName);
+            exerciseChapterPart.imageURL = imgAbsolutePath;
+            Timber.d("Saved img path: %s to chapterPart: %s", imgAbsolutePath, exerciseChapterPartName);
+        } else {
+            chapterParts.add(new ExerciseChapterPart(exerciseChapterPartName, null, imgAbsolutePath));
+            Timber.d("Created new exerciseChapterPart = name: %s", exerciseChapterPartName);
         }
     }
 

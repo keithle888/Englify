@@ -16,6 +16,7 @@ import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -40,7 +41,7 @@ public class ReadImage extends Fragment {
         ArrayList<String> dataRecorded = analyticListRead.get(MainActivity.strGrade+MainActivity.lesson);
         if(dataRecorded==null){
             analyticListRead.put(MainActivity.strGrade+MainActivity.lesson, new ArrayList<String>());
-            Log.d("analytic read", "null");
+            Timber.d("null");
             dataRecorded = new ArrayList<>();
             dataRecorded.add(Integer.toString(position));
             analyticListRead.put(MainActivity.strGrade+MainActivity.lesson, dataRecorded);
@@ -74,13 +75,13 @@ public class ReadImage extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d("ReadImage", "viewPager:onPageSelected: " + Integer.toString(position));
+                Timber.d( "viewPager:onPageSelected: " + Integer.toString(position));
                 if (mainActivity.position != position) {
                     mainActivity.position = position;
                 }
                 //Trigger for Audio Bar and speech recognition to change track/answer
                 if (fragment_audio_bar != null) {
-                    Log.d(bucketName, "Class ReadImageImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
+                    Timber.d(bucketName, "Class ReadImageImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
                     ((AudioBar)fragment_audio_bar).setAudioTrack(position);
                 }
             }

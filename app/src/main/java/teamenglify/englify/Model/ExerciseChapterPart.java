@@ -13,23 +13,13 @@ import java.util.LinkedList;
 public class ExerciseChapterPart implements Serializable{
     public String name;
     public String question;
-    public String answer;
-    public String[] choices;
+    public ArrayList<String> answer;
+    public ArrayList<ArrayList<String>> choices;  //Outer array is a list for each "blank" in the question. Inner array is a list of choices for "blank" in question at index n.
     public String imageURL;
     public String audioURL;
 
-    public ExerciseChapterPart(String name, LinkedList<String> details) {
+    public ExerciseChapterPart(String name) {
         this.name = name;
-        for (String detail : details) {
-            String[] delimited_detail = detail.split(":");
-            if (delimited_detail[0].equalsIgnoreCase("Question")) {
-                this.question = delimited_detail[1];
-            } else if (delimited_detail[0].equalsIgnoreCase("Answer")) {
-                this.answer = delimited_detail[1];
-            } else if (delimited_detail[0].equalsIgnoreCase("Choices")) {
-                this.choices = delimited_detail[1].split(",");
-            }
-        }
     }
 
     public ExerciseChapterPart(String name, String audioURL, String imgURL) {

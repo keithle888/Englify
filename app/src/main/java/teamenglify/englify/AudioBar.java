@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import teamenglify.englify.Model.ExerciseChapter;
 import teamenglify.englify.Model.Read;
 import teamenglify.englify.Model.Vocab;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -119,7 +120,7 @@ public class AudioBar extends Fragment {
                 try {
                     fis.close();
                 } catch (Exception e) {
-                    Log.d(mainActivity.getString(R.string.app_name), "Class AudioBar: Method setListeners(): Caught Exception -> " + e.toString());
+                    Timber.d("Class AudioBar: Method setListeners(): Caught Exception -> " + e.toString());
                 }
             }
             }
@@ -146,7 +147,7 @@ public class AudioBar extends Fragment {
                     try {
                         fis.close();
                     } catch (Exception e) {
-                        Log.d(mainActivity.getString(R.string.app_name), "Class AudioBar: Method setListeners(): Caught Exception -> " + e.toString());
+                        Timber.d( "Class AudioBar: Method setListeners(): Caught Exception -> " + e.toString());
                     }
                 }
                 return false;

@@ -19,6 +19,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 import static teamenglify.englify.MainActivity.mainActivity;
 
 
@@ -33,7 +35,7 @@ public class LocalSave {
             fos.write(input.getBytes());
             fos.close();
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method saveString: Caught Exception: " + e);
+            Timber.d( "Class LocalSave: Method saveString: Caught Exception: " + e);
             return false;
         }
         return true;
@@ -47,7 +49,7 @@ public class LocalSave {
             oos.close();
             fos.close();
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method saveObject: Trying to save " + fileName + " but caught Exception: " + e);
+            Timber.d( "Class LocalSave: Method saveObject: Trying to save " + fileName + " but caught Exception: " + e);
             return false;
         }
         return true;
@@ -62,7 +64,7 @@ public class LocalSave {
             oos.close();
             fos.close();
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method saveObject: Trying to save " + fileName + " but caught Exception: " + e);
+            Timber.d( "Class LocalSave: Method saveObject: Trying to save " + fileName + " but caught Exception: " + e);
             return false;
         }
         return true;
@@ -80,7 +82,7 @@ public class LocalSave {
             }
             fis.close();
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method loadString: Caught Exception:" + e);
+            Timber.d( "Class LocalSave: Method loadString: Caught Exception:" + e);
             return null;
         }
         return sb.toString();
@@ -95,7 +97,7 @@ public class LocalSave {
             fis.close();
             return object;
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method loadObject: Caught Exception:" + e);
+            Timber.d( "Class LocalSave: Method loadObject: Caught Exception:" + e);
             return null;
         }
     }
@@ -109,7 +111,7 @@ public class LocalSave {
             fis.close();
             return object;
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method loadObject: Caught Exception:" + e);
+            Timber.d( "Class LocalSave: Method loadObject: Caught Exception:" + e);
             return null;
         }
     }
@@ -124,14 +126,16 @@ public class LocalSave {
     }
 
     public static String saveMedia(String fileName, S3Object s3Object) {
+        Timber.d("Attempting to save media to path: %s", fileName);
         try {
             FileOutputStream fos = mainActivity.openFileOutput(fileName, Context.MODE_PRIVATE);
             fos.write(IOUtils.toByteArray(s3Object.getObjectContent()));
             fos.close();
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method saveMedia: Tried saving " + fileName + " but caught Exception: " + e);
+            Timber.d( "Class LocalSave: Method saveMedia: Tried saving " + fileName + " but caught Exception: " + e);
             return null;
         }
+        Timber.d("Successfully saved media to path: %s", fileName);
         return mainActivity.getFilesDir().getAbsolutePath() + fileName;
     }
 
@@ -140,7 +144,7 @@ public class LocalSave {
         try {
             fis = mainActivity.openFileInput(fileName);
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
+            Timber.d( "Class LocalSave: Method loadAudio(): Tried loading " + fileName + " but caught Exception: " + e);
         }
         return fis;
     }
@@ -151,7 +155,7 @@ public class LocalSave {
             FileInputStream fis = mainActivity.openFileInput(fileName);
             array = IOUtils.toByteArray(fis);
         } catch (Exception e) {
-            Log.d("Englify", "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
+            Timber.d( "Class LocalSave: Method loadAudio(): Tried saving " + fileName + " but caught Exception: " + e);
         }
         return array;
     }

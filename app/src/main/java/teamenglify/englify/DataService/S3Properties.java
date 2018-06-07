@@ -14,6 +14,7 @@ import java.util.List;
 import teamenglify.englify.LocalSave;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.AnalyticsConfiguration;
+import timber.log.Timber;
 
 public class S3Properties {
     public static String IDENTITYPOOLID;
@@ -36,14 +37,14 @@ public class S3Properties {
         try{
             S3Object s3AnalyticsConfiguration = MainActivity.s3Client.getObject(s3BucketName, "readme/configuration.csv");
             List<String> configurationList = DownloadService.readTextFile(s3AnalyticsConfiguration);
-            Log.d("S3Pro", configurationList.toString());
+            Timber.d(configurationList.toString());
             vocabConfiguration = Integer.parseInt(configurationList.get(2));
             readConfiguration = Integer.parseInt(configurationList.get(4));
             exerciseConfiguration = Integer.parseInt(configurationList.get(6));
             AnalyticsConfiguration analyticsConfiguration = new AnalyticsConfiguration(vocabConfiguration,readConfiguration,exerciseConfiguration);
             LocalSave.saveObject("AnalyticsConfiguration", analyticsConfiguration);
         } catch (Exception e){
-            Log.d("S3Properties", "failed to save analyticsConfiguration");
+            Timber.d( "failed to save analyticsConfiguration");
             e.printStackTrace();
             isLoadedAnalytics = false;
         }

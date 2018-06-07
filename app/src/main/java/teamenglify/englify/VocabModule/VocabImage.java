@@ -16,6 +16,7 @@ import teamenglify.englify.AudioBar;
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.Model.Vocab;
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.bucketName;
 import static teamenglify.englify.MainActivity.mainActivity;
@@ -47,7 +48,7 @@ public class VocabImage extends Fragment {
         ArrayList<String> dataRecorded = analyticListVocab.get(MainActivity.strGrade+MainActivity.lesson);
         if(dataRecorded==null){
             analyticListVocab.put(MainActivity.strGrade+MainActivity.lesson, new ArrayList<String>());
-            Log.d("analytic vocab", "null");
+            Timber.d( "null");
             dataRecorded = new ArrayList<>();
             dataRecorded.add(Integer.toString(position));
             analyticListVocab.put(MainActivity.strGrade+MainActivity.lesson, dataRecorded);
@@ -83,14 +84,14 @@ public class VocabImage extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Page changed to =>" + Integer.toString(position));
+                Timber.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Page changed to =>" + Integer.toString(position));
                 if (mainActivity.position != position) {
                     mainActivity.position = position;
                 }
                 recordDataVocab(position);
                 //Trigger for Audio Bar and speech recognition to change track/answer
                 if (fragment_audio_bar != null) {
-                    Log.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
+                    Timber.d(bucketName, "Class VocabImage: Method viewPager:onPageSelected: Changing Audio track to position =>" + Integer.toString(position));
                     ((AudioBar)fragment_audio_bar).setAudioTrack(position);
                 }
             }

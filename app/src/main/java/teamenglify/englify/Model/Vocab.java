@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+import timber.log.Timber;
+
 /**
  * Created by Keith on 06-Mar-17.
  */
@@ -62,8 +64,8 @@ public class Vocab extends Module{
 
     public void overwriteTexts(LinkedList<String> texts) {
         if (texts != null) {
-            Log.d("Englify", "Class Vocab: Method overwriteTexts(): Texts received for overwriting VocabParts, contents are -> " + texts.toString());
-            Log.d("Englify", "Class Vocab: Method overwriteTexts(): Number of VocabParts -> " + vocabParts.size() + " and number of Overwrite texts -> " + texts.size());
+            Timber.d("Class Vocab: Method overwriteTexts(): Texts received for overwriting VocabParts, contents are -> " + texts.toString());
+            Timber.d("Class Vocab: Method overwriteTexts(): Number of VocabParts -> " + vocabParts.size() + " and number of Overwrite texts -> " + texts.size());
             //Check which list is bigger (texts or vocabPart) , there may be errors in DB.
             if (vocabParts.size() <= texts.size()) {
                 for (VocabPart vocabPart : vocabParts) {

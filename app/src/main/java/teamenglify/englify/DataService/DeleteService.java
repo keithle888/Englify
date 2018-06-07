@@ -2,21 +2,18 @@ package teamenglify.englify.DataService;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import teamenglify.englify.LocalSave;
-import teamenglify.englify.LoginFragment.LoginFragment;
+import teamenglify.englify.LoginFragment.HomeFragment;
 
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.Lesson;
 import teamenglify.englify.Model.RootListing;
 
 import teamenglify.englify.R;
+import timber.log.Timber;
 
-import static teamenglify.englify.MainActivity.lesson;
 import static teamenglify.englify.MainActivity.mainActivity;
 
 /**
@@ -57,7 +54,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
 
     @Override
     public void onPreExecute() {
-        Log.d("Englify", "Class DeleteService: Method onPreExecute(): Delete Service starting, opening ProgressDialog.");
+        Timber.d( "Class DeleteService: Method onPreExecute(): Delete Service starting, opening ProgressDialog.");
         pd = new ProgressDialog(mainActivity);
         pd.setTitle("Download");
         pd.setCancelable(false);
@@ -82,7 +79,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         pd.dismiss();
         Toast.makeText(mainActivity, "Grade deleted.", Toast.LENGTH_LONG).show();
         mainActivity.clearBackStack();
-        mainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new LoginFragment()).addToBackStack(null).commit();
+        mainActivity.getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_container, new HomeFragment()).addToBackStack(null).commit();
         super.onPostExecute(result);
     }
 
@@ -96,7 +93,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
         //delete media resources seperately stored on grade.
         for (String fileName : mainActivity.fileList()) {
             if (fileName.contains(grade.name)) {
-                Log.d("Englify", "Class DeleteService: Method deleteGrade(): Deleting -> " + fileName);
+                Timber.d( "Class DeleteService: Method deleteGrade(): Deleting -> " + fileName);
                 mainActivity.deleteFile(fileName);
             }
         }
@@ -118,7 +115,7 @@ public class DeleteService extends AsyncTask<Void, Void, Void>{
     public void deleteLesson() {
         for (String file_name : mainActivity.fileList()) {
             if (file_name.contains(lesson.name)) {
-                Log.d("Englify", "Class DeleteService: Method deleteLesson(): Deleting -> " + file_name);
+                Timber.d( "Class DeleteService: Method deleteLesson(): Deleting -> " + file_name);
                 mainActivity.deleteFile(file_name);
             }
         }

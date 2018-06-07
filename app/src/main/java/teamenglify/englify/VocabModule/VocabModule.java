@@ -48,7 +48,7 @@ public class VocabModule extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_vocab_module, container, false);
-        //Log.d("vocab", MainActivity.getMainActivity().getCurrentListingURL());
+        //Timber.d("vocab", MainActivity.getMainActivity().getCurrentListingURL());
         MainActivity.getMainActivity().getSupportActionBar().setTitle("Study Vocab");
         FragmentManager fm = mainActivity.getSupportFragmentManager();
         VocabImage vocabImage = VocabImage.newInstance(vocab);

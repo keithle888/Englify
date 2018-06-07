@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import teamenglify.englify.MainActivity;
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -112,7 +113,7 @@ public class Feedback extends Fragment {
                         "englifyfeedbackmy@gmail.com",
                         "englifyteam@gmail.com");
             } catch (Exception e) {
-                Log.e("SendMail", e.getMessage(), e);
+                Timber.e(e, "Error");
             }
             return null;
         }

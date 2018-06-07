@@ -20,6 +20,7 @@ import teamenglify.englify.LocalSave;
 import teamenglify.englify.Model.Grade;
 import teamenglify.englify.Model.RootListing;
 import teamenglify.englify.R;
+import timber.log.Timber;
 
 import static teamenglify.englify.MainActivity.mainActivity;
 
@@ -70,9 +71,9 @@ public class DeleteGrade extends Fragment {
             RootListing newListing = new RootListing(new ArrayList<Grade>());
             for (int i = 0; i < rootListing.grades.size(); i++) {
                 Grade grade = rootListing.grades.get(i);
-                Log.d("Englify", "Class DeleteGrade: Method Constructor DeleteGradeAdapter: Looking at -> " + grade.toString());
+                Timber.d("Class DeleteGrade: Method Constructor DeleteGradeAdapter: Looking at -> " + grade.toString());
                 if (grade.lessons.size() != 0) {
-                    Log.d("Englify", "Class DeleteGrade: Method Constructor DeleteGradeAdapter: " + grade.name + " has been downloaded.");
+                    Timber.d( "Class DeleteGrade: Method Constructor DeleteGradeAdapter: " + grade.name + " has been downloaded.");
                     newListing.grades.add(grade);
                 }
             }
