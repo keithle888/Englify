@@ -7,8 +7,8 @@ android {
         applicationId "teamenglify.englify"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 4
-        versionName "1.1"
+        versionCode 5
+        versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -45,4 +45,3 @@ dependencies {
     implementation 'com.synnapps:carouselview:0.1.4'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }
-
