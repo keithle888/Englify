@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
+import com.synnapps.carouselview.ViewListener;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class ExerciseModule extends Fragment {
 
         //Update image carousel
         exerciseCarousel.setPageCount(exerciseChapter.chapterParts.size());
-        exerciseCarousel.setImageListener(imageListener);
+        exerciseCarousel.setViewListener(imageListener);
         exerciseCarousel.addOnPageChangeListener(pageChangeListener);
 
         updateUIBasedOnPage(0);
@@ -122,9 +123,11 @@ public class ExerciseModule extends Fragment {
         }
     }
 
-    private ImageListener imageListener = new ImageListener() {
+    private ViewListener imageListener = new ViewListener() {
         @Override
-        public void setImageForPosition(int position, ImageView imageView) {
+        public View setViewForPosition(int position) {
+            ImageView imageView = new ImageView(getContext());
+            imageView.setAdjustViewBounds(true);
             if (exerciseChapter.chapterParts.get(position).imageURL != null) {
                 Glide.with(getContext())
                         .load(LocalSave.loadImage(exerciseChapter.chapterParts.get(position).imageURL))
@@ -132,6 +135,7 @@ public class ExerciseModule extends Fragment {
                         .error(R.drawable.logonocontent)
                         .into(imageView);
             }
+            return imageView;
         }
     };
 
